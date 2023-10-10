@@ -7,32 +7,47 @@ import (
 
 	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
+	"github.com/joho/godotenv"
 )
 
-func GetAWSAccessKey() string {
-	awsAccessKey := os.Getenv("AWS_ACCESS_KEY")
-
-	if awsAccessKey == "" {
-		panic(constants.ErrAWSAccessKey.Error())
+func LoadEnv() {
+	err := godotenv.Load()
+	if err != nil {
+		panic(constants.LoadingEnvFileError.Error())
 	}
-
-	return awsAccessKey
 }
 
-func GetAWSSecretKey() string {
-	awsSecretKey := os.Getenv("AWS_SECRET_KEY")
+func GetJWTPrivateKey() []byte {
+	jwtPrivateKey := os.Getenv("JWT_PRIVATE_KEY")
 
-	if awsSecretKey == "" {
-		panic(constants.ErrAWSSecretKey.Error())
+	if jwtPrivateKey == "" {
+		panic(constants.JWTPrivateKeyError.Error())
 	}
 
-	return awsSecretKey
+	return []byte(jwtPrivateKey)
+}
+
+func GetFirebaseUrl() string {
+	firebaseUrl := os.Getenv("FIREBASE_URL")
+
+	if firebaseUrl == "" {
+		panic(constants.FirebaseURLKeyError.Error())
+	}
+
+	return firebaseUrl
+}
+
+func GetFirebaseBucketName() string {
+	firebaseBucketName := os.Getenv("FIREBASE_BUCKET_NAME")
+
+	if firebaseBucketName == "" {
+		panic(constants.FirebaseBucketNameError.Error())
+	}
+
+	return firebaseBucketName
 }
 
 func CreateDynamoDBClient(ctx context.Context) (*dynamodb.Client, error) {
-	// awsAccessKeyID := GetAWSAccessKey()
-	// awsSecretAccessKey := GetAWSSecretKey()
-
 	cfg, err := config.LoadDefaultConfig(ctx, config.WithRegion(constants.AWSRegion))
 	if err != nil {
 		return nil, err

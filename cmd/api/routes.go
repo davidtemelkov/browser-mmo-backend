@@ -17,6 +17,12 @@ func (app *application) setupRoutes() *gin.Engine {
 		MaxAge:           0,
 	}))
 
+	usersRoutes := r.Group("/users")
+	{
+		usersRoutes.POST("/register", app.registerUserHandler)
+		usersRoutes.POST("/login", app.loginUserHandler)
+	}
+
 	r.Run(":8080")
 
 	return r
