@@ -21,6 +21,8 @@ func (app *application) setupRoutes() *gin.Engine {
 	{
 		usersRoutes.POST("/register", app.registerUserHandler)
 		usersRoutes.POST("/login", app.loginUserHandler)
+		usersRoutes.Use(app.authenticate())
+		usersRoutes.GET("/:email", app.getUserHandler)
 	}
 
 	r.Run(":8080")

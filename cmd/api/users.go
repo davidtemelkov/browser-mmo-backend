@@ -5,10 +5,12 @@ import (
 	"browser-mmo-backend/internal/data"
 	"browser-mmo-backend/internal/helpers"
 	"browser-mmo-backend/internal/validator"
+	"errors"
 	"net/http"
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/golang-jwt/jwt"
 )
 
 func (app *application) registerUserHandler(c *gin.Context) {
@@ -130,4 +132,38 @@ func (app *application) loginUserHandler(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, jwt)
+}
+
+func (app *application) getUserHandler(c *gin.Context) {
+	email := c.Param("email")
+
+	claims, ok := c.Get("user")
+	if !ok {
+		c.JSON(http.StatusInternalServerError, constants.InternalServerError.Error())
+		return
+	}
+
+	userEmail, exists := claims.(jwt.MapClaims)["email"].(string)
+	if !exists {
+		c.JSON(http.StatusInternalServerError, constants.InternalServerError.Error())
+		return
+	}
+
+	user, err := app.models.Users.Get(email)
+	if err != nil {
+		if errors.Is(err, constants.UserNotFoundError) {
+			c.JSON(http.StatusNotFound, constants.UserNotFoundError.Error())
+			return
+		}
+
+		c.JSON(http.StatusInternalServerError, constants.InternalServerError.Error())
+		return
+	}
+
+	if email != userEmail {
+		c.JSON(http.StatusForbidden, constants.UserIsNotAuthorizedError.Error())
+		return
+	}
+
+	c.JSON(http.StatusOK, user)
 }
