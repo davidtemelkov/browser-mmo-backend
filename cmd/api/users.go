@@ -46,8 +46,7 @@ func (app *application) registerUserHandler(c *gin.Context) {
 			"Boots":      "",
 			"Weapon":     "",
 			"Shield":     "",
-			"Ring1":      "",
-			"Ring2":      "",
+			"Ring":       "",
 		},
 		WeaponShop:    map[string]string{"1": "", "2": "", "3": "", "4": "", "5": "", "6": ""}, //TODO: Fill this in with random items later
 		MagicShop:     map[string]string{"1": "", "2": "", "3": "", "4": "", "5": "", "6": ""}, //TODO: Fill this in with random items later

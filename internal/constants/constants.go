@@ -35,3 +35,48 @@ const (
 	MountAttribute         = "Mount"
 	MountImageURLAttribute = "MountImageURL"
 )
+
+// Item DB constants
+const (
+	ItemPrefix           = "ITEM#"
+	BaseNameAttribute    = "BaseName"
+	MinLevelAttribute    = "MinLevel"
+	IsLegendaryAttribute = "IsLegendary"
+	TypeAttribute        = "Type"
+	Ring                 = "Ring"
+	Amulet               = "Amulet"
+	Gloves               = "Gloves"
+	Boots                = "Boots"
+	Helmet               = "Helmet"
+	Chestplate           = "Chestplate"
+)
+
+// Weapon DB constants
+const (
+	WeaponPrefix       = "WEAPON#"
+	Weapon             = "WEAPON"
+	DamageMinAttribute = "DMGMin"
+	DamageMaxAttribute = "DMGMax"
+)
+
+// Accessory DB constants
+const (
+	AccessoryPrefix = "ACCESSORY#"
+	Accessory       = "ACCESSORY"
+)
+
+// Armour DB constants
+const (
+	ArmourPrefix             = "ARMOUR#"
+	Armour                   = "ARMOUR"
+	ArmourAmountMinAttribute = "ArmourAmountMin"
+	ArmourAmountMaxAttribute = "ArmourAmountMax"
+)
+
+// Shield DB constants
+const (
+	ShieldPrefix                  = "SHIELD#"
+	Shield                        = "SHIELD"
+	ShieldBlockChanceMinAttribute = "ShieldMinBlockChance"
+	ShieldBlockChanceMaxAttribute = "ShieldMaxBlockChance"
+)

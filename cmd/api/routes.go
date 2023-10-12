@@ -25,6 +25,14 @@ func (app *application) setupRoutes() *gin.Engine {
 		usersRoutes.GET("/:email", app.getUserHandler)
 	}
 
+	itemsRoutes := r.Group("/items")
+	{
+		itemsRoutes.POST("/weapons", app.createWeaponHandler)
+		itemsRoutes.POST("/accessories", app.createAccessoryHandler)
+		itemsRoutes.POST("/armours", app.createArmourHandler)
+		itemsRoutes.POST("/shields", app.createShieldHandler)
+	}
+
 	r.Run(":8080")
 
 	return r
