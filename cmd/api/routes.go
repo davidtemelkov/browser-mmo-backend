@@ -33,6 +33,11 @@ func (app *application) setupRoutes() *gin.Engine {
 		itemsRoutes.POST("/shields", app.createShieldHandler)
 	}
 
+	questRoutes := r.Group("/quests")
+	{
+		questRoutes.POST("/", app.createQuestandler)
+	}
+
 	r.Run(":8080")
 
 	return r

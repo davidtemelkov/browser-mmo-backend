@@ -12,6 +12,7 @@ type Models struct {
 	Accessories AccessoryModel
 	Armours     ArmourModel
 	Shields     ShieldModel
+	Quests      QuestModel
 }
 
 func NewModels(db *dynamodb.Client, ctx context.Context) Models {
@@ -21,5 +22,6 @@ func NewModels(db *dynamodb.Client, ctx context.Context) Models {
 		Accessories: AccessoryModel{DB: db, CTX: ctx},
 		Armours:     ArmourModel{DB: db, CTX: ctx},
 		Shields:     ShieldModel{DB: db, CTX: ctx},
+		Quests:      QuestModel{DB: db, CTX: ctx},
 	}
 }

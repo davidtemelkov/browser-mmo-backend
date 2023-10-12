@@ -80,3 +80,9 @@ const (
 	ShieldBlockChanceMinAttribute = "ShieldMinBlockChance"
 	ShieldBlockChanceMaxAttribute = "ShieldMaxBlockChance"
 )
+
+// Quest DB constants
+const (
+	Questrefix = "QUEST#"
+	Quest      = "QUEST"
+)
