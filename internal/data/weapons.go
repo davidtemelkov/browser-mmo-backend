@@ -29,13 +29,15 @@ import (
 
 // Base weapons
 type Weapon struct {
-	ID          string
-	BaseName    string
-	MinLevel    int
-	DamageMin   int
-	DamageMax   int
-	IsLegendary bool
-	ImageURL    string
+	ID                 string
+	BaseName           string
+	MinLevel           int
+	DamageLowRangeMin  int
+	DamageLowRangeMax  int
+	DamageHighRangeMin int
+	DamageHighRangeMax int
+	IsLegendary        bool
+	ImageURL           string
 }
 
 type WeaponModel struct {
@@ -57,11 +59,17 @@ func (wm WeaponModel) Insert(weapon *Weapon) error {
 		constants.MinLevelAttribute: &types.AttributeValueMemberN{
 			Value: strconv.Itoa(weapon.MinLevel),
 		},
-		constants.DamageMinAttribute: &types.AttributeValueMemberN{
-			Value: strconv.Itoa(weapon.DamageMin),
+		constants.DamageLowRangeMinAttribute: &types.AttributeValueMemberN{
+			Value: strconv.Itoa(weapon.DamageLowRangeMin),
 		},
-		constants.DamageMaxAttribute: &types.AttributeValueMemberN{
-			Value: strconv.Itoa(weapon.DamageMax),
+		constants.DamageLowRangeMaxAttribute: &types.AttributeValueMemberN{
+			Value: strconv.Itoa(weapon.DamageLowRangeMax),
+		},
+		constants.DamageHighRangeMinAttribute: &types.AttributeValueMemberN{
+			Value: strconv.Itoa(weapon.DamageHighRangeMin),
+		},
+		constants.DamageHighRangeMaxAttribute: &types.AttributeValueMemberN{
+			Value: strconv.Itoa(weapon.DamageLowRangeMax),
 		},
 		constants.IsLegendaryAttribute: &types.AttributeValueMemberBOOL{
 			Value: weapon.IsLegendary,

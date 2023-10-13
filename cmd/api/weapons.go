@@ -11,12 +11,14 @@ import (
 
 func (app *application) createWeaponHandler(c *gin.Context) {
 	var input struct {
-		BaseName    string `json:"base_name"`
-		MinLevel    int    `json:"min_level"`
-		DamageMin   int    `json:"damage_min"`
-		DamageMax   int    `json:"damage_max"`
-		IsLegendary bool   `json:"is_legendary"`
-		ImageURL    string `json:"imageURL"`
+		BaseName           string `json:"base_name"`
+		MinLevel           int    `json:"min_level"`
+		DamageLowRangeMin  int    `json:"damage_low_min"`
+		DamageLowRangeMax  int    `json:"damage_low_max"`
+		DamageHighRangeMin int    `json:"damage_high_min"`
+		DamageHighRangeMax int    `json:"damage_high_max"`
+		IsLegendary        bool   `json:"is_legendary"`
+		ImageURL           string `json:"imageURL"`
 	}
 
 	if err := c.BindJSON(&input); err != nil {
@@ -25,13 +27,15 @@ func (app *application) createWeaponHandler(c *gin.Context) {
 	}
 
 	weapon := &data.Weapon{
-		ID:          uuid.New().String(),
-		BaseName:    input.BaseName,
-		MinLevel:    input.MinLevel,
-		DamageMin:   input.DamageMin,
-		DamageMax:   input.DamageMax,
-		IsLegendary: input.IsLegendary,
-		ImageURL:    input.ImageURL,
+		ID:                 uuid.New().String(),
+		BaseName:           input.BaseName,
+		MinLevel:           input.MinLevel,
+		DamageLowRangeMin:  input.DamageLowRangeMin,
+		DamageLowRangeMax:  input.DamageLowRangeMax,
+		DamageHighRangeMin: input.DamageHighRangeMin,
+		DamageHighRangeMax: input.DamageHighRangeMax,
+		IsLegendary:        input.IsLegendary,
+		ImageURL:           input.ImageURL,
 	}
 
 	err := app.models.Weapons.Insert(weapon)

@@ -53,10 +53,12 @@ const (
 
 // Weapon DB constants
 const (
-	WeaponPrefix       = "WEAPON#"
-	Weapon             = "WEAPON"
-	DamageMinAttribute = "DMGMin"
-	DamageMaxAttribute = "DMGMax"
+	WeaponPrefix                = "WEAPON#"
+	Weapon                      = "WEAPON"
+	DamageLowRangeMinAttribute  = "DMGLowMin"
+	DamageLowRangeMaxAttribute  = "DMGLowMax"
+	DamageHighRangeMinAttribute = "DMGHighMix"
+	DamageHighRangeMaxAttribute = "DMGHighMax"
 )
 
 // Accessory DB constants
