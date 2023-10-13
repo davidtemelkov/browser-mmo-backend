@@ -34,6 +34,7 @@ func (app *application) registerUserHandler(c *gin.Context) {
 		Level:        1,
 		Gold:         100,
 		EXP:          0,
+		BigDPoints:   0,
 		Strength:     1,
 		Dexterity:    1,
 		Constitution: 1,
@@ -48,15 +49,18 @@ func (app *application) registerUserHandler(c *gin.Context) {
 			"Shield":     "",
 			"Ring":       "",
 		},
-		WeaponShop:    map[string]string{"1": "", "2": "", "3": "", "4": "", "5": "", "6": ""}, //TODO: Fill this in with random items later
-		MagicShop:     map[string]string{"1": "", "2": "", "3": "", "4": "", "5": "", "6": ""}, //TODO: Fill this in with random items later
+		WeaponShop:    map[string]string{"1": "", "2": "", "3": "", "4": "", "5": "", "6": ""},                                                                                        //TODO: Fill this in with random items later
+		MagicShop:     map[string]string{"1": "", "2": "", "3": "", "4": "", "5": "", "6": ""},                                                                                        //TODO: Fill this in with random items later
+		Inventory:     map[string]string{"1": "", "2": "", "3": "", "4": "", "5": "", "6": "", "7": "", "8": "", "9": "", "10": "", "11": "", "12": "", "13": "", "14": "", "15": ""}, //TODO: Fill this in with random items later
 		Mount:         "",
 		MountImageURL: "",
+		IsQuesting:    false,
+		IsWorking:     false,
 	}
 
 	err := user.Password.Set(input.Password)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": constants.InternalServerError.Error()})
+		c.JSON(http.StatusInternalServerError, constants.InternalServerError.Error())
 		return
 	}
 

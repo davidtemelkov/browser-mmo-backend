@@ -25,6 +25,7 @@ type User struct {
 	Level         int               `json:"level" dynamodbav:"Level"`
 	Gold          int               `json:"gold" dynamodbav:"Gold"`
 	EXP           int               `json:"EXP" dynamodbav:"EXP"`
+	BigDPoints    int               `json:"bigDPoints" dynamodbav:"BigDPoints"`
 	Strength      int               `json:"strength" dynamodbav:"Strength"`
 	Dexterity     int               `json:"dexterity" dynamodbav:"Dexterity"`
 	Constitution  int               `json:"constitution" dynamodbav:"Constitution"`
@@ -34,6 +35,9 @@ type User struct {
 	MagicShop     map[string]string `json:"magicShop" dynamodbav:"MagicShop"`
 	Mount         string            `json:"mount" dynamodbav:"Mount"`
 	MountImageURL string            `json:"mountImageURL" dynamodbav:"MountImageURL"`
+	Inventory     map[string]string `json:"inventory" dynamodbav:"Inventory"`
+	IsQuesting    bool              `json:"isQuesting" dynamodbav:"IsQuesting"`
+	IsWorking     bool              `json:"isWorking" dynamodbav:"IsWorking"`
 }
 
 type Password struct {
@@ -125,6 +129,9 @@ func (um UserModel) Insert(user *User) error {
 		constants.EXPAttribute: &types.AttributeValueMemberN{
 			Value: strconv.Itoa(user.EXP),
 		},
+		constants.BigDPointsAttribute: &types.AttributeValueMemberN{
+			Value: strconv.Itoa(user.BigDPoints),
+		},
 		constants.StrengthAttribute: &types.AttributeValueMemberN{
 			Value: strconv.Itoa(user.Strength),
 		},
@@ -146,11 +153,20 @@ func (um UserModel) Insert(user *User) error {
 		constants.MagicShopAttribute: &types.AttributeValueMemberM{
 			Value: map[string]types.AttributeValue{},
 		},
+		constants.InventoryAttribute: &types.AttributeValueMemberM{
+			Value: map[string]types.AttributeValue{},
+		},
 		constants.MountAttribute: &types.AttributeValueMemberS{
 			Value: user.Mount,
 		},
 		constants.MountImageURLAttribute: &types.AttributeValueMemberS{
 			Value: user.MountImageURL,
+		},
+		constants.IsQuestingAttribute: &types.AttributeValueMemberBOOL{
+			Value: user.IsQuesting,
+		},
+		constants.IsWorkingAttribute: &types.AttributeValueMemberBOOL{
+			Value: user.IsWorking,
 		},
 	}
 
@@ -168,6 +184,12 @@ func (um UserModel) Insert(user *User) error {
 
 	for key, value := range user.MagicShop {
 		item[constants.MagicShopAttribute].(*types.AttributeValueMemberM).Value[key] = &types.AttributeValueMemberS{
+			Value: value,
+		}
+	}
+
+	for key, value := range user.Inventory {
+		item[constants.InventoryAttribute].(*types.AttributeValueMemberM).Value[key] = &types.AttributeValueMemberS{
 			Value: value,
 		}
 	}

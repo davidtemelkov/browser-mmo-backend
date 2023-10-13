@@ -25,6 +25,7 @@ const (
 	LevelAttribute         = "Level"
 	GoldAttribute          = "Gold"
 	EXPAttribute           = "EXP"
+	BigDPointsAttribute    = "BigDPoints"
 	StrengthAttribute      = "Strength"
 	DexterityAttribute     = "Dexterity"
 	ConstitutionAttribute  = "Constitution"
@@ -34,6 +35,9 @@ const (
 	MagicShopAttribute     = "MagicShop"
 	MountAttribute         = "Mount"
 	MountImageURLAttribute = "MountImageURL"
+	InventoryAttribute     = "Inventory"
+	IsQuestingAttribute    = "IsQuesting"
+	IsWorkingAttribute     = "IsWorking"
 )
 
 // Item DB constants
