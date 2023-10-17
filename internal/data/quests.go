@@ -29,7 +29,7 @@ func (qm QuestModel) Insert(quest *Quest) error {
 		constants.SK: &types.AttributeValueMemberS{
 			Value: constants.Questrefix + quest.ID,
 		},
-		constants.BaseNameAttribute: &types.AttributeValueMemberS{
+		constants.NameAttribute: &types.AttributeValueMemberS{
 			Value: quest.Name,
 		},
 		constants.ImageURLAttribute: &types.AttributeValueMemberS{

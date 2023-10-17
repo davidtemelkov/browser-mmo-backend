@@ -43,6 +43,7 @@ const (
 // Item DB constants
 const (
 	ItemPrefix           = "ITEM#"
+	NameAttribute        = "Name"
 	BaseNameAttribute    = "BaseName"
 	MinLevelAttribute    = "MinLevel"
 	IsLegendaryAttribute = "IsLegendary"
