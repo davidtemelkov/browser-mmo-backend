@@ -16,28 +16,29 @@ import (
 )
 
 type User struct {
-	Name          string            `json:"name" dynamodbav:"Username"`
-	Email         string            `json:"email" dynamodbav:"Email"`
-	Password      Password          `json:"-"`
-	PasswordHash  string            `json:"-" dynamodbav:"PasswordHash"`
-	CreatedOn     string            `json:"createdOn,omitempty" dynamodbav:"CreatedOn"`
-	ImageURL      string            `json:"imageURL" dynamodbav:"ImageURL"`
-	Level         int               `json:"level" dynamodbav:"Level"`
-	Gold          int               `json:"gold" dynamodbav:"Gold"`
-	EXP           int               `json:"EXP" dynamodbav:"EXP"`
-	BigDPoints    int               `json:"bigDPoints" dynamodbav:"BigDPoints"`
-	Strength      int               `json:"strength" dynamodbav:"Strength"`
-	Dexterity     int               `json:"dexterity" dynamodbav:"Dexterity"`
-	Constitution  int               `json:"constitution" dynamodbav:"Constitution"`
-	Intelligence  int               `json:"intelligence" dynamodbav:"Intelligence"`
-	Items         map[string]string `json:"items" dynamodbav:"Items"`
-	WeaponShop    map[string]string `json:"weaponShop" dynamodbav:"WeaponShop"`
-	MagicShop     map[string]string `json:"magicShop" dynamodbav:"MagicShop"`
-	Mount         string            `json:"mount" dynamodbav:"Mount"`
-	MountImageURL string            `json:"mountImageURL" dynamodbav:"MountImageURL"`
-	Inventory     map[string]string `json:"inventory" dynamodbav:"Inventory"`
-	IsQuesting    bool              `json:"isQuesting" dynamodbav:"IsQuesting"`
-	IsWorking     bool              `json:"isWorking" dynamodbav:"IsWorking"`
+	Name          string                    `json:"name" dynamodbav:"Username"`
+	Email         string                    `json:"email" dynamodbav:"Email"`
+	Password      Password                  `json:"-"`
+	PasswordHash  string                    `json:"-" dynamodbav:"PasswordHash"`
+	CreatedOn     string                    `json:"createdOn,omitempty" dynamodbav:"CreatedOn"`
+	ImageURL      string                    `json:"imageURL" dynamodbav:"ImageURL"`
+	Level         int                       `json:"level" dynamodbav:"Level"`
+	Gold          int                       `json:"gold" dynamodbav:"Gold"`
+	EXP           int                       `json:"EXP" dynamodbav:"EXP"`
+	BigDPoints    int                       `json:"bigDPoints" dynamodbav:"BigDPoints"`
+	Strength      int                       `json:"strength" dynamodbav:"Strength"`
+	Dexterity     int                       `json:"dexterity" dynamodbav:"Dexterity"`
+	Constitution  int                       `json:"constitution" dynamodbav:"Constitution"`
+	Intelligence  int                       `json:"intelligence" dynamodbav:"Intelligence"`
+	Items         map[string]string         `json:"items" dynamodbav:"Items"`
+	WeaponShop    map[string]string         `json:"weaponShop" dynamodbav:"WeaponShop"`
+	MagicShop     map[string]string         `json:"magicShop" dynamodbav:"MagicShop"`
+	Mount         string                    `json:"mount" dynamodbav:"Mount"`
+	MountImageURL string                    `json:"mountImageURL" dynamodbav:"MountImageURL"`
+	Inventory     map[string]string         `json:"inventory" dynamodbav:"Inventory"`
+	IsQuesting    bool                      `json:"isQuesting" dynamodbav:"IsQuesting"`
+	IsWorking     bool                      `json:"isWorking" dynamodbav:"IsWorking"`
+	CurrentQuests map[string]GeneratedQuest `json:"currentQuests" dynamodbav:"CurrentQuests"`
 }
 
 type Password struct {
@@ -168,6 +169,9 @@ func (um UserModel) Insert(user *User) error {
 		constants.IsWorkingAttribute: &types.AttributeValueMemberBOOL{
 			Value: user.IsWorking,
 		},
+		constants.CurrentQuestsAttribute: &types.AttributeValueMemberM{
+			Value: map[string]types.AttributeValue{},
+		},
 	}
 
 	for key, value := range user.Items {
@@ -193,6 +197,12 @@ func (um UserModel) Insert(user *User) error {
 			Value: value,
 		}
 	}
+
+	// for key, value := range user.CurrentQuests {
+	// 	item[constants.CurrentQuestsAttribute].(*types.AttributeValueMemberM).Value[key] = &types.AttributeValueMemberS{
+	// 		Value: value,
+	// 	}
+	// }
 
 	putInput := &dynamodb.PutItemInput{
 		TableName:           aws.String(constants.TableName),
@@ -258,4 +268,60 @@ func (um UserModel) CanLoginUser(password string, user *User) (bool, error) {
 	}
 
 	return true, nil
+}
+
+func (um UserModel) AddGeneratedQuests(email string, generatedQuests []GeneratedQuest) error {
+	key := map[string]types.AttributeValue{
+		constants.PK: &types.AttributeValueMemberS{
+			Value: constants.UserPrefix + email,
+		},
+		constants.SK: &types.AttributeValueMemberS{
+			Value: constants.UserPrefix + email,
+		},
+	}
+
+	generatedQuestsAttribute := map[string]types.AttributeValue{}
+	for i, quest := range generatedQuests {
+		questKey := strconv.Itoa(i)
+		generatedQuestsAttribute[questKey] = &types.AttributeValueMemberM{
+			Value: map[string]types.AttributeValue{
+				constants.NameAttribute: &types.AttributeValueMemberS{
+					Value: quest.Name,
+				},
+				constants.ImageURLAttribute: &types.AttributeValueMemberS{
+					Value: quest.ImageURL,
+				},
+				"Time": &types.AttributeValueMemberS{
+					Value: quest.Time,
+				},
+				constants.EXPAttribute: &types.AttributeValueMemberN{
+					Value: quest.EXP,
+				},
+				constants.GoldAttribute: &types.AttributeValueMemberN{
+					Value: quest.Gold,
+				},
+			},
+		}
+	}
+
+	updateExpression := "SET " + constants.CurrentQuestsAttribute + " = :quests"
+	expressionAttributeValues := map[string]types.AttributeValue{
+		":quests": &types.AttributeValueMemberM{
+			Value: generatedQuestsAttribute,
+		},
+	}
+
+	input := &dynamodb.UpdateItemInput{
+		TableName:                 aws.String(constants.TableName),
+		Key:                       key,
+		UpdateExpression:          aws.String(updateExpression),
+		ExpressionAttributeValues: expressionAttributeValues,
+	}
+
+	_, err := um.DB.UpdateItem(um.CTX, input)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

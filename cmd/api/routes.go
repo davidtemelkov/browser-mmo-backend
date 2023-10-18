@@ -35,7 +35,9 @@ func (app *application) setupRoutes() *gin.Engine {
 
 	questRoutes := r.Group("/quests")
 	{
-		questRoutes.POST("/", app.createQuestandler)
+		questRoutes.POST("/", app.createQuestHandler)
+		questRoutes.Use(app.authenticate())
+		questRoutes.GET("/generate/:email", app.generateQuestsHandler)
 	}
 
 	r.Run(":8080")

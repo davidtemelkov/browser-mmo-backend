@@ -56,6 +56,7 @@ func (app *application) registerUserHandler(c *gin.Context) {
 		MountImageURL: "",
 		IsQuesting:    false,
 		IsWorking:     false,
+		CurrentQuests: map[string]data.GeneratedQuest{},
 	}
 
 	err := user.Password.Set(input.Password)
@@ -159,7 +160,7 @@ func (app *application) getUserHandler(c *gin.Context) {
 			return
 		}
 
-		c.JSON(http.StatusInternalServerError, constants.InternalServerError.Error())
+		c.JSON(http.StatusInternalServerError, err.Error())
 		return
 	}
 
