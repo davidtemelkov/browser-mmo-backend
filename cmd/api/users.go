@@ -171,3 +171,164 @@ func (app *application) getUserHandler(c *gin.Context) {
 
 	c.JSON(http.StatusOK, user)
 }
+
+func (app *application) upgradeStrengthHandler(c *gin.Context) {
+	//this should be moved so it can be reused, maybe in a middleware
+	claims, ok := c.Get("user")
+	if !ok {
+		c.JSON(http.StatusInternalServerError, constants.InternalServerError.Error())
+		return
+	}
+
+	userEmail, exists := claims.(jwt.MapClaims)["email"].(string)
+	if !exists {
+		c.JSON(http.StatusInternalServerError, constants.InternalServerError.Error())
+		return
+	}
+
+	user, err := app.models.Users.Get(userEmail)
+	if err != nil {
+		if errors.Is(err, constants.UserNotFoundError) {
+			c.JSON(http.StatusNotFound, constants.UserNotFoundError.Error())
+			return
+		}
+
+		c.JSON(http.StatusInternalServerError, err.Error())
+		return
+	}
+	//end
+
+	if user.Gold < user.Strength {
+		c.JSON(http.StatusForbidden, "Not enough gold")
+		return
+	}
+
+	result, err := app.models.Users.UpgradeStrength(user)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	c.JSON(http.StatusOK, result)
+}
+
+func (app *application) upgradeDexterityHandler(c *gin.Context) {
+	//this should be moved so it can be reused, maybe in a middleware
+	claims, ok := c.Get("user")
+	if !ok {
+		c.JSON(http.StatusInternalServerError, constants.InternalServerError.Error())
+		return
+	}
+
+	userEmail, exists := claims.(jwt.MapClaims)["email"].(string)
+	if !exists {
+		c.JSON(http.StatusInternalServerError, constants.InternalServerError.Error())
+		return
+	}
+
+	user, err := app.models.Users.Get(userEmail)
+	if err != nil {
+		if errors.Is(err, constants.UserNotFoundError) {
+			c.JSON(http.StatusNotFound, constants.UserNotFoundError.Error())
+			return
+		}
+
+		c.JSON(http.StatusInternalServerError, err.Error())
+		return
+	}
+	//end
+
+	if user.Gold < user.Dexterity {
+		c.JSON(http.StatusForbidden, "Not enough gold")
+		return
+	}
+
+	result, err := app.models.Users.UpgradeDexterity(user)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	c.JSON(http.StatusOK, result)
+}
+
+func (app *application) upgradeConstitutionHandler(c *gin.Context) {
+	//this should be moved so it can be reused, maybe in a middleware
+	claims, ok := c.Get("user")
+	if !ok {
+		c.JSON(http.StatusInternalServerError, constants.InternalServerError.Error())
+		return
+	}
+
+	userEmail, exists := claims.(jwt.MapClaims)["email"].(string)
+	if !exists {
+		c.JSON(http.StatusInternalServerError, constants.InternalServerError.Error())
+		return
+	}
+
+	user, err := app.models.Users.Get(userEmail)
+	if err != nil {
+		if errors.Is(err, constants.UserNotFoundError) {
+			c.JSON(http.StatusNotFound, constants.UserNotFoundError.Error())
+			return
+		}
+
+		c.JSON(http.StatusInternalServerError, err.Error())
+		return
+	}
+	//end
+
+	if user.Gold < user.Constitution {
+		c.JSON(http.StatusForbidden, "Not enough gold")
+		return
+	}
+
+	result, err := app.models.Users.UpgradeConstitution(user)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	c.JSON(http.StatusOK, result)
+}
+
+func (app *application) upgradeIntelligenceHandler(c *gin.Context) {
+	//this should be moved so it can be reused, maybe in a middleware
+	claims, ok := c.Get("user")
+	if !ok {
+		c.JSON(http.StatusInternalServerError, constants.InternalServerError.Error())
+		return
+	}
+
+	userEmail, exists := claims.(jwt.MapClaims)["email"].(string)
+	if !exists {
+		c.JSON(http.StatusInternalServerError, constants.InternalServerError.Error())
+		return
+	}
+
+	user, err := app.models.Users.Get(userEmail)
+	if err != nil {
+		if errors.Is(err, constants.UserNotFoundError) {
+			c.JSON(http.StatusNotFound, constants.UserNotFoundError.Error())
+			return
+		}
+
+		c.JSON(http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	//end
+
+	if user.Gold < user.Strength {
+		c.JSON(http.StatusForbidden, "Not enough gold")
+		return
+	}
+
+	result, err := app.models.Users.UpgradeIntelligence(user)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	c.JSON(http.StatusOK, result)
+}

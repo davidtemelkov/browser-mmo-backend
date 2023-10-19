@@ -23,6 +23,10 @@ func (app *application) setupRoutes() *gin.Engine {
 		usersRoutes.POST("/login", app.loginUserHandler)
 		usersRoutes.Use(app.authenticate())
 		usersRoutes.GET("/:email", app.getUserHandler)
+		usersRoutes.PATCH("/strength", app.upgradeStrengthHandler)
+		usersRoutes.PATCH("/dexterity", app.upgradeDexterityHandler)
+		usersRoutes.PATCH("/constitution", app.upgradeConstitutionHandler)
+		usersRoutes.PATCH("/intelligence", app.upgradeIntelligenceHandler)
 	}
 
 	itemsRoutes := r.Group("/items")

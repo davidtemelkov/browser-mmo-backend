@@ -325,3 +325,163 @@ func (um UserModel) AddGeneratedQuests(email string, generatedQuests []Generated
 
 	return nil
 }
+
+func (um UserModel) UpgradeStrength(user *User) (*User, error) {
+	upgradeCost := user.Strength + 1
+
+	user.Strength++
+	user.Gold -= upgradeCost
+
+	key := map[string]types.AttributeValue{
+		constants.PK: &types.AttributeValueMemberS{
+			Value: constants.UserPrefix + user.Email,
+		},
+		constants.SK: &types.AttributeValueMemberS{
+			Value: constants.UserPrefix + user.Email,
+		},
+	}
+
+	updateExpression := "SET " + constants.StrengthAttribute + " = :strength, " + constants.GoldAttribute + " = :gold"
+	expressionAttributeValues := map[string]types.AttributeValue{
+		":strength": &types.AttributeValueMemberN{
+			Value: strconv.Itoa(user.Strength),
+		},
+		":gold": &types.AttributeValueMemberN{
+			Value: strconv.Itoa(user.Gold),
+		},
+	}
+
+	input := &dynamodb.UpdateItemInput{
+		TableName:                 aws.String(constants.TableName),
+		Key:                       key,
+		UpdateExpression:          aws.String(updateExpression),
+		ExpressionAttributeValues: expressionAttributeValues,
+	}
+
+	_, err := um.DB.UpdateItem(um.CTX, input)
+	if err != nil {
+		return nil, err
+	}
+
+	return user, nil
+}
+
+func (um UserModel) UpgradeDexterity(user *User) (*User, error) {
+	upgradeCost := user.Dexterity + 1
+
+	user.Dexterity++
+	user.Gold -= upgradeCost
+
+	key := map[string]types.AttributeValue{
+		constants.PK: &types.AttributeValueMemberS{
+			Value: constants.UserPrefix + user.Email,
+		},
+		constants.SK: &types.AttributeValueMemberS{
+			Value: constants.UserPrefix + user.Email,
+		},
+	}
+
+	updateExpression := "SET " + constants.DexterityAttribute + " = :dexterity, " + constants.GoldAttribute + " = :gold"
+	expressionAttributeValues := map[string]types.AttributeValue{
+		":dexterity": &types.AttributeValueMemberN{
+			Value: strconv.Itoa(user.Dexterity),
+		},
+		":gold": &types.AttributeValueMemberN{
+			Value: strconv.Itoa(user.Gold),
+		},
+	}
+
+	input := &dynamodb.UpdateItemInput{
+		TableName:                 aws.String(constants.TableName),
+		Key:                       key,
+		UpdateExpression:          aws.String(updateExpression),
+		ExpressionAttributeValues: expressionAttributeValues,
+	}
+
+	_, err := um.DB.UpdateItem(um.CTX, input)
+	if err != nil {
+		return nil, err
+	}
+
+	return user, nil
+}
+
+func (um UserModel) UpgradeConstitution(user *User) (*User, error) {
+	upgradeCost := user.Constitution + 1
+
+	user.Constitution++
+	user.Gold -= upgradeCost
+
+	key := map[string]types.AttributeValue{
+		constants.PK: &types.AttributeValueMemberS{
+			Value: constants.UserPrefix + user.Email,
+		},
+		constants.SK: &types.AttributeValueMemberS{
+			Value: constants.UserPrefix + user.Email,
+		},
+	}
+
+	updateExpression := "SET " + constants.ConstitutionAttribute + " = :constitution, " + constants.GoldAttribute + " = :gold"
+	expressionAttributeValues := map[string]types.AttributeValue{
+		":constitution": &types.AttributeValueMemberN{
+			Value: strconv.Itoa(user.Constitution),
+		},
+		":gold": &types.AttributeValueMemberN{
+			Value: strconv.Itoa(user.Gold),
+		},
+	}
+
+	input := &dynamodb.UpdateItemInput{
+		TableName:                 aws.String(constants.TableName),
+		Key:                       key,
+		UpdateExpression:          aws.String(updateExpression),
+		ExpressionAttributeValues: expressionAttributeValues,
+	}
+
+	_, err := um.DB.UpdateItem(um.CTX, input)
+	if err != nil {
+		return nil, err
+	}
+
+	return user, nil
+}
+
+func (um UserModel) UpgradeIntelligence(user *User) (*User, error) {
+	upgradeCost := user.Intelligence + 1
+
+	user.Intelligence++
+	user.Gold -= upgradeCost
+
+	key := map[string]types.AttributeValue{
+		constants.PK: &types.AttributeValueMemberS{
+			Value: constants.UserPrefix + user.Email,
+		},
+		constants.SK: &types.AttributeValueMemberS{
+			Value: constants.UserPrefix + user.Email,
+		},
+	}
+
+	updateExpression := "SET " + constants.IntelligenceAttribute + " = :intelligence, " + constants.GoldAttribute + " = :gold"
+	expressionAttributeValues := map[string]types.AttributeValue{
+		":intelligence": &types.AttributeValueMemberN{
+			Value: strconv.Itoa(user.Intelligence),
+		},
+		":gold": &types.AttributeValueMemberN{
+			Value: strconv.Itoa(user.Gold),
+		},
+	}
+
+	input := &dynamodb.UpdateItemInput{
+		TableName:                 aws.String(constants.TableName),
+		Key:                       key,
+		UpdateExpression:          aws.String(updateExpression),
+		ExpressionAttributeValues: expressionAttributeValues,
+	}
+
+	_, err := um.DB.UpdateItem(um.CTX, input)
+	if err != nil {
+		return nil, err
+	}
+
+	return user, nil
+}
