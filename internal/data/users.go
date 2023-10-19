@@ -30,12 +30,12 @@ type User struct {
 	Dexterity     int                       `json:"dexterity" dynamodbav:"Dexterity"`
 	Constitution  int                       `json:"constitution" dynamodbav:"Constitution"`
 	Intelligence  int                       `json:"intelligence" dynamodbav:"Intelligence"`
-	Items         map[string]string         `json:"items" dynamodbav:"Items"`
-	WeaponShop    map[string]string         `json:"weaponShop" dynamodbav:"WeaponShop"`
-	MagicShop     map[string]string         `json:"magicShop" dynamodbav:"MagicShop"`
+	Items         map[string]Item           `json:"items" dynamodbav:"Items"`
+	WeaponShop    map[string]Item           `json:"weaponShop" dynamodbav:"WeaponShop"`
+	MagicShop     map[string]Item           `json:"magicShop" dynamodbav:"MagicShop"`
 	Mount         string                    `json:"mount" dynamodbav:"Mount"`
 	MountImageURL string                    `json:"mountImageURL" dynamodbav:"MountImageURL"`
-	Inventory     map[string]string         `json:"inventory" dynamodbav:"Inventory"`
+	Inventory     map[string]Item           `json:"inventory" dynamodbav:"Inventory"`
 	IsQuesting    bool                      `json:"isQuesting" dynamodbav:"IsQuesting"`
 	IsWorking     bool                      `json:"isWorking" dynamodbav:"IsWorking"`
 	CurrentQuests map[string]GeneratedQuest `json:"currentQuests" dynamodbav:"CurrentQuests"`
@@ -175,34 +175,40 @@ func (um UserModel) Insert(user *User) error {
 	}
 
 	for key, value := range user.Items {
-		item[constants.ItemsAttribute].(*types.AttributeValueMemberM).Value[key] = &types.AttributeValueMemberS{
-			Value: value,
+		item[constants.ItemsAttribute].(*types.AttributeValueMemberM).Value[key] = &types.AttributeValueMemberM{
+			Value: map[string]types.AttributeValue{
+				"ID":   &types.AttributeValueMemberS{Value: value.ID},
+				"Name": &types.AttributeValueMemberS{Value: value.Name},
+			},
 		}
 	}
 
 	for key, value := range user.WeaponShop {
-		item[constants.WeaponShopAttribute].(*types.AttributeValueMemberM).Value[key] = &types.AttributeValueMemberS{
-			Value: value,
+		item[constants.WeaponShopAttribute].(*types.AttributeValueMemberM).Value[key] = &types.AttributeValueMemberM{
+			Value: map[string]types.AttributeValue{
+				"ID":   &types.AttributeValueMemberS{Value: value.ID},
+				"Name": &types.AttributeValueMemberS{Value: value.Name},
+			},
 		}
 	}
 
 	for key, value := range user.MagicShop {
-		item[constants.MagicShopAttribute].(*types.AttributeValueMemberM).Value[key] = &types.AttributeValueMemberS{
-			Value: value,
+		item[constants.MagicShopAttribute].(*types.AttributeValueMemberM).Value[key] = &types.AttributeValueMemberM{
+			Value: map[string]types.AttributeValue{
+				"ID":   &types.AttributeValueMemberS{Value: value.ID},
+				"Name": &types.AttributeValueMemberS{Value: value.Name},
+			},
 		}
 	}
 
 	for key, value := range user.Inventory {
-		item[constants.InventoryAttribute].(*types.AttributeValueMemberM).Value[key] = &types.AttributeValueMemberS{
-			Value: value,
+		item[constants.InventoryAttribute].(*types.AttributeValueMemberM).Value[key] = &types.AttributeValueMemberM{
+			Value: map[string]types.AttributeValue{
+				"ID":   &types.AttributeValueMemberS{Value: value.ID},
+				"Name": &types.AttributeValueMemberS{Value: value.Name},
+			},
 		}
 	}
-
-	// for key, value := range user.CurrentQuests {
-	// 	item[constants.CurrentQuestsAttribute].(*types.AttributeValueMemberM).Value[key] = &types.AttributeValueMemberS{
-	// 		Value: value,
-	// 	}
-	// }
 
 	putInput := &dynamodb.PutItemInput{
 		TableName:           aws.String(constants.TableName),

@@ -40,6 +40,25 @@ type Weapon struct {
 	ImageURL           string
 }
 
+// Temporary placement
+type Item struct {
+	ID            string `json:"id"`
+	Name          string `json:"name"`
+	Level         string `json:"level"`
+	DamageMin     int    `json:"damageMin"`
+	DamageMax     int    `json:"damageMax"`
+	DamageAverage int    `json:"damageAverage"`
+	Strength      int    `json:"strength"`
+	Dexterity     int    `json:"dexterity"`
+	Constitution  int    `json:"constitution"`
+	Intelligence  int    `json:"intelligence"`
+	ArmourAmount  int    `json:"armourAmount"`
+	BlockChance   int    `json:"blockChance"`
+	IsLegendary   bool   `json:"isLegendary"`
+	ImageURL      string `json:"imageURL"`
+	Price         int    `json:"price"`
+}
+
 type WeaponModel struct {
 	DB  *dynamodb.Client
 	CTX context.Context

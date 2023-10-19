@@ -39,19 +39,46 @@ func (app *application) registerUserHandler(c *gin.Context) {
 		Dexterity:    1,
 		Constitution: 1,
 		Intelligence: 1,
-		Items: map[string]string{
-			"Helmet":     "",
-			"Chestplate": "",
-			"Amulet":     "",
-			"Gloves":     "",
-			"Boots":      "",
-			"Weapon":     "",
-			"Shield":     "",
-			"Ring":       "",
+		Items: map[string]data.Item{
+			"Helmet":     {ID: "0", Name: "Empty Helmet"},
+			"Chestplate": {ID: "0", Name: "Empty Chestplate"},
+			"Amulet":     {ID: "0", Name: "Empty Amulet"},
+			"Gloves":     {ID: "0", Name: "Empty Gloves"},
+			"Boots":      {ID: "0", Name: "Empty Boots"},
+			"Weapon":     {ID: "0", Name: "Empty Weapon"},
+			"Shield":     {ID: "0", Name: "Empty Shield"},
+			"Ring":       {ID: "0", Name: "Empty Ring"},
 		},
-		WeaponShop:    map[string]string{"1": "", "2": "", "3": "", "4": "", "5": "", "6": ""},                                                                                        //TODO: Fill this in with random items later
-		MagicShop:     map[string]string{"1": "", "2": "", "3": "", "4": "", "5": "", "6": ""},                                                                                        //TODO: Fill this in with random items later
-		Inventory:     map[string]string{"1": "", "2": "", "3": "", "4": "", "5": "", "6": "", "7": "", "8": "", "9": "", "10": "", "11": "", "12": "", "13": "", "14": "", "15": ""}, //TODO: Fill this in with random items later
+		WeaponShop: map[string]data.Item{
+			"1": {ID: "0", Name: "Empty Item 1"},
+			"2": {ID: "0", Name: "Empty Item 2"},
+			"3": {ID: "0", Name: "Empty Item 3"},
+			"4": {ID: "0", Name: "Empty Item 4"},
+			"5": {ID: "0", Name: "Empty Item 5"},
+			"6": {ID: "0", Name: "Empty Item 6"}}, //TODO: Fill this in with random items later
+		MagicShop: map[string]data.Item{
+			"1": {ID: "0", Name: "Empty Item 1"},
+			"2": {ID: "0", Name: "Empty Item 2"},
+			"3": {ID: "0", Name: "Empty Item 3"},
+			"4": {ID: "0", Name: "Empty Item 4"},
+			"5": {ID: "0", Name: "Empty Item 5"},
+			"6": {ID: "0", Name: "Empty Item 6"}}, //TODO: Fill this in with random items later
+		Inventory: map[string]data.Item{
+			"1":  {ID: "0", Name: "Empty Item 1"},
+			"2":  {ID: "0", Name: "Empty Item 2"},
+			"3":  {ID: "0", Name: "Empty Item 3"},
+			"4":  {ID: "0", Name: "Empty Item 4"},
+			"5":  {ID: "0", Name: "Empty Item 5"},
+			"6":  {ID: "0", Name: "Empty Item 6"},
+			"7":  {ID: "0", Name: "Empty Item 7"},
+			"8":  {ID: "0", Name: "Empty Item 8"},
+			"9":  {ID: "0", Name: "Empty Item 9"},
+			"10": {ID: "0", Name: "Empty Item 10"},
+			"11": {ID: "0", Name: "Empty Item 11"},
+			"12": {ID: "0", Name: "Empty Item 12"},
+			"13": {ID: "0", Name: "Empty Item 13"},
+			"14": {ID: "0", Name: "Empty Item 14"},
+			"15": {ID: "0", Name: "Empty Item 15"}}, //TODO: Fill this in with random items later
 		Mount:         "",
 		MountImageURL: "",
 		IsQuesting:    false,
