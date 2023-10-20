@@ -288,7 +288,7 @@ func (um UserModel) AddGeneratedQuests(email string, generatedQuests []Generated
 
 	generatedQuestsAttribute := map[string]types.AttributeValue{}
 	for i, quest := range generatedQuests {
-		questKey := strconv.Itoa(i)
+		questKey := "Quest" + strconv.Itoa(i)
 		generatedQuestsAttribute[questKey] = &types.AttributeValueMemberM{
 			Value: map[string]types.AttributeValue{
 				constants.NameAttribute: &types.AttributeValueMemberS{

@@ -50,35 +50,35 @@ func (app *application) registerUserHandler(c *gin.Context) {
 			"Ring":       {ID: "0", Name: "Empty Ring"},
 		},
 		WeaponShop: map[string]data.Item{
-			"1": {ID: "0", Name: "Empty Item 1"},
-			"2": {ID: "0", Name: "Empty Item 2"},
-			"3": {ID: "0", Name: "Empty Item 3"},
-			"4": {ID: "0", Name: "Empty Item 4"},
-			"5": {ID: "0", Name: "Empty Item 5"},
-			"6": {ID: "0", Name: "Empty Item 6"}}, //TODO: Fill this in with random items later
+			"Item1": {ID: "0", Name: "Empty Item 1"},
+			"Item2": {ID: "0", Name: "Empty Item 2"},
+			"Item3": {ID: "0", Name: "Empty Item 3"},
+			"Item4": {ID: "0", Name: "Empty Item 4"},
+			"Item5": {ID: "0", Name: "Empty Item 5"},
+			"Item6": {ID: "0", Name: "Empty Item 6"}}, //TODO: Fill this in with random items later
 		MagicShop: map[string]data.Item{
-			"1": {ID: "0", Name: "Empty Item 1"},
-			"2": {ID: "0", Name: "Empty Item 2"},
-			"3": {ID: "0", Name: "Empty Item 3"},
-			"4": {ID: "0", Name: "Empty Item 4"},
-			"5": {ID: "0", Name: "Empty Item 5"},
-			"6": {ID: "0", Name: "Empty Item 6"}}, //TODO: Fill this in with random items later
+			"Item1": {ID: "0", Name: "Empty Item 1"},
+			"Item2": {ID: "0", Name: "Empty Item 2"},
+			"Item3": {ID: "0", Name: "Empty Item 3"},
+			"Item4": {ID: "0", Name: "Empty Item 4"},
+			"Item5": {ID: "0", Name: "Empty Item 5"},
+			"Item6": {ID: "0", Name: "Empty Item 6"}}, //TODO: Fill this in with random items later
 		Inventory: map[string]data.Item{
-			"1":  {ID: "0", Name: "Empty Item 1"},
-			"2":  {ID: "0", Name: "Empty Item 2"},
-			"3":  {ID: "0", Name: "Empty Item 3"},
-			"4":  {ID: "0", Name: "Empty Item 4"},
-			"5":  {ID: "0", Name: "Empty Item 5"},
-			"6":  {ID: "0", Name: "Empty Item 6"},
-			"7":  {ID: "0", Name: "Empty Item 7"},
-			"8":  {ID: "0", Name: "Empty Item 8"},
-			"9":  {ID: "0", Name: "Empty Item 9"},
-			"10": {ID: "0", Name: "Empty Item 10"},
-			"11": {ID: "0", Name: "Empty Item 11"},
-			"12": {ID: "0", Name: "Empty Item 12"},
-			"13": {ID: "0", Name: "Empty Item 13"},
-			"14": {ID: "0", Name: "Empty Item 14"},
-			"15": {ID: "0", Name: "Empty Item 15"}}, //TODO: Fill this in with random items later
+			"Item1":  {ID: "0", Name: "Empty Item 1"},
+			"Item2":  {ID: "0", Name: "Empty Item 2"},
+			"Item3":  {ID: "0", Name: "Empty Item 3"},
+			"Item4":  {ID: "0", Name: "Empty Item 4"},
+			"Item5":  {ID: "0", Name: "Empty Item 5"},
+			"Item6":  {ID: "0", Name: "Empty Item 6"},
+			"Item7":  {ID: "0", Name: "Empty Item 7"},
+			"Item8":  {ID: "0", Name: "Empty Item 8"},
+			"Item9":  {ID: "0", Name: "Empty Item 9"},
+			"Item10": {ID: "0", Name: "Empty Item 10"},
+			"Item11": {ID: "0", Name: "Empty Item 11"},
+			"Item12": {ID: "0", Name: "Empty Item 12"},
+			"Item13": {ID: "0", Name: "Empty Item 13"},
+			"Item14": {ID: "0", Name: "Empty Item 14"},
+			"Item15": {ID: "0", Name: "Empty Item 15"}}, //TODO: Fill this in with random items later
 		Mount:         "",
 		MountImageURL: "",
 		IsQuesting:    false,
@@ -88,7 +88,7 @@ func (app *application) registerUserHandler(c *gin.Context) {
 
 	err := user.Password.Set(input.Password)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, constants.InternalServerError.Error())
+		c.JSON(http.StatusInternalServerError, err.Error())
 		return
 	}
 
@@ -104,13 +104,13 @@ func (app *application) registerUserHandler(c *gin.Context) {
 			c.JSON(http.StatusConflict, constants.DuplicateEmailError.Error())
 			return
 		}
-		c.JSON(http.StatusInternalServerError, constants.InternalServerError.Error())
+		c.JSON(http.StatusInternalServerError, err.Error())
 		return
 	}
 
 	jwt, err := helpers.CreateJWT(user.Name, user.Email)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, constants.InternalServerError.Error())
+		c.JSON(http.StatusInternalServerError, err.Error())
 		return
 	}
 
