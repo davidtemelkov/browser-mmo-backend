@@ -21,8 +21,7 @@ func (app *application) setupRoutes() *gin.Engine {
 	{
 		usersRoutes.POST("/register", app.registerUserHandler)
 		usersRoutes.POST("/login", app.loginUserHandler)
-		//should add authorize and authenticate together
-		usersRoutes.Use(app.authenticate(), app.authorize())
+		usersRoutes.Use(app.authenticate())
 		usersRoutes.GET("/:email", app.getUserHandler)
 		usersRoutes.PATCH("/strength", app.upgradeStrengthHandler)
 		usersRoutes.PATCH("/dexterity", app.upgradeDexterityHandler)
@@ -43,7 +42,7 @@ func (app *application) setupRoutes() *gin.Engine {
 	{
 		//should add something like an api key and middleware so only admins can add new quests
 		questRoutes.POST("/", app.createQuestHandler)
-		questRoutes.Use(app.authenticate(), app.authorize())
+		questRoutes.Use(app.authenticate())
 		questRoutes.GET("/generate", app.generateQuestsHandler)
 	}
 

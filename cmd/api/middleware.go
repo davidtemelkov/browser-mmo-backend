@@ -45,21 +45,7 @@ func (app *application) authenticate() gin.HandlerFunc {
 			return
 		}
 
-		c.Set("claims", claims)
-		c.Next()
-	}
-}
-
-func (app *application) authorize() gin.HandlerFunc {
-	return func(c *gin.Context) {
-		claims, ok := c.Get("claims")
-		if !ok {
-			c.JSON(http.StatusInternalServerError, constants.InternalServerError.Error())
-			c.Abort()
-			return
-		}
-
-		userEmail, exists := claims.(jwt.MapClaims)["email"].(string)
+		userEmail, exists := claims["email"].(string)
 		if !exists {
 			c.JSON(http.StatusInternalServerError, constants.InternalServerError.Error())
 			c.Abort()
@@ -80,6 +66,7 @@ func (app *application) authorize() gin.HandlerFunc {
 		}
 
 		c.Set("user", user)
+
 		c.Next()
 	}
 }
