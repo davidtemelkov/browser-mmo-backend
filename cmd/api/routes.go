@@ -21,7 +21,8 @@ func (app *application) setupRoutes() *gin.Engine {
 	{
 		usersRoutes.POST("/register", app.registerUserHandler)
 		usersRoutes.POST("/login", app.loginUserHandler)
-		usersRoutes.Use(app.authenticate())
+		//should add authorize and authenticate together
+		usersRoutes.Use(app.authenticate(), app.authorize())
 		usersRoutes.GET("/:email", app.getUserHandler)
 		usersRoutes.PATCH("/strength", app.upgradeStrengthHandler)
 		usersRoutes.PATCH("/dexterity", app.upgradeDexterityHandler)
@@ -31,6 +32,7 @@ func (app *application) setupRoutes() *gin.Engine {
 
 	itemsRoutes := r.Group("/items")
 	{
+		//should add something like an api key and middleware so only admins can add new items
 		itemsRoutes.POST("/weapons", app.createWeaponHandler)
 		itemsRoutes.POST("/accessories", app.createAccessoryHandler)
 		itemsRoutes.POST("/armours", app.createArmourHandler)
@@ -39,9 +41,10 @@ func (app *application) setupRoutes() *gin.Engine {
 
 	questRoutes := r.Group("/quests")
 	{
+		//should add something like an api key and middleware so only admins can add new quests
 		questRoutes.POST("/", app.createQuestHandler)
-		questRoutes.Use(app.authenticate())
-		questRoutes.GET("/generate/:email", app.generateQuestsHandler)
+		questRoutes.Use(app.authenticate(), app.authorize())
+		questRoutes.GET("/generate", app.generateQuestsHandler)
 	}
 
 	r.Run(":8080")

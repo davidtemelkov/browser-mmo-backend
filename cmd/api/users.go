@@ -5,12 +5,10 @@ import (
 	"browser-mmo-backend/internal/data"
 	"browser-mmo-backend/internal/helpers"
 	"browser-mmo-backend/internal/validator"
-	"errors"
 	"net/http"
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/golang-jwt/jwt"
 )
 
 func (app *application) registerUserHandler(c *gin.Context) {
@@ -168,30 +166,10 @@ func (app *application) loginUserHandler(c *gin.Context) {
 func (app *application) getUserHandler(c *gin.Context) {
 	email := c.Param("email")
 
-	claims, ok := c.Get("user")
-	if !ok {
-		c.JSON(http.StatusInternalServerError, constants.InternalServerError.Error())
-		return
-	}
+	userValue, _ := c.Get("user")
+	user, _ := userValue.(*data.User)
 
-	userEmail, exists := claims.(jwt.MapClaims)["email"].(string)
-	if !exists {
-		c.JSON(http.StatusInternalServerError, constants.InternalServerError.Error())
-		return
-	}
-
-	user, err := app.models.Users.Get(email)
-	if err != nil {
-		if errors.Is(err, constants.UserNotFoundError) {
-			c.JSON(http.StatusNotFound, constants.UserNotFoundError.Error())
-			return
-		}
-
-		c.JSON(http.StatusInternalServerError, err.Error())
-		return
-	}
-
-	if email != userEmail {
+	if email != user.Email {
 		c.JSON(http.StatusForbidden, constants.UserIsNotAuthorizedError.Error())
 		return
 	}
@@ -200,30 +178,8 @@ func (app *application) getUserHandler(c *gin.Context) {
 }
 
 func (app *application) upgradeStrengthHandler(c *gin.Context) {
-	//this should be moved so it can be reused, maybe in a middleware
-	claims, ok := c.Get("user")
-	if !ok {
-		c.JSON(http.StatusInternalServerError, constants.InternalServerError.Error())
-		return
-	}
-
-	userEmail, exists := claims.(jwt.MapClaims)["email"].(string)
-	if !exists {
-		c.JSON(http.StatusInternalServerError, constants.InternalServerError.Error())
-		return
-	}
-
-	user, err := app.models.Users.Get(userEmail)
-	if err != nil {
-		if errors.Is(err, constants.UserNotFoundError) {
-			c.JSON(http.StatusNotFound, constants.UserNotFoundError.Error())
-			return
-		}
-
-		c.JSON(http.StatusInternalServerError, err.Error())
-		return
-	}
-	//end
+	userValue, _ := c.Get("user")
+	user, _ := userValue.(*data.User)
 
 	if user.Gold < user.Strength {
 		c.JSON(http.StatusForbidden, "Not enough gold")
@@ -240,30 +196,8 @@ func (app *application) upgradeStrengthHandler(c *gin.Context) {
 }
 
 func (app *application) upgradeDexterityHandler(c *gin.Context) {
-	//this should be moved so it can be reused, maybe in a middleware
-	claims, ok := c.Get("user")
-	if !ok {
-		c.JSON(http.StatusInternalServerError, constants.InternalServerError.Error())
-		return
-	}
-
-	userEmail, exists := claims.(jwt.MapClaims)["email"].(string)
-	if !exists {
-		c.JSON(http.StatusInternalServerError, constants.InternalServerError.Error())
-		return
-	}
-
-	user, err := app.models.Users.Get(userEmail)
-	if err != nil {
-		if errors.Is(err, constants.UserNotFoundError) {
-			c.JSON(http.StatusNotFound, constants.UserNotFoundError.Error())
-			return
-		}
-
-		c.JSON(http.StatusInternalServerError, err.Error())
-		return
-	}
-	//end
+	userValue, _ := c.Get("user")
+	user, _ := userValue.(*data.User)
 
 	if user.Gold < user.Dexterity {
 		c.JSON(http.StatusForbidden, "Not enough gold")
@@ -280,30 +214,8 @@ func (app *application) upgradeDexterityHandler(c *gin.Context) {
 }
 
 func (app *application) upgradeConstitutionHandler(c *gin.Context) {
-	//this should be moved so it can be reused, maybe in a middleware
-	claims, ok := c.Get("user")
-	if !ok {
-		c.JSON(http.StatusInternalServerError, constants.InternalServerError.Error())
-		return
-	}
-
-	userEmail, exists := claims.(jwt.MapClaims)["email"].(string)
-	if !exists {
-		c.JSON(http.StatusInternalServerError, constants.InternalServerError.Error())
-		return
-	}
-
-	user, err := app.models.Users.Get(userEmail)
-	if err != nil {
-		if errors.Is(err, constants.UserNotFoundError) {
-			c.JSON(http.StatusNotFound, constants.UserNotFoundError.Error())
-			return
-		}
-
-		c.JSON(http.StatusInternalServerError, err.Error())
-		return
-	}
-	//end
+	userValue, _ := c.Get("user")
+	user, _ := userValue.(*data.User)
 
 	if user.Gold < user.Constitution {
 		c.JSON(http.StatusForbidden, "Not enough gold")
@@ -320,31 +232,8 @@ func (app *application) upgradeConstitutionHandler(c *gin.Context) {
 }
 
 func (app *application) upgradeIntelligenceHandler(c *gin.Context) {
-	//this should be moved so it can be reused, maybe in a middleware
-	claims, ok := c.Get("user")
-	if !ok {
-		c.JSON(http.StatusInternalServerError, constants.InternalServerError.Error())
-		return
-	}
-
-	userEmail, exists := claims.(jwt.MapClaims)["email"].(string)
-	if !exists {
-		c.JSON(http.StatusInternalServerError, constants.InternalServerError.Error())
-		return
-	}
-
-	user, err := app.models.Users.Get(userEmail)
-	if err != nil {
-		if errors.Is(err, constants.UserNotFoundError) {
-			c.JSON(http.StatusNotFound, constants.UserNotFoundError.Error())
-			return
-		}
-
-		c.JSON(http.StatusInternalServerError, err.Error())
-		return
-	}
-
-	//end
+	userValue, _ := c.Get("user")
+	user, _ := userValue.(*data.User)
 
 	if user.Gold < user.Strength {
 		c.JSON(http.StatusForbidden, "Not enough gold")

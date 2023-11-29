@@ -3,6 +3,7 @@ package main
 import (
 	"browser-mmo-backend/internal/constants"
 	"browser-mmo-backend/internal/helpers"
+	"errors"
 	"net/http"
 	"strings"
 
@@ -44,7 +45,41 @@ func (app *application) authenticate() gin.HandlerFunc {
 			return
 		}
 
-		c.Set("user", claims)
+		c.Set("claims", claims)
+		c.Next()
+	}
+}
+
+func (app *application) authorize() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		claims, ok := c.Get("claims")
+		if !ok {
+			c.JSON(http.StatusInternalServerError, constants.InternalServerError.Error())
+			c.Abort()
+			return
+		}
+
+		userEmail, exists := claims.(jwt.MapClaims)["email"].(string)
+		if !exists {
+			c.JSON(http.StatusInternalServerError, constants.InternalServerError.Error())
+			c.Abort()
+			return
+		}
+
+		user, err := app.models.Users.Get(userEmail)
+		if err != nil {
+			if errors.Is(err, constants.UserNotFoundError) {
+				c.JSON(http.StatusNotFound, constants.UserNotFoundError.Error())
+				c.Abort()
+				return
+			}
+
+			c.JSON(http.StatusInternalServerError, err.Error())
+			c.Abort()
+			return
+		}
+
+		c.Set("user", user)
 		c.Next()
 	}
 }
