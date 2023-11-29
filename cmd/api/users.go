@@ -81,7 +81,11 @@ func (app *application) registerUserHandler(c *gin.Context) {
 		MountImageURL: "",
 		IsQuesting:    false,
 		IsWorking:     false,
-		CurrentQuests: map[string]data.GeneratedQuest{},
+		CurrentQuests: map[string]data.GeneratedQuest{
+			"Quest0": {Name: "Empty Quest 0", ImageURL: "", Time: "", EXP: "", Gold: ""},
+			"Quest1": {Name: "Empty Quest 1", ImageURL: "", Time: "", EXP: "", Gold: ""},
+			"Quest2": {Name: "Empty Quest 2", ImageURL: "", Time: "", EXP: "", Gold: ""},
+		},
 	}
 
 	err := user.Password.Set(input.Password)

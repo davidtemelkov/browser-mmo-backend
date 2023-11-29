@@ -210,6 +210,18 @@ func (um UserModel) Insert(user *User) error {
 		}
 	}
 
+	for key, value := range user.CurrentQuests {
+		item[constants.CurrentQuestsAttribute].(*types.AttributeValueMemberM).Value[key] = &types.AttributeValueMemberM{
+			Value: map[string]types.AttributeValue{
+				"Name":     &types.AttributeValueMemberS{Value: value.Name},
+				"Time":     &types.AttributeValueMemberS{Value: value.Time},
+				"EXP":      &types.AttributeValueMemberS{Value: value.EXP},
+				"ImageURL": &types.AttributeValueMemberS{Value: value.ImageURL},
+				"Gold":     &types.AttributeValueMemberS{Value: value.Gold},
+			},
+		}
+	}
+
 	putInput := &dynamodb.PutItemInput{
 		TableName:           aws.String(constants.TableName),
 		Item:                item,
