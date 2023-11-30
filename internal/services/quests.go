@@ -5,6 +5,7 @@ import (
 	"math/rand"
 )
 
+// TODO: Decide what should be in data and what in services packages
 func GenerateQuestsForUser(qm data.QuestModel, um data.UserModel, email string) ([]data.GeneratedQuest, error) {
 	allQuests, err := qm.GetAll()
 	if err != nil {
