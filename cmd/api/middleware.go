@@ -11,6 +11,7 @@ import (
 	"github.com/golang-jwt/jwt"
 )
 
+// TODO: Think about what needs to be an error an what can just be a response message constant
 func (app *application) authenticate() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		authHeader := c.GetHeader("Authorization")
@@ -47,7 +48,7 @@ func (app *application) authenticate() gin.HandlerFunc {
 
 		userEmail, exists := claims["email"].(string)
 		if !exists {
-			c.JSON(http.StatusInternalServerError, constants.InternalServerError.Error())
+			c.JSON(http.StatusBadRequest, constants.BadRequestError.Error())
 			c.Abort()
 			return
 		}
@@ -60,7 +61,7 @@ func (app *application) authenticate() gin.HandlerFunc {
 				return
 			}
 
-			c.JSON(http.StatusInternalServerError, err.Error())
+			c.JSON(http.StatusInternalServerError, constants.InternalServerError.Error())
 			c.Abort()
 			return
 		}

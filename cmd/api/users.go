@@ -90,7 +90,7 @@ func (app *application) registerUserHandler(c *gin.Context) {
 
 	err := user.Password.Set(input.Password)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, err.Error())
+		c.JSON(http.StatusInternalServerError, constants.InternalServerError.Error())
 		return
 	}
 
@@ -106,13 +106,13 @@ func (app *application) registerUserHandler(c *gin.Context) {
 			c.JSON(http.StatusConflict, constants.DuplicateEmailError.Error())
 			return
 		}
-		c.JSON(http.StatusInternalServerError, err.Error())
+		c.JSON(http.StatusInternalServerError, constants.InternalServerError.Error())
 		return
 	}
 
 	jwt, err := helpers.CreateJWT(user.Name, user.Email)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, err.Error())
+		c.JSON(http.StatusInternalServerError, constants.InternalServerError.Error())
 		return
 	}
 
@@ -192,7 +192,7 @@ func (app *application) upgradeStrengthHandler(c *gin.Context) {
 
 	result, err := app.models.Users.UpgradeStrength(user)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, err.Error())
+		c.JSON(http.StatusInternalServerError, constants.InternalServerError.Error())
 		return
 	}
 
@@ -210,7 +210,7 @@ func (app *application) upgradeDexterityHandler(c *gin.Context) {
 
 	result, err := app.models.Users.UpgradeDexterity(user)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, err.Error())
+		c.JSON(http.StatusInternalServerError, constants.InternalServerError.Error())
 		return
 	}
 
@@ -228,7 +228,7 @@ func (app *application) upgradeConstitutionHandler(c *gin.Context) {
 
 	result, err := app.models.Users.UpgradeConstitution(user)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, err.Error())
+		c.JSON(http.StatusInternalServerError, constants.InternalServerError.Error())
 		return
 	}
 
@@ -246,7 +246,7 @@ func (app *application) upgradeIntelligenceHandler(c *gin.Context) {
 
 	result, err := app.models.Users.UpgradeIntelligence(user)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, err.Error())
+		c.JSON(http.StatusInternalServerError, constants.InternalServerError.Error())
 		return
 	}
 

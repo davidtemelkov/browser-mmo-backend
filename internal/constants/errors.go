@@ -10,6 +10,7 @@ var (
 	InvalidJSONFormatError        = errors.New("Invalid JSON format")
 	InvalidBase64ImagePrefixError = errors.New("Invalid base64 image format prefix")
 	InternalServerError           = errors.New("Internal server error")
+	BadRequestError               = errors.New("Bad request")
 )
 
 // Env errors
