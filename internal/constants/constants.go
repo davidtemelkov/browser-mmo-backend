@@ -24,6 +24,7 @@ const (
 	ImageURLAttribute      = "ImageURL"
 	LevelAttribute         = "Level"
 	GoldAttribute          = "Gold"
+	TimeAttribute          = "Time"
 	EXPAttribute           = "EXP"
 	BigDPointsAttribute    = "BigDPoints"
 	StrengthAttribute      = "Strength"
@@ -39,6 +40,7 @@ const (
 	IsQuestingAttribute    = "IsQuesting"
 	IsWorkingAttribute     = "IsWorking"
 	QuestsAttribute        = "Quests"
+	CurrentQuestAttribute  = "CurrentQuest"
 )
 
 // Item DB constants

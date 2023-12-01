@@ -39,6 +39,7 @@ type User struct {
 	IsQuesting    bool                      `json:"isQuesting" dynamodbav:"IsQuesting"`
 	IsWorking     bool                      `json:"isWorking" dynamodbav:"IsWorking"`
 	Quests        map[string]GeneratedQuest `json:"quests" dynamodbav:"Quests"`
+	CurrentQuest  map[string]GeneratedQuest `json:"currentQuest" dynamodbav:"CurrentQuest"`
 }
 
 type Password struct {
@@ -172,6 +173,9 @@ func (um UserModel) Insert(user *User) error {
 		constants.QuestsAttribute: &types.AttributeValueMemberM{
 			Value: map[string]types.AttributeValue{},
 		},
+		constants.CurrentQuestAttribute: &types.AttributeValueMemberM{
+			Value: map[string]types.AttributeValue{},
+		},
 	}
 
 	for key, value := range user.Items {
@@ -212,6 +216,18 @@ func (um UserModel) Insert(user *User) error {
 
 	for key, value := range user.Quests {
 		item[constants.QuestsAttribute].(*types.AttributeValueMemberM).Value[key] = &types.AttributeValueMemberM{
+			Value: map[string]types.AttributeValue{
+				"Name":     &types.AttributeValueMemberS{Value: value.Name},
+				"Time":     &types.AttributeValueMemberS{Value: value.Time},
+				"EXP":      &types.AttributeValueMemberS{Value: value.EXP},
+				"ImageURL": &types.AttributeValueMemberS{Value: value.ImageURL},
+				"Gold":     &types.AttributeValueMemberS{Value: value.Gold},
+			},
+		}
+	}
+
+	for key, value := range user.CurrentQuest {
+		item[constants.CurrentQuestAttribute].(*types.AttributeValueMemberM).Value[key] = &types.AttributeValueMemberM{
 			Value: map[string]types.AttributeValue{
 				"Name":     &types.AttributeValueMemberS{Value: value.Name},
 				"Time":     &types.AttributeValueMemberS{Value: value.Time},
@@ -309,7 +325,7 @@ func (um UserModel) AddGeneratedQuests(email string, generatedQuests []Generated
 				constants.ImageURLAttribute: &types.AttributeValueMemberS{
 					Value: quest.ImageURL,
 				},
-				"Time": &types.AttributeValueMemberS{
+				constants.TimeAttribute: &types.AttributeValueMemberS{
 					Value: quest.Time,
 				},
 				constants.EXPAttribute: &types.AttributeValueMemberN{

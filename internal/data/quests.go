@@ -17,6 +17,7 @@ type Quest struct {
 	ImageURL string
 }
 
+// TODO: change these to lowercase
 type GeneratedQuest struct {
 	Name     string `json:"Name"`
 	ImageURL string `json:"ImageURL"`
@@ -88,4 +89,61 @@ func (qm QuestModel) GetAll() ([]Quest, error) {
 	}
 
 	return quests, nil
+}
+
+func (qm QuestModel) SetCurrentQuest(email string, quest map[string]GeneratedQuest) error {
+	key := map[string]types.AttributeValue{
+		constants.PK: &types.AttributeValueMemberS{
+			Value: constants.UserPrefix + email,
+		},
+		constants.SK: &types.AttributeValueMemberS{
+			Value: constants.UserPrefix + email,
+		},
+	}
+
+	currentQuestAttribute := map[string]types.AttributeValue{}
+	for _, quest := range quest {
+		questKey := "CurrentQuest"
+		currentQuestAttribute[questKey] = &types.AttributeValueMemberM{
+			Value: map[string]types.AttributeValue{
+				constants.NameAttribute: &types.AttributeValueMemberS{
+					Value: quest.Name,
+				},
+				constants.ImageURLAttribute: &types.AttributeValueMemberS{
+					Value: quest.ImageURL,
+				},
+				constants.TimeAttribute: &types.AttributeValueMemberS{
+					Value: quest.Time,
+				},
+				constants.EXPAttribute: &types.AttributeValueMemberN{
+					Value: quest.EXP,
+				},
+				constants.GoldAttribute: &types.AttributeValueMemberN{
+					Value: quest.Gold,
+				},
+			},
+		}
+	}
+
+	updateExpression := "SET " + constants.CurrentQuestAttribute + " = :currentQuest, " + constants.IsQuestingAttribute + " = :isQuesting"
+	expressionAttributeValues := map[string]types.AttributeValue{
+		":currentQuest": &types.AttributeValueMemberM{
+			Value: currentQuestAttribute,
+		},
+		":isQuesting": &types.AttributeValueMemberBOOL{Value: true},
+	}
+
+	input := &dynamodb.UpdateItemInput{
+		TableName:                 aws.String(constants.TableName),
+		Key:                       key,
+		UpdateExpression:          aws.String(updateExpression),
+		ExpressionAttributeValues: expressionAttributeValues,
+	}
+
+	_, err := qm.DB.UpdateItem(qm.CTX, input)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

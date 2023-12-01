@@ -76,5 +76,7 @@ func GetInitialUser(input UserInput) *data.User {
 			"Quest1": {Name: "Empty Quest 1", ImageURL: "", Time: "", EXP: "", Gold: ""},
 			"Quest2": {Name: "Empty Quest 2", ImageURL: "", Time: "", EXP: "", Gold: ""},
 		},
+		CurrentQuest: map[string]data.GeneratedQuest{
+			"CurrentQuest": {Name: "Empty Quest 0", ImageURL: "", Time: "", EXP: "", Gold: ""}},
 	}
 }

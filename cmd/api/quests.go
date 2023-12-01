@@ -48,3 +48,22 @@ func (app *application) generateQuestsHandler(c *gin.Context) {
 
 	c.IndentedJSON(http.StatusCreated, generatedQuests)
 }
+
+func (app *application) setCurrentQuestHandler(c *gin.Context) {
+	userValue, _ := c.Get("user")
+	user, _ := userValue.(*data.User)
+
+	var currentQuestMap map[string]data.GeneratedQuest
+	if err := c.BindJSON(&currentQuestMap); err != nil {
+		c.JSON(http.StatusBadRequest, err.Error())
+		return
+	}
+
+	err := app.models.Quests.SetCurrentQuest(user.Email, currentQuestMap)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	c.IndentedJSON(http.StatusOK, currentQuestMap)
+}

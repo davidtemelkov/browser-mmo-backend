@@ -41,9 +41,10 @@ func (app *application) setupRoutes() *gin.Engine {
 	questRoutes := r.Group("/quests")
 	{
 		//should add something like an api key and middleware so only admins can add new quests
-		questRoutes.POST("/", app.createQuestHandler)
+		questRoutes.POST("/create", app.createQuestHandler)
 		questRoutes.Use(app.authenticate())
 		questRoutes.GET("/generate", app.generateQuestsHandler)
+		questRoutes.POST("/set", app.setCurrentQuestHandler)
 	}
 
 	r.Run(":8080")
