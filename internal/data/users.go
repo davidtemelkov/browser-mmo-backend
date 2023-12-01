@@ -38,7 +38,7 @@ type User struct {
 	Inventory     map[string]Item           `json:"inventory" dynamodbav:"Inventory"`
 	IsQuesting    bool                      `json:"isQuesting" dynamodbav:"IsQuesting"`
 	IsWorking     bool                      `json:"isWorking" dynamodbav:"IsWorking"`
-	CurrentQuests map[string]GeneratedQuest `json:"currentQuests" dynamodbav:"CurrentQuests"`
+	Quests        map[string]GeneratedQuest `json:"quests" dynamodbav:"Quests"`
 }
 
 type Password struct {
@@ -169,7 +169,7 @@ func (um UserModel) Insert(user *User) error {
 		constants.IsWorkingAttribute: &types.AttributeValueMemberBOOL{
 			Value: user.IsWorking,
 		},
-		constants.CurrentQuestsAttribute: &types.AttributeValueMemberM{
+		constants.QuestsAttribute: &types.AttributeValueMemberM{
 			Value: map[string]types.AttributeValue{},
 		},
 	}
@@ -210,8 +210,8 @@ func (um UserModel) Insert(user *User) error {
 		}
 	}
 
-	for key, value := range user.CurrentQuests {
-		item[constants.CurrentQuestsAttribute].(*types.AttributeValueMemberM).Value[key] = &types.AttributeValueMemberM{
+	for key, value := range user.Quests {
+		item[constants.QuestsAttribute].(*types.AttributeValueMemberM).Value[key] = &types.AttributeValueMemberM{
 			Value: map[string]types.AttributeValue{
 				"Name":     &types.AttributeValueMemberS{Value: value.Name},
 				"Time":     &types.AttributeValueMemberS{Value: value.Time},
@@ -322,7 +322,7 @@ func (um UserModel) AddGeneratedQuests(email string, generatedQuests []Generated
 		}
 	}
 
-	updateExpression := "SET " + constants.CurrentQuestsAttribute + " = :quests"
+	updateExpression := "SET " + constants.QuestsAttribute + " = :quests"
 	expressionAttributeValues := map[string]types.AttributeValue{
 		":quests": &types.AttributeValueMemberM{
 			Value: generatedQuestsAttribute,
