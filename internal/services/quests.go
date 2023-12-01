@@ -5,15 +5,9 @@ import (
 	"math/rand"
 )
 
-// TODO: Decide what should be in data and what in services packages
-func GenerateQuestsForUser(qm data.QuestModel, um data.UserModel, email string) ([]data.GeneratedQuest, error) {
-	allQuests, err := qm.GetAll()
-	if err != nil {
-		return nil, err
-	}
-
+// TODO: Refactor this to require user to make tailored quests
+func GenerateQuestsForUser(allQuests []data.Quest) ([]data.GeneratedQuest, error) {
 	var generatedQuests []data.GeneratedQuest
-
 	for i := 0; i < 3; i++ {
 		randIndex := rand.Intn(len(allQuests))
 		selectedQuest := allQuests[randIndex]
@@ -31,11 +25,6 @@ func GenerateQuestsForUser(qm data.QuestModel, um data.UserModel, email string) 
 
 		generatedQuests = append(generatedQuests, generatedQuest)
 		allQuests = append(allQuests[:randIndex], allQuests[randIndex+1:]...)
-	}
-
-	err = um.AddGeneratedQuests(email, generatedQuests)
-	if err != nil {
-		return nil, err
 	}
 
 	return generatedQuests, nil

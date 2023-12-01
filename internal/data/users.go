@@ -304,62 +304,6 @@ func (um UserModel) CanLoginUser(password string, user *User) (bool, error) {
 	return true, nil
 }
 
-func (um UserModel) AddGeneratedQuests(email string, generatedQuests []GeneratedQuest) error {
-	key := map[string]types.AttributeValue{
-		constants.PK: &types.AttributeValueMemberS{
-			Value: constants.UserPrefix + email,
-		},
-		constants.SK: &types.AttributeValueMemberS{
-			Value: constants.UserPrefix + email,
-		},
-	}
-
-	generatedQuestsAttribute := map[string]types.AttributeValue{}
-	for i, quest := range generatedQuests {
-		questKey := "Quest" + strconv.Itoa(i)
-		generatedQuestsAttribute[questKey] = &types.AttributeValueMemberM{
-			Value: map[string]types.AttributeValue{
-				constants.NameAttribute: &types.AttributeValueMemberS{
-					Value: quest.Name,
-				},
-				constants.ImageURLAttribute: &types.AttributeValueMemberS{
-					Value: quest.ImageURL,
-				},
-				constants.TimeAttribute: &types.AttributeValueMemberS{
-					Value: quest.Time,
-				},
-				constants.EXPAttribute: &types.AttributeValueMemberN{
-					Value: quest.EXP,
-				},
-				constants.GoldAttribute: &types.AttributeValueMemberN{
-					Value: quest.Gold,
-				},
-			},
-		}
-	}
-
-	updateExpression := "SET " + constants.QuestsAttribute + " = :quests"
-	expressionAttributeValues := map[string]types.AttributeValue{
-		":quests": &types.AttributeValueMemberM{
-			Value: generatedQuestsAttribute,
-		},
-	}
-
-	input := &dynamodb.UpdateItemInput{
-		TableName:                 aws.String(constants.TableName),
-		Key:                       key,
-		UpdateExpression:          aws.String(updateExpression),
-		ExpressionAttributeValues: expressionAttributeValues,
-	}
-
-	_, err := um.DB.UpdateItem(um.CTX, input)
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
 func (um UserModel) UpgradeStrength(user *User) (*User, error) {
 	upgradeCost := user.Strength + 1
 

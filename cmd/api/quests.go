@@ -40,7 +40,19 @@ func (app *application) generateQuestsHandler(c *gin.Context) {
 	userValue, _ := c.Get("user")
 	user, _ := userValue.(*data.User)
 
-	generatedQuests, err := services.GenerateQuestsForUser(app.models.Quests, app.models.Users, user.Email)
+	allQuests, err := app.models.Quests.GetAll()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, constants.InternalServerError.Error())
+		return
+	}
+
+	generatedQuests, err := services.GenerateQuestsForUser(allQuests)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, constants.InternalServerError.Error())
+		return
+	}
+
+	err = app.models.Quests.SetQuests(user.Email, generatedQuests)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, constants.InternalServerError.Error())
 		return
@@ -59,13 +71,14 @@ func (app *application) setCurrentQuestHandler(c *gin.Context) {
 		return
 	}
 
+	//TODO: This could be in a single request
 	err := app.models.Quests.SetCurrentQuest(user.Email, currentQuestMap)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, constants.InternalServerError.Error())
 		return
 	}
 
-	err = app.models.Users.AddGeneratedQuests(user.Email, []data.GeneratedQuest{
+	err = app.models.Quests.SetQuests(user.Email, []data.GeneratedQuest{
 		{Name: "Empty Quest 0", ImageURL: "", Time: "", EXP: "0", Gold: "0"},
 		{Name: "Empty Quest 1", ImageURL: "", Time: "", EXP: "0", Gold: "0"},
 		{Name: "Empty Quest 2", ImageURL: "", Time: "", EXP: "0", Gold: "0"},
@@ -74,6 +87,7 @@ func (app *application) setCurrentQuestHandler(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, constants.InternalServerError.Error())
 		return
 	}
+	//end
 
 	c.IndentedJSON(http.StatusOK, currentQuestMap)
 }
