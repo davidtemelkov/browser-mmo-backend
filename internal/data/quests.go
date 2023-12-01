@@ -91,6 +91,7 @@ func (qm QuestModel) GetAll() ([]Quest, error) {
 	return quests, nil
 }
 
+// TODO: Refactor this
 func (qm QuestModel) SetCurrentQuest(email string, quest map[string]GeneratedQuest) error {
 	key := map[string]types.AttributeValue{
 		constants.PK: &types.AttributeValueMemberS{
@@ -131,6 +132,61 @@ func (qm QuestModel) SetCurrentQuest(email string, quest map[string]GeneratedQue
 			Value: currentQuestAttribute,
 		},
 		":isQuesting": &types.AttributeValueMemberBOOL{Value: true},
+	}
+
+	input := &dynamodb.UpdateItemInput{
+		TableName:                 aws.String(constants.TableName),
+		Key:                       key,
+		UpdateExpression:          aws.String(updateExpression),
+		ExpressionAttributeValues: expressionAttributeValues,
+	}
+
+	_, err := qm.DB.UpdateItem(qm.CTX, input)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (qm QuestModel) CancelCurrentQuest(email string) error {
+	key := map[string]types.AttributeValue{
+		constants.PK: &types.AttributeValueMemberS{
+			Value: constants.UserPrefix + email,
+		},
+		constants.SK: &types.AttributeValueMemberS{
+			Value: constants.UserPrefix + email,
+		},
+	}
+
+	emptyQuest := map[string]types.AttributeValue{}
+	questKey := "CurrentQuest"
+	emptyQuest[questKey] = &types.AttributeValueMemberM{
+		Value: map[string]types.AttributeValue{
+			constants.NameAttribute: &types.AttributeValueMemberS{
+				Value: "Empty Quest 0",
+			},
+			constants.ImageURLAttribute: &types.AttributeValueMemberS{
+				Value: "",
+			},
+			constants.TimeAttribute: &types.AttributeValueMemberS{
+				Value: "",
+			},
+			constants.EXPAttribute: &types.AttributeValueMemberN{
+				Value: "0",
+			},
+			constants.GoldAttribute: &types.AttributeValueMemberN{
+				Value: "0",
+			},
+		},
+	}
+
+	updateExpression := "SET " + constants.CurrentQuestAttribute + " = :emptyQuest, " + constants.IsQuestingAttribute + " = :isQuesting"
+	expressionAttributeValues := map[string]types.AttributeValue{
+		":emptyQuest": &types.AttributeValueMemberM{
+			Value: emptyQuest,
+		},
+		":isQuesting": &types.AttributeValueMemberBOOL{Value: false},
 	}
 
 	input := &dynamodb.UpdateItemInput{

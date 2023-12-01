@@ -55,15 +55,38 @@ func (app *application) setCurrentQuestHandler(c *gin.Context) {
 
 	var currentQuestMap map[string]data.GeneratedQuest
 	if err := c.BindJSON(&currentQuestMap); err != nil {
-		c.JSON(http.StatusBadRequest, err.Error())
+		c.JSON(http.StatusBadRequest, constants.InvalidJSONFormatError.Error())
 		return
 	}
 
 	err := app.models.Quests.SetCurrentQuest(user.Email, currentQuestMap)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, err.Error())
+		c.JSON(http.StatusInternalServerError, constants.InternalServerError.Error())
+		return
+	}
+
+	err = app.models.Users.AddGeneratedQuests(user.Email, []data.GeneratedQuest{
+		{Name: "Empty Quest 0", ImageURL: "", Time: "", EXP: "0", Gold: "0"},
+		{Name: "Empty Quest 1", ImageURL: "", Time: "", EXP: "0", Gold: "0"},
+		{Name: "Empty Quest 2", ImageURL: "", Time: "", EXP: "0", Gold: "0"},
+	})
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, constants.InternalServerError.Error())
 		return
 	}
 
 	c.IndentedJSON(http.StatusOK, currentQuestMap)
+}
+
+func (app *application) cancelCurrentQuestHandler(c *gin.Context) {
+	userValue, _ := c.Get("user")
+	user, _ := userValue.(*data.User)
+
+	err := app.models.Quests.CancelCurrentQuest(user.Email)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, constants.InternalServerError.Error())
+		return
+	}
+
+	c.IndentedJSON(http.StatusOK, "quest cancelled")
 }
