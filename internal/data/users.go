@@ -40,6 +40,7 @@ type User struct {
 	IsWorking     bool                      `json:"isWorking" dynamodbav:"IsWorking"`
 	Quests        map[string]GeneratedQuest `json:"quests" dynamodbav:"Quests"`
 	CurrentQuest  map[string]GeneratedQuest `json:"currentQuest" dynamodbav:"CurrentQuest"`
+	QuestingUntil string                    `json:"questingUntil" dynamodbav:"QuestingUntil"`
 }
 
 type Password struct {
@@ -175,6 +176,9 @@ func (um UserModel) Insert(user *User) error {
 		},
 		constants.CurrentQuestAttribute: &types.AttributeValueMemberM{
 			Value: map[string]types.AttributeValue{},
+		},
+		constants.QuestingUntilAttribute: &types.AttributeValueMemberS{
+			Value: user.QuestingUntil,
 		},
 	}
 

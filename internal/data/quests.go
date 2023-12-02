@@ -4,6 +4,8 @@ import (
 	"browser-mmo-backend/internal/constants"
 	"context"
 	"strconv"
+	"strings"
+	"time"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue"
@@ -158,6 +160,7 @@ func (qm QuestModel) SetCurrentQuest(email string, quest map[string]GeneratedQue
 		},
 	}
 
+	var timeStr string
 	currentQuestAttribute := map[string]types.AttributeValue{}
 	for _, quest := range quest {
 		questKey := "CurrentQuest"
@@ -180,14 +183,25 @@ func (qm QuestModel) SetCurrentQuest(email string, quest map[string]GeneratedQue
 				},
 			},
 		}
+		timeStr = quest.Time
 	}
 
-	updateExpression := "SET " + constants.CurrentQuestAttribute + " = :currentQuest, " + constants.IsQuestingAttribute + " = :isQuesting"
+	//TODO: Rework this later, quest.Time can be an integer
+	minutes, err := strconv.Atoi(strings.Split(timeStr, " ")[0])
+	if err != nil {
+		return err
+	}
+
+	questingUntilTime := time.Now().Add(time.Minute * time.Duration(minutes))
+	questingUntilFormatted := questingUntilTime.Format(constants.TimeFormat)
+
+	updateExpression := "SET " + constants.CurrentQuestAttribute + " = :currentQuest, " + constants.IsQuestingAttribute + " = :isQuesting, " + constants.QuestingUntilAttribute + " = :questingUntil"
 	expressionAttributeValues := map[string]types.AttributeValue{
 		":currentQuest": &types.AttributeValueMemberM{
 			Value: currentQuestAttribute,
 		},
-		":isQuesting": &types.AttributeValueMemberBOOL{Value: true},
+		":isQuesting":    &types.AttributeValueMemberBOOL{Value: true},
+		":questingUntil": &types.AttributeValueMemberS{Value: questingUntilFormatted},
 	}
 
 	input := &dynamodb.UpdateItemInput{
@@ -197,7 +211,7 @@ func (qm QuestModel) SetCurrentQuest(email string, quest map[string]GeneratedQue
 		ExpressionAttributeValues: expressionAttributeValues,
 	}
 
-	_, err := qm.DB.UpdateItem(qm.CTX, input)
+	_, err = qm.DB.UpdateItem(qm.CTX, input)
 	if err != nil {
 		return err
 	}
@@ -237,12 +251,82 @@ func (qm QuestModel) CancelCurrentQuest(email string) error {
 		},
 	}
 
-	updateExpression := "SET " + constants.CurrentQuestAttribute + " = :emptyQuest, " + constants.IsQuestingAttribute + " = :isQuesting"
+	updateExpression := "SET " + constants.CurrentQuestAttribute + " = :emptyQuest, " + constants.IsQuestingAttribute + " = :isQuesting, " + constants.QuestingUntilAttribute + " = :questingUntil"
 	expressionAttributeValues := map[string]types.AttributeValue{
 		":emptyQuest": &types.AttributeValueMemberM{
 			Value: emptyQuest,
 		},
-		":isQuesting": &types.AttributeValueMemberBOOL{Value: false},
+		":isQuesting":    &types.AttributeValueMemberBOOL{Value: false},
+		":questingUntil": &types.AttributeValueMemberS{Value: ""},
+	}
+
+	input := &dynamodb.UpdateItemInput{
+		TableName:                 aws.String(constants.TableName),
+		Key:                       key,
+		UpdateExpression:          aws.String(updateExpression),
+		ExpressionAttributeValues: expressionAttributeValues,
+	}
+
+	_, err := qm.DB.UpdateItem(qm.CTX, input)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (qm QuestModel) CollectCurrentQuestRewards(user *User) error {
+	key := map[string]types.AttributeValue{
+		constants.PK: &types.AttributeValueMemberS{
+			Value: constants.UserPrefix + user.Email,
+		},
+		constants.SK: &types.AttributeValueMemberS{
+			Value: constants.UserPrefix + user.Email,
+		},
+	}
+
+	emptyQuest := map[string]types.AttributeValue{}
+	questKey := "CurrentQuest"
+	emptyQuest[questKey] = &types.AttributeValueMemberM{
+		Value: map[string]types.AttributeValue{
+			constants.NameAttribute: &types.AttributeValueMemberS{
+				Value: "Empty Quest 0",
+			},
+			constants.ImageURLAttribute: &types.AttributeValueMemberS{
+				Value: "",
+			},
+			constants.TimeAttribute: &types.AttributeValueMemberS{
+				Value: "",
+			},
+			constants.EXPAttribute: &types.AttributeValueMemberN{
+				Value: "0",
+			},
+			constants.GoldAttribute: &types.AttributeValueMemberN{
+				Value: "0",
+			},
+		},
+	}
+
+	goldReward, _ := strconv.Atoi(user.CurrentQuest["CurrentQuest"].Gold)
+	EXPReward, _ := strconv.Atoi(user.CurrentQuest["CurrentQuest"].EXP)
+
+	user.Gold += goldReward
+	user.EXP += EXPReward
+
+	updateExpression := "SET " + constants.CurrentQuestAttribute + " = :emptyQuest, " +
+		constants.IsQuestingAttribute + " = :isQuesting, " +
+		constants.QuestingUntilAttribute + " = :questingUntil, " +
+		constants.GoldAttribute + " = :newGold, " +
+		constants.EXPAttribute + " = :newEXP"
+
+	expressionAttributeValues := map[string]types.AttributeValue{
+		":emptyQuest": &types.AttributeValueMemberM{
+			Value: emptyQuest,
+		},
+		":isQuesting":    &types.AttributeValueMemberBOOL{Value: false},
+		":questingUntil": &types.AttributeValueMemberS{Value: ""},
+		":newGold":       &types.AttributeValueMemberN{Value: strconv.Itoa(user.Gold)},
+		":newEXP":        &types.AttributeValueMemberN{Value: strconv.Itoa(user.EXP)},
 	}
 
 	input := &dynamodb.UpdateItemInput{

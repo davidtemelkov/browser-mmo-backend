@@ -104,3 +104,16 @@ func (app *application) cancelCurrentQuestHandler(c *gin.Context) {
 
 	c.IndentedJSON(http.StatusOK, "quest cancelled")
 }
+
+func (app *application) collectCurrentQuestRewardsHandler(c *gin.Context) {
+	userValue, _ := c.Get("user")
+	user, _ := userValue.(*data.User)
+
+	err := app.models.Quests.CollectCurrentQuestRewards(user)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, constants.InternalServerError.Error())
+		return
+	}
+
+	c.IndentedJSON(http.StatusOK, "rewards collected")
+}

@@ -41,6 +41,7 @@ const (
 	IsWorkingAttribute     = "IsWorking"
 	QuestsAttribute        = "Quests"
 	CurrentQuestAttribute  = "CurrentQuest"
+	QuestingUntilAttribute = "QuestingUntil"
 )
 
 // Item DB constants

@@ -46,6 +46,7 @@ func (app *application) setupRoutes() *gin.Engine {
 		questRoutes.GET("/generate", app.generateQuestsHandler)
 		questRoutes.POST("/set", app.setCurrentQuestHandler)
 		questRoutes.GET("/cancel", app.cancelCurrentQuestHandler)
+		questRoutes.GET("/collect", app.collectCurrentQuestRewardsHandler)
 	}
 
 	r.Run(":8080")

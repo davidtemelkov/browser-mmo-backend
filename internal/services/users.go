@@ -78,5 +78,6 @@ func GetInitialUser(input UserInput) *data.User {
 		},
 		CurrentQuest: map[string]data.GeneratedQuest{
 			"CurrentQuest": {Name: "Empty Quest 0", ImageURL: "", Time: "", EXP: "", Gold: ""}},
+		QuestingUntil: "",
 	}
 }
