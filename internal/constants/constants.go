@@ -42,6 +42,9 @@ const (
 	QuestsAttribute        = "Quests"
 	CurrentQuestAttribute  = "CurrentQuest"
 	QuestingUntilAttribute = "QuestingUntil"
+	WorkingUntilAttribute  = "WorkingUntil"
+	WorkRewardAttribute    = "WorkReward"
+	WorkDurationAttribute  = "WorkDuration"
 )
 
 // Item DB constants

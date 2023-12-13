@@ -41,6 +41,9 @@ type User struct {
 	Quests        map[string]GeneratedQuest `json:"quests" dynamodbav:"Quests"`
 	CurrentQuest  map[string]GeneratedQuest `json:"currentQuest" dynamodbav:"CurrentQuest"`
 	QuestingUntil string                    `json:"questingUntil" dynamodbav:"QuestingUntil"`
+	WorkingUntil  string                    `json:"workingUntil" dynamodbav:"WorkingUntil"`
+	WorkReward    int                       `json:"workReward" dynamodbav:"WorkReward"`
+	WorkDuration  int                       `json:"workDuration" dynamodbav:"WorkDuration"`
 }
 
 type Password struct {

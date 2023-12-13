@@ -173,7 +173,7 @@ func (app *application) upgradeIntelligenceHandler(c *gin.Context) {
 	userValue, _ := c.Get("user")
 	user, _ := userValue.(*data.User)
 
-	if user.Gold < user.Strength {
+	if user.Gold < user.Intelligence {
 		c.JSON(http.StatusForbidden, "Not enough gold")
 		return
 	}
