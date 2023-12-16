@@ -324,7 +324,7 @@ func (qm QuestModel) CollectCurrentQuestRewards(user *User) error {
 		constants.IsQuestingAttribute + " = :isQuesting, " +
 		constants.QuestingUntilAttribute + " = :questingUntil, " +
 		constants.GoldAttribute + " = :newGold, " +
-		constants.EXPAttribute + " = :newEXP" +
+		constants.EXPAttribute + " = :newEXP, " +
 		constants.LastPlayedDateAttribute + " = :lastPlayedDate, " +
 		constants.DailyQuestCountAttribute + " = :dailyQuestCount"
 
