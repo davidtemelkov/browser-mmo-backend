@@ -3,6 +3,7 @@ package services
 import (
 	"browser-mmo-backend/internal/constants"
 	"browser-mmo-backend/internal/data"
+	"browser-mmo-backend/internal/helpers"
 	"time"
 )
 
@@ -78,9 +79,11 @@ func GetInitialUser(input UserInput) *data.User {
 		},
 		CurrentQuest: map[string]data.GeneratedQuest{
 			"CurrentQuest": {Name: "Empty Quest 0", ImageURL: "", Time: "", EXP: "", Gold: ""}},
-		QuestingUntil: "",
-		WorkingUntil:  "",
-		WorkReward:    0,
-		WorkDuration:  0,
+		QuestingUntil:   "",
+		WorkingUntil:    "",
+		WorkReward:      0,
+		WorkDuration:    0,
+		LastPlayedDate:  helpers.GetCurrentDate(),
+		DailyQuestCount: 0,
 	}
 }

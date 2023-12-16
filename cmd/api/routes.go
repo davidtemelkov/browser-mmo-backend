@@ -47,6 +47,7 @@ func (app *application) setupRoutes() *gin.Engine {
 		questRoutes.POST("/set", app.setCurrentQuestHandler)
 		questRoutes.GET("/cancel", app.cancelCurrentQuestHandler)
 		questRoutes.GET("/collect", app.collectCurrentQuestRewardsHandler)
+		questRoutes.GET("/reset", app.resetQuestsHandler)
 	}
 
 	workRoutes := r.Group("/work")

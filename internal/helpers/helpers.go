@@ -4,6 +4,7 @@ import (
 	"browser-mmo-backend/internal/constants"
 	"context"
 	"os"
+	"time"
 
 	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
@@ -54,4 +55,10 @@ func CreateDynamoDBClient(ctx context.Context) (*dynamodb.Client, error) {
 	}
 
 	return dynamodb.NewFromConfig(cfg), nil
+}
+
+func GetCurrentDate() string {
+	currentTime := time.Now().UTC()
+
+	return currentTime.Format(constants.TimeFormatJustDate)
 }

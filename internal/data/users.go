@@ -16,34 +16,36 @@ import (
 )
 
 type User struct {
-	Name          string                    `json:"name" dynamodbav:"Username"`
-	Email         string                    `json:"email" dynamodbav:"Email"`
-	Password      Password                  `json:"-"`
-	PasswordHash  string                    `json:"-" dynamodbav:"PasswordHash"`
-	CreatedOn     string                    `json:"createdOn,omitempty" dynamodbav:"CreatedOn"`
-	ImageURL      string                    `json:"imageURL" dynamodbav:"ImageURL"`
-	Level         int                       `json:"level" dynamodbav:"Level"`
-	Gold          int                       `json:"gold" dynamodbav:"Gold"`
-	EXP           int                       `json:"EXP" dynamodbav:"EXP"`
-	BigDPoints    int                       `json:"bigDPoints" dynamodbav:"BigDPoints"`
-	Strength      int                       `json:"strength" dynamodbav:"Strength"`
-	Dexterity     int                       `json:"dexterity" dynamodbav:"Dexterity"`
-	Constitution  int                       `json:"constitution" dynamodbav:"Constitution"`
-	Intelligence  int                       `json:"intelligence" dynamodbav:"Intelligence"`
-	Items         map[string]Item           `json:"items" dynamodbav:"Items"`
-	WeaponShop    map[string]Item           `json:"weaponShop" dynamodbav:"WeaponShop"`
-	MagicShop     map[string]Item           `json:"magicShop" dynamodbav:"MagicShop"`
-	Mount         string                    `json:"mount" dynamodbav:"Mount"`
-	MountImageURL string                    `json:"mountImageURL" dynamodbav:"MountImageURL"`
-	Inventory     map[string]Item           `json:"inventory" dynamodbav:"Inventory"`
-	IsQuesting    bool                      `json:"isQuesting" dynamodbav:"IsQuesting"`
-	IsWorking     bool                      `json:"isWorking" dynamodbav:"IsWorking"`
-	Quests        map[string]GeneratedQuest `json:"quests" dynamodbav:"Quests"`
-	CurrentQuest  map[string]GeneratedQuest `json:"currentQuest" dynamodbav:"CurrentQuest"`
-	QuestingUntil string                    `json:"questingUntil" dynamodbav:"QuestingUntil"`
-	WorkingUntil  string                    `json:"workingUntil" dynamodbav:"WorkingUntil"`
-	WorkReward    int                       `json:"workReward" dynamodbav:"WorkReward"`
-	WorkDuration  int                       `json:"workDuration" dynamodbav:"WorkDuration"`
+	Name            string                    `json:"name" dynamodbav:"Username"`
+	Email           string                    `json:"email" dynamodbav:"Email"`
+	Password        Password                  `json:"-"`
+	PasswordHash    string                    `json:"-" dynamodbav:"PasswordHash"`
+	CreatedOn       string                    `json:"createdOn,omitempty" dynamodbav:"CreatedOn"`
+	ImageURL        string                    `json:"imageURL" dynamodbav:"ImageURL"`
+	Level           int                       `json:"level" dynamodbav:"Level"`
+	Gold            int                       `json:"gold" dynamodbav:"Gold"`
+	EXP             int                       `json:"EXP" dynamodbav:"EXP"`
+	BigDPoints      int                       `json:"bigDPoints" dynamodbav:"BigDPoints"`
+	Strength        int                       `json:"strength" dynamodbav:"Strength"`
+	Dexterity       int                       `json:"dexterity" dynamodbav:"Dexterity"`
+	Constitution    int                       `json:"constitution" dynamodbav:"Constitution"`
+	Intelligence    int                       `json:"intelligence" dynamodbav:"Intelligence"`
+	Items           map[string]Item           `json:"items" dynamodbav:"Items"`
+	WeaponShop      map[string]Item           `json:"weaponShop" dynamodbav:"WeaponShop"`
+	MagicShop       map[string]Item           `json:"magicShop" dynamodbav:"MagicShop"`
+	Mount           string                    `json:"mount" dynamodbav:"Mount"`
+	MountImageURL   string                    `json:"mountImageURL" dynamodbav:"MountImageURL"`
+	Inventory       map[string]Item           `json:"inventory" dynamodbav:"Inventory"`
+	IsQuesting      bool                      `json:"isQuesting" dynamodbav:"IsQuesting"`
+	IsWorking       bool                      `json:"isWorking" dynamodbav:"IsWorking"`
+	Quests          map[string]GeneratedQuest `json:"quests" dynamodbav:"Quests"`
+	CurrentQuest    map[string]GeneratedQuest `json:"currentQuest" dynamodbav:"CurrentQuest"`
+	QuestingUntil   string                    `json:"questingUntil" dynamodbav:"QuestingUntil"`
+	WorkingUntil    string                    `json:"workingUntil" dynamodbav:"WorkingUntil"`
+	WorkReward      int                       `json:"workReward" dynamodbav:"WorkReward"`
+	WorkDuration    int                       `json:"workDuration" dynamodbav:"WorkDuration"`
+	LastPlayedDate  string                    `json:"lastPlayedDate" dynamodbav:"LastPlayedDate"`
+	DailyQuestCount int                       `json:"dailyQuestCount" dynamodbav:"DailyQuestCount"`
 }
 
 type Password struct {

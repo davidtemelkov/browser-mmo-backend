@@ -2,6 +2,7 @@ package data
 
 import (
 	"browser-mmo-backend/internal/constants"
+	"browser-mmo-backend/internal/helpers"
 	"context"
 	"strconv"
 	"strings"
@@ -219,13 +220,13 @@ func (qm QuestModel) SetCurrentQuest(email string, quest map[string]GeneratedQue
 	return nil
 }
 
-func (qm QuestModel) CancelCurrentQuest(email string) error {
+func (qm QuestModel) CancelCurrentQuest(user *User) error {
 	key := map[string]types.AttributeValue{
 		constants.PK: &types.AttributeValueMemberS{
-			Value: constants.UserPrefix + email,
+			Value: constants.UserPrefix + user.Email,
 		},
 		constants.SK: &types.AttributeValueMemberS{
-			Value: constants.UserPrefix + email,
+			Value: constants.UserPrefix + user.Email,
 		},
 	}
 
@@ -251,13 +252,19 @@ func (qm QuestModel) CancelCurrentQuest(email string) error {
 		},
 	}
 
-	updateExpression := "SET " + constants.CurrentQuestAttribute + " = :emptyQuest, " + constants.IsQuestingAttribute + " = :isQuesting, " + constants.QuestingUntilAttribute + " = :questingUntil"
+	updateExpression := "SET " +
+		constants.CurrentQuestAttribute + " = :emptyQuest, " +
+		constants.IsQuestingAttribute + " = :isQuesting, " +
+		constants.QuestingUntilAttribute + " = :questingUntil, " +
+		constants.LastPlayedDateAttribute + " = :lastPlayedDate, " +
+		constants.DailyQuestCountAttribute + " = :dailyQuestCount"
+
 	expressionAttributeValues := map[string]types.AttributeValue{
-		":emptyQuest": &types.AttributeValueMemberM{
-			Value: emptyQuest,
-		},
-		":isQuesting":    &types.AttributeValueMemberBOOL{Value: false},
-		":questingUntil": &types.AttributeValueMemberS{Value: ""},
+		":emptyQuest":      &types.AttributeValueMemberM{Value: emptyQuest},
+		":isQuesting":      &types.AttributeValueMemberBOOL{Value: false},
+		":questingUntil":   &types.AttributeValueMemberS{Value: ""},
+		":lastPlayedDate":  &types.AttributeValueMemberS{Value: helpers.GetCurrentDate()},
+		":dailyQuestCount": &types.AttributeValueMemberN{Value: strconv.Itoa(user.DailyQuestCount + 1)},
 	}
 
 	input := &dynamodb.UpdateItemInput{
@@ -317,16 +324,54 @@ func (qm QuestModel) CollectCurrentQuestRewards(user *User) error {
 		constants.IsQuestingAttribute + " = :isQuesting, " +
 		constants.QuestingUntilAttribute + " = :questingUntil, " +
 		constants.GoldAttribute + " = :newGold, " +
-		constants.EXPAttribute + " = :newEXP"
+		constants.EXPAttribute + " = :newEXP" +
+		constants.LastPlayedDateAttribute + " = :lastPlayedDate, " +
+		constants.DailyQuestCountAttribute + " = :dailyQuestCount"
 
 	expressionAttributeValues := map[string]types.AttributeValue{
 		":emptyQuest": &types.AttributeValueMemberM{
 			Value: emptyQuest,
 		},
-		":isQuesting":    &types.AttributeValueMemberBOOL{Value: false},
-		":questingUntil": &types.AttributeValueMemberS{Value: ""},
-		":newGold":       &types.AttributeValueMemberN{Value: strconv.Itoa(user.Gold)},
-		":newEXP":        &types.AttributeValueMemberN{Value: strconv.Itoa(user.EXP)},
+		":isQuesting":      &types.AttributeValueMemberBOOL{Value: false},
+		":questingUntil":   &types.AttributeValueMemberS{Value: ""},
+		":newGold":         &types.AttributeValueMemberN{Value: strconv.Itoa(user.Gold)},
+		":newEXP":          &types.AttributeValueMemberN{Value: strconv.Itoa(user.EXP)},
+		":lastPlayedDate":  &types.AttributeValueMemberS{Value: helpers.GetCurrentDate()},
+		":dailyQuestCount": &types.AttributeValueMemberN{Value: strconv.Itoa(user.DailyQuestCount + 1)},
+	}
+
+	input := &dynamodb.UpdateItemInput{
+		TableName:                 aws.String(constants.TableName),
+		Key:                       key,
+		UpdateExpression:          aws.String(updateExpression),
+		ExpressionAttributeValues: expressionAttributeValues,
+	}
+
+	_, err := qm.DB.UpdateItem(qm.CTX, input)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (qm QuestModel) ResetQuests(user *User) error {
+	key := map[string]types.AttributeValue{
+		constants.PK: &types.AttributeValueMemberS{
+			Value: constants.UserPrefix + user.Email,
+		},
+		constants.SK: &types.AttributeValueMemberS{
+			Value: constants.UserPrefix + user.Email,
+		},
+	}
+
+	updateExpression := "SET " +
+		constants.LastPlayedDateAttribute + " = :lastPlayedDate, " +
+		constants.DailyQuestCountAttribute + " = :dailyQuestCount"
+
+	expressionAttributeValues := map[string]types.AttributeValue{
+		":lastPlayedDate":  &types.AttributeValueMemberS{Value: helpers.GetCurrentDate()},
+		":dailyQuestCount": &types.AttributeValueMemberN{Value: "0"},
 	}
 
 	input := &dynamodb.UpdateItemInput{
