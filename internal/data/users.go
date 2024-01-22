@@ -314,7 +314,7 @@ func (um UserModel) CanLoginUser(password string, user *User) (bool, error) {
 }
 
 func (um UserModel) UpgradeStrength(user *User) (*User, error) {
-	upgradeCost := user.Strength + 1
+	upgradeCost := user.Strength
 
 	user.Strength++
 	user.Gold -= upgradeCost
@@ -354,7 +354,7 @@ func (um UserModel) UpgradeStrength(user *User) (*User, error) {
 }
 
 func (um UserModel) UpgradeDexterity(user *User) (*User, error) {
-	upgradeCost := user.Dexterity + 1
+	upgradeCost := user.Dexterity
 
 	user.Dexterity++
 	user.Gold -= upgradeCost
@@ -394,7 +394,7 @@ func (um UserModel) UpgradeDexterity(user *User) (*User, error) {
 }
 
 func (um UserModel) UpgradeConstitution(user *User) (*User, error) {
-	upgradeCost := user.Constitution + 1
+	upgradeCost := user.Constitution
 
 	user.Constitution++
 	user.Gold -= upgradeCost
@@ -434,7 +434,7 @@ func (um UserModel) UpgradeConstitution(user *User) (*User, error) {
 }
 
 func (um UserModel) UpgradeIntelligence(user *User) (*User, error) {
-	upgradeCost := user.Intelligence + 1
+	upgradeCost := user.Intelligence
 
 	user.Intelligence++
 	user.Gold -= upgradeCost
