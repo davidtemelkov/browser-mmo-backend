@@ -1,10 +1,11 @@
-package helpers
+package utils
 
 import (
 	"browser-mmo-backend/internal/constants"
 	"context"
 	"encoding/base64"
 	"fmt"
+	"os"
 	"strings"
 
 	"cloud.google.com/go/storage"
@@ -106,4 +107,34 @@ func generateFirebaseUrl(fileFolder, fileName string) (string, error) {
 	url := fmt.Sprintf("%s%s%%2F%s?alt=media", baseUrl, fileFolder, fileName)
 
 	return url, nil
+}
+
+func GetJWTPrivateKey() []byte {
+	jwtPrivateKey := os.Getenv("JWT_PRIVATE_KEY")
+
+	if jwtPrivateKey == "" {
+		panic(constants.JWTPrivateKeyError.Error())
+	}
+
+	return []byte(jwtPrivateKey)
+}
+
+func GetFirebaseUrl() string {
+	firebaseUrl := os.Getenv("FIREBASE_URL")
+
+	if firebaseUrl == "" {
+		panic(constants.FirebaseURLKeyError.Error())
+	}
+
+	return firebaseUrl
+}
+
+func GetFirebaseBucketName() string {
+	firebaseBucketName := os.Getenv("FIREBASE_BUCKET_NAME")
+
+	if firebaseBucketName == "" {
+		panic(constants.FirebaseBucketNameError.Error())
+	}
+
+	return firebaseBucketName
 }

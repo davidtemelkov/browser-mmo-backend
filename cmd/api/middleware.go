@@ -2,7 +2,7 @@ package main
 
 import (
 	"browser-mmo-backend/internal/constants"
-	"browser-mmo-backend/internal/helpers"
+	"browser-mmo-backend/internal/utils"
 	"errors"
 	"net/http"
 	"strings"
@@ -31,7 +31,7 @@ func (app *application) authenticate() gin.HandlerFunc {
 		tokenString := tokenParts[1]
 
 		token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
-			return helpers.GetJWTPrivateKey(), nil
+			return utils.GetJWTPrivateKey(), nil
 		})
 		if err != nil || !token.Valid {
 			c.JSON(http.StatusUnauthorized, constants.InvalidTokenError.Error())

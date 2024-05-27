@@ -1,9 +1,8 @@
-package helpers
+package utils
 
 import (
 	"browser-mmo-backend/internal/constants"
 	"context"
-	"os"
 	"time"
 
 	"github.com/aws/aws-sdk-go-v2/config"
@@ -16,36 +15,6 @@ func LoadEnv() {
 	if err != nil {
 		panic(constants.LoadingEnvFileError.Error())
 	}
-}
-
-func GetJWTPrivateKey() []byte {
-	jwtPrivateKey := os.Getenv("JWT_PRIVATE_KEY")
-
-	if jwtPrivateKey == "" {
-		panic(constants.JWTPrivateKeyError.Error())
-	}
-
-	return []byte(jwtPrivateKey)
-}
-
-func GetFirebaseUrl() string {
-	firebaseUrl := os.Getenv("FIREBASE_URL")
-
-	if firebaseUrl == "" {
-		panic(constants.FirebaseURLKeyError.Error())
-	}
-
-	return firebaseUrl
-}
-
-func GetFirebaseBucketName() string {
-	firebaseBucketName := os.Getenv("FIREBASE_BUCKET_NAME")
-
-	if firebaseBucketName == "" {
-		panic(constants.FirebaseBucketNameError.Error())
-	}
-
-	return firebaseBucketName
 }
 
 func CreateDynamoDBClient(ctx context.Context) (*dynamodb.Client, error) {

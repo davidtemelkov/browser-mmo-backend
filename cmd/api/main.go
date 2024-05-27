@@ -3,7 +3,7 @@ package main
 import (
 	"browser-mmo-backend/internal/constants"
 	"browser-mmo-backend/internal/data"
-	"browser-mmo-backend/internal/helpers"
+	"browser-mmo-backend/internal/utils"
 	"context"
 )
 
@@ -12,11 +12,11 @@ type application struct {
 }
 
 func main() {
-	helpers.LoadEnv()
+	utils.LoadEnv()
 
 	ctx := context.Background()
 
-	db, err := helpers.CreateDynamoDBClient(ctx)
+	db, err := utils.CreateDynamoDBClient(ctx)
 	if err != nil {
 		panic(constants.DynamoDBClientError.Error())
 	}

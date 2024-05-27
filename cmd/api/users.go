@@ -3,8 +3,8 @@ package main
 import (
 	"browser-mmo-backend/internal/constants"
 	"browser-mmo-backend/internal/data"
-	"browser-mmo-backend/internal/helpers"
 	"browser-mmo-backend/internal/services"
+	"browser-mmo-backend/internal/utils"
 	"browser-mmo-backend/internal/validator"
 	"net/http"
 
@@ -43,7 +43,7 @@ func (app *application) registerUserHandler(c *gin.Context) {
 		return
 	}
 
-	jwt, err := helpers.CreateJWT(user.Name, user.Email)
+	jwt, err := utils.CreateJWT(user.Name, user.Email)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, constants.InternalServerError.Error())
 		return
@@ -91,7 +91,7 @@ func (app *application) loginUserHandler(c *gin.Context) {
 		return
 	}
 
-	jwt, err := helpers.CreateJWT(user.Name, user.Email)
+	jwt, err := utils.CreateJWT(user.Name, user.Email)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, constants.InternalServerError.Error())
 		return

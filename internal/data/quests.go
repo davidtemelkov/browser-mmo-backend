@@ -2,7 +2,7 @@ package data
 
 import (
 	"browser-mmo-backend/internal/constants"
-	"browser-mmo-backend/internal/helpers"
+	"browser-mmo-backend/internal/utils"
 	"context"
 	"strconv"
 	"strings"
@@ -263,7 +263,7 @@ func (qm QuestModel) CancelCurrentQuest(user *User) error {
 		":emptyQuest":      &types.AttributeValueMemberM{Value: emptyQuest},
 		":isQuesting":      &types.AttributeValueMemberBOOL{Value: false},
 		":questingUntil":   &types.AttributeValueMemberS{Value: ""},
-		":lastPlayedDate":  &types.AttributeValueMemberS{Value: helpers.GetCurrentDate()},
+		":lastPlayedDate":  &types.AttributeValueMemberS{Value: utils.GetCurrentDate()},
 		":dailyQuestCount": &types.AttributeValueMemberN{Value: strconv.Itoa(user.DailyQuestCount + 1)},
 	}
 
@@ -336,7 +336,7 @@ func (qm QuestModel) CollectCurrentQuestRewards(user *User) error {
 		":questingUntil":   &types.AttributeValueMemberS{Value: ""},
 		":newGold":         &types.AttributeValueMemberN{Value: strconv.Itoa(user.Gold)},
 		":newEXP":          &types.AttributeValueMemberN{Value: strconv.Itoa(user.EXP)},
-		":lastPlayedDate":  &types.AttributeValueMemberS{Value: helpers.GetCurrentDate()},
+		":lastPlayedDate":  &types.AttributeValueMemberS{Value: utils.GetCurrentDate()},
 		":dailyQuestCount": &types.AttributeValueMemberN{Value: strconv.Itoa(user.DailyQuestCount + 1)},
 	}
 
@@ -370,7 +370,7 @@ func (qm QuestModel) ResetQuests(user *User) error {
 		constants.DailyQuestCountAttribute + " = :dailyQuestCount"
 
 	expressionAttributeValues := map[string]types.AttributeValue{
-		":lastPlayedDate":  &types.AttributeValueMemberS{Value: helpers.GetCurrentDate()},
+		":lastPlayedDate":  &types.AttributeValueMemberS{Value: utils.GetCurrentDate()},
 		":dailyQuestCount": &types.AttributeValueMemberN{Value: "0"},
 	}
 

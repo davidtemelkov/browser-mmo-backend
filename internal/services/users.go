@@ -3,7 +3,7 @@ package services
 import (
 	"browser-mmo-backend/internal/constants"
 	"browser-mmo-backend/internal/data"
-	"browser-mmo-backend/internal/helpers"
+	"browser-mmo-backend/internal/utils"
 	"time"
 )
 
@@ -83,7 +83,7 @@ func GetInitialUser(input UserInput) *data.User {
 		WorkingUntil:    "",
 		WorkReward:      0,
 		WorkDuration:    0,
-		LastPlayedDate:  helpers.GetCurrentDate(),
+		LastPlayedDate:  utils.GetCurrentDate(),
 		DailyQuestCount: 0,
 	}
 }
