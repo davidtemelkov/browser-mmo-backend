@@ -77,20 +77,20 @@ func (p *Password) Matches(plaintextPassword string) (bool, error) {
 }
 
 func ValidateEmail(v *validator.Validator, email string) {
-	v.Check(email != "", "email", constants.RequiredFieldError.Error())
-	v.Check(validator.Matches(email, validator.EmailRX), "email", constants.EmailFormatError.Error())
+	v.Check(email != "", "email", constants.RequiredFieldError)
+	v.Check(validator.Matches(email, validator.EmailRX), "email", constants.EmailFormatError)
 }
 
 func ValidatePasswordPlaintext(v *validator.Validator, password string) {
-	v.Check(password != "", "password", constants.RequiredFieldError.Error())
-	v.Check(len(password) >= 8, "password", constants.PasswordMinLengthError.Error())
-	v.Check(len(password) <= 72, "password", constants.PasswordMaxLengthError.Error())
+	v.Check(password != "", "password", constants.RequiredFieldError)
+	v.Check(len(password) >= 8, "password", constants.PasswordMinLengthError)
+	v.Check(len(password) <= 72, "password", constants.PasswordMaxLengthError)
 }
 
 func ValidateRegisterInput(v *validator.Validator, user *User) {
-	v.Check(user.Name != "", "name", constants.RequiredFieldError.Error())
-	v.Check(len(user.Name) >= 4, "name", constants.UserNameMinLengthError.Error())
-	v.Check(len(user.Name) <= 50, "name", constants.UserNameMaxLengthError.Error())
+	v.Check(user.Name != "", "name", constants.RequiredFieldError)
+	v.Check(len(user.Name) >= 4, "name", constants.UserNameMinLengthError)
+	v.Check(len(user.Name) <= 50, "name", constants.UserNameMaxLengthError)
 
 	ValidateEmail(v, user.Email)
 	ValidatePasswordPlaintext(v, *user.Password.plaintext)
@@ -256,7 +256,7 @@ func (um UserModel) Insert(user *User) error {
 	_, err := um.DB.PutItem(um.CTX, putInput)
 	if err != nil {
 		if strings.Contains(err.Error(), "The conditional request failed") {
-			return constants.DuplicateEmailError
+			return errors.New(constants.DuplicateEmailError)
 		}
 		return err
 	}
@@ -266,7 +266,7 @@ func (um UserModel) Insert(user *User) error {
 
 func (um UserModel) Get(email string) (*User, error) {
 	if email == "" {
-		return nil, constants.UserNotFoundError
+		return nil, errors.New(constants.UserNotFoundError)
 	}
 
 	key := map[string]types.AttributeValue{
@@ -289,7 +289,7 @@ func (um UserModel) Get(email string) (*User, error) {
 	}
 
 	if len(result.Item) == 0 {
-		return nil, constants.UserNotFoundError
+		return nil, errors.New(constants.UserNotFoundError)
 	}
 
 	user := &User{}

@@ -15,7 +15,7 @@ func (app *application) registerUserHandler(c *gin.Context) {
 	var input services.UserInput
 
 	if err := c.BindJSON(&input); err != nil {
-		c.JSON(http.StatusInternalServerError, constants.InvalidJSONFormatError.Error())
+		c.JSON(http.StatusInternalServerError, constants.InvalidJSONFormatError)
 		return
 	}
 
@@ -23,7 +23,7 @@ func (app *application) registerUserHandler(c *gin.Context) {
 
 	err := user.Password.Set(input.Password)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, constants.InternalServerError.Error())
+		c.JSON(http.StatusInternalServerError, constants.InternalServerError)
 		return
 	}
 
@@ -35,17 +35,17 @@ func (app *application) registerUserHandler(c *gin.Context) {
 
 	err = app.models.Users.Insert(user)
 	if err != nil {
-		if err == constants.DuplicateEmailError {
-			c.JSON(http.StatusConflict, constants.DuplicateEmailError.Error())
+		if err.Error() == constants.DuplicateEmailError {
+			c.JSON(http.StatusConflict, constants.DuplicateEmailError)
 			return
 		}
-		c.JSON(http.StatusInternalServerError, constants.InternalServerError.Error())
+		c.JSON(http.StatusInternalServerError, constants.InternalServerError)
 		return
 	}
 
 	jwt, err := utils.CreateJWT(user.Name, user.Email)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, constants.InternalServerError.Error())
+		c.JSON(http.StatusInternalServerError, constants.InternalServerError)
 		return
 	}
 
@@ -59,7 +59,7 @@ func (app *application) loginUserHandler(c *gin.Context) {
 	}
 
 	if err := c.BindJSON(&input); err != nil {
-		c.JSON(http.StatusInternalServerError, constants.InvalidJSONFormatError.Error())
+		c.JSON(http.StatusInternalServerError, constants.InvalidJSONFormatError)
 		return
 	}
 
@@ -71,29 +71,29 @@ func (app *application) loginUserHandler(c *gin.Context) {
 
 	user, err := app.models.Users.Get(input.Email)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, constants.FailedLoginError.Error())
+		c.JSON(http.StatusInternalServerError, constants.FailedLoginError)
 		return
 	}
 
 	if user == nil {
-		c.JSON(http.StatusNotFound, constants.FailedLoginError.Error())
+		c.JSON(http.StatusNotFound, constants.FailedLoginError)
 		return
 	}
 
 	userLoggedIn, err := app.models.Users.CanLoginUser(input.Password, user)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, constants.InternalServerError.Error())
+		c.JSON(http.StatusInternalServerError, constants.InternalServerError)
 		return
 	}
 
 	if !userLoggedIn {
-		c.JSON(http.StatusNotFound, constants.FailedLoginError.Error())
+		c.JSON(http.StatusNotFound, constants.FailedLoginError)
 		return
 	}
 
 	jwt, err := utils.CreateJWT(user.Name, user.Email)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, constants.InternalServerError.Error())
+		c.JSON(http.StatusInternalServerError, constants.InternalServerError)
 		return
 	}
 
@@ -108,7 +108,7 @@ func (app *application) getUserHandler(c *gin.Context) {
 
 	if email != user.Email {
 		//TODO: This shouldn't matter, users should be able to view others' profiles
-		c.JSON(http.StatusForbidden, constants.UserIsNotAuthorizedError.Error())
+		c.JSON(http.StatusForbidden, constants.UserIsNotAuthorizedError)
 		return
 	}
 
@@ -126,7 +126,7 @@ func (app *application) upgradeStrengthHandler(c *gin.Context) {
 
 	result, err := app.models.Users.UpgradeStrength(user)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, constants.InternalServerError.Error())
+		c.JSON(http.StatusInternalServerError, constants.InternalServerError)
 		return
 	}
 
@@ -144,7 +144,7 @@ func (app *application) upgradeDexterityHandler(c *gin.Context) {
 
 	result, err := app.models.Users.UpgradeDexterity(user)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, constants.InternalServerError.Error())
+		c.JSON(http.StatusInternalServerError, constants.InternalServerError)
 		return
 	}
 
@@ -162,7 +162,7 @@ func (app *application) upgradeConstitutionHandler(c *gin.Context) {
 
 	result, err := app.models.Users.UpgradeConstitution(user)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, constants.InternalServerError.Error())
+		c.JSON(http.StatusInternalServerError, constants.InternalServerError)
 		return
 	}
 
@@ -180,7 +180,7 @@ func (app *application) upgradeIntelligenceHandler(c *gin.Context) {
 
 	result, err := app.models.Users.UpgradeIntelligence(user)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, constants.InternalServerError.Error())
+		c.JSON(http.StatusInternalServerError, constants.InternalServerError)
 		return
 	}
 

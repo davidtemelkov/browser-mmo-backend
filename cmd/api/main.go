@@ -18,7 +18,7 @@ func main() {
 
 	db, err := utils.CreateDynamoDBClient(ctx)
 	if err != nil {
-		panic(constants.DynamoDBClientError.Error())
+		panic(constants.DynamoDBClientError)
 	}
 
 	app := &application{

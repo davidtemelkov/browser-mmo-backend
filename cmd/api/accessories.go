@@ -19,7 +19,7 @@ func (app *application) createAccessoryHandler(c *gin.Context) {
 	}
 
 	if err := c.BindJSON(&input); err != nil {
-		c.JSON(http.StatusInternalServerError, constants.InvalidJSONFormatError.Error())
+		c.JSON(http.StatusInternalServerError, constants.InvalidJSONFormatError)
 		return
 	}
 
@@ -33,7 +33,7 @@ func (app *application) createAccessoryHandler(c *gin.Context) {
 
 	err := app.models.Accessories.Insert(accessory)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, constants.InvalidJSONFormatError.Error())
+		c.JSON(http.StatusInternalServerError, constants.InvalidJSONFormatError)
 		return
 	}
 

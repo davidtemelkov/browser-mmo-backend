@@ -22,7 +22,7 @@ func (app *application) createWeaponHandler(c *gin.Context) {
 	}
 
 	if err := c.BindJSON(&input); err != nil {
-		c.JSON(http.StatusInternalServerError, constants.InvalidJSONFormatError.Error())
+		c.JSON(http.StatusInternalServerError, constants.InvalidJSONFormatError)
 		return
 	}
 
@@ -40,7 +40,7 @@ func (app *application) createWeaponHandler(c *gin.Context) {
 
 	err := app.models.Weapons.Insert(weapon)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, constants.InvalidJSONFormatError.Error())
+		c.JSON(http.StatusInternalServerError, constants.InvalidJSONFormatError)
 		return
 	}
 

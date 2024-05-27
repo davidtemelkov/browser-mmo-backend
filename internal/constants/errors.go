@@ -1,59 +1,57 @@
 package constants
 
-import "errors"
-
 // General errors
-var (
-	RecordNotFoundError           = errors.New("record not found")
-	EditConflictError             = errors.New("edit conflict")
-	DBConnectionError             = errors.New("Db connection error")
-	InvalidJSONFormatError        = errors.New("Invalid JSON format")
-	InvalidBase64ImagePrefixError = errors.New("Invalid base64 image format prefix")
-	InternalServerError           = errors.New("Internal server error")
-	BadRequestError               = errors.New("Bad request")
+const (
+	RecordNotFoundError           = "record not found"
+	EditConflictError             = "edit conflict"
+	DBConnectionError             = "db connection error"
+	InvalidJSONFormatError        = "invalid JSON format"
+	InvalidBase64ImagePrefixError = "invalid base64 image format prefix"
+	InternalServerError           = "internal server error"
+	BadRequestError               = "bad request"
 )
 
 // Env errors
-var (
-	LoadingEnvFileError     = errors.New("Error loading .env file")
-	AWSAccessKeyError       = errors.New("AWS access key not found in env file")
-	AWSSecretKeyError       = errors.New("AWS secret key not found in env file")
-	JWTPrivateKeyError      = errors.New("JWT private key not found in env file")
-	FirebaseURLKeyError     = errors.New("Firebase URL key not found in env file")
-	FirebaseBucketNameError = errors.New("Firebase bucket name not found in env file")
+const (
+	LoadingEnvFileError     = "error loading .env file"
+	AWSAccessKeyError       = "aws access key not found in env file"
+	AWSSecretKeyError       = "aws secret key not found in env file"
+	JWTPrivateKeyError      = "jwt private key not found in env file"
+	FirebaseURLKeyError     = "firebase URL key not found in env file"
+	FirebaseBucketNameError = "firebase bucket name not found in env file"
 )
 
 // Firebase errors
-var (
-	FirebaseClientError  = errors.New("Failed to initialize Firebase Storage client")
-	FileFolderEmptyError = errors.New("FileFolder is empty")
-	FileNameEmptyError   = errors.New("FileName is empty")
+const (
+	FirebaseClientError  = "failed to initialize Firebase Storage client"
+	FileFolderEmptyError = "fileFolder is empty"
+	FileNameEmptyError   = "fileName is empty"
 )
 
 // DynamoDB errors
 var (
-	DynamoDBClientError = errors.New("Couldn't create dynamoDB client")
+	DynamoDBClientError = "couldn't create dynamoDB client"
 )
 
 // Authentication errors
-var (
-	MissingAuthorizationHeaderError       = errors.New("Missing authorization header")
-	InvalidAuthorizationHeaderFormatError = errors.New("Invalid authorization header format")
-	InvalidTokenError                     = errors.New("Invalid token")
-	InvalidTokenClaimsError               = errors.New("Invalid token claims")
+const (
+	MissingAuthorizationHeaderError       = "missing authorization header"
+	InvalidAuthorizationHeaderFormatError = "invalid authorization header format"
+	InvalidTokenError                     = "invalid token"
+	InvalidTokenClaimsError               = "invalid token claims"
 )
 
 // User errors
-var (
-	RequiredFieldError        = errors.New("Field is required")
-	EmailFormatError          = errors.New("Email must be in the correct email format")
-	PasswordMinLengthError    = errors.New("Password must be at least 8 symbols")
-	PasswordMaxLengthError    = errors.New("Password must be less than 72 symbols")
-	UserNameMinLengthError    = errors.New("Name must be at least 4 symbols")
-	UserNameMaxLengthError    = errors.New("Name must be less than 50 symbols")
-	UserNameNoWhitespaceError = errors.New("Must contain two names seperated by whitespace")
-	UserIsNotAuthorizedError  = errors.New("User is not authorized")
-	DuplicateEmailError       = errors.New("Duplicate email")
-	UserNotFoundError         = errors.New("User not found")
-	FailedLoginError          = errors.New("Invalid email or password")
+const (
+	RequiredFieldError        = "field is required"
+	EmailFormatError          = "email must be in the correct email format"
+	PasswordMinLengthError    = "password must be at least 8 symbols"
+	PasswordMaxLengthError    = "password must be less than 72 symbols"
+	UserNameMinLengthError    = "name must be at least 4 symbols"
+	UserNameMaxLengthError    = "name must be less than 50 symbols"
+	UserNameNoWhitespaceError = "must contain two names seperated by whitespace"
+	UserIsNotAuthorizedError  = "user is not authorized"
+	DuplicateEmailError       = "duplicate email"
+	UserNotFoundError         = "user not found"
+	FailedLoginError          = "invalid email or password"
 )

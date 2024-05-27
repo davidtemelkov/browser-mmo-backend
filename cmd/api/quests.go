@@ -17,7 +17,7 @@ func (app *application) createQuestHandler(c *gin.Context) {
 	}
 
 	if err := c.BindJSON(&input); err != nil {
-		c.JSON(http.StatusInternalServerError, constants.InvalidJSONFormatError.Error())
+		c.JSON(http.StatusInternalServerError, constants.InvalidJSONFormatError)
 		return
 	}
 
@@ -29,7 +29,7 @@ func (app *application) createQuestHandler(c *gin.Context) {
 
 	err := app.models.Quests.Insert(quest)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, constants.InvalidJSONFormatError.Error())
+		c.JSON(http.StatusInternalServerError, constants.InvalidJSONFormatError)
 		return
 	}
 
@@ -42,19 +42,19 @@ func (app *application) generateQuestsHandler(c *gin.Context) {
 
 	allQuests, err := app.models.Quests.GetAll()
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, constants.InternalServerError.Error())
+		c.JSON(http.StatusInternalServerError, constants.InternalServerError)
 		return
 	}
 
 	generatedQuests, err := services.GenerateQuestsForUser(allQuests)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, constants.InternalServerError.Error())
+		c.JSON(http.StatusInternalServerError, constants.InternalServerError)
 		return
 	}
 
 	err = app.models.Quests.SetQuests(user.Email, generatedQuests)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, constants.InternalServerError.Error())
+		c.JSON(http.StatusInternalServerError, constants.InternalServerError)
 		return
 	}
 
@@ -67,14 +67,14 @@ func (app *application) setCurrentQuestHandler(c *gin.Context) {
 
 	var currentQuestMap map[string]data.GeneratedQuest
 	if err := c.BindJSON(&currentQuestMap); err != nil {
-		c.JSON(http.StatusBadRequest, constants.InvalidJSONFormatError.Error())
+		c.JSON(http.StatusBadRequest, constants.InvalidJSONFormatError)
 		return
 	}
 
 	//TODO: This could be in a single request
 	err := app.models.Quests.SetCurrentQuest(user.Email, currentQuestMap)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, constants.InternalServerError.Error())
+		c.JSON(http.StatusInternalServerError, constants.InternalServerError)
 		return
 	}
 
@@ -84,7 +84,7 @@ func (app *application) setCurrentQuestHandler(c *gin.Context) {
 		{Name: "Empty Quest 2", ImageURL: "", Time: "", EXP: "0", Gold: "0"},
 	})
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, constants.InternalServerError.Error())
+		c.JSON(http.StatusInternalServerError, constants.InternalServerError)
 		return
 	}
 	//end
@@ -98,7 +98,7 @@ func (app *application) cancelCurrentQuestHandler(c *gin.Context) {
 
 	err := app.models.Quests.CancelCurrentQuest(user)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, constants.InternalServerError.Error())
+		c.JSON(http.StatusInternalServerError, constants.InternalServerError)
 		return
 	}
 
@@ -111,7 +111,7 @@ func (app *application) collectCurrentQuestRewardsHandler(c *gin.Context) {
 
 	err := app.models.Quests.CollectCurrentQuestRewards(user)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, constants.InternalServerError.Error())
+		c.JSON(http.StatusInternalServerError, constants.InternalServerError)
 		return
 	}
 
@@ -124,7 +124,7 @@ func (app *application) resetQuestsHandler(c *gin.Context) {
 
 	err := app.models.Quests.ResetQuests(user)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, constants.InternalServerError.Error())
+		c.JSON(http.StatusInternalServerError, constants.InternalServerError)
 		return
 	}
 

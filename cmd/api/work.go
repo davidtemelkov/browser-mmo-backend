@@ -15,7 +15,7 @@ func (app *application) setWorkHandler(c *gin.Context) {
 	}
 
 	if err := c.BindJSON(&input); err != nil {
-		c.JSON(http.StatusBadRequest, constants.InvalidJSONFormatError.Error())
+		c.JSON(http.StatusBadRequest, constants.InvalidJSONFormatError)
 		return
 	}
 
@@ -24,7 +24,7 @@ func (app *application) setWorkHandler(c *gin.Context) {
 
 	err := app.models.Work.Set(user, input.Hours, input.Reward)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, constants.InternalServerError.Error())
+		c.JSON(http.StatusInternalServerError, constants.InternalServerError)
 		return
 	}
 
@@ -37,7 +37,7 @@ func (app *application) cancelWorkHandler(c *gin.Context) {
 
 	err := app.models.Work.Cancel(user)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, constants.InternalServerError.Error())
+		c.JSON(http.StatusInternalServerError, constants.InternalServerError)
 		return
 	}
 
@@ -50,7 +50,7 @@ func (app *application) collectWorkRewardsHandler(c *gin.Context) {
 
 	err := app.models.Work.CollectRewards(user)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, constants.InternalServerError.Error())
+		c.JSON(http.StatusInternalServerError, constants.InternalServerError)
 		return
 	}
 

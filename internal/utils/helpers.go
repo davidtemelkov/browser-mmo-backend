@@ -13,7 +13,7 @@ import (
 func LoadEnv() {
 	err := godotenv.Load()
 	if err != nil {
-		panic(constants.LoadingEnvFileError.Error())
+		panic(constants.LoadingEnvFileError)
 	}
 }
 

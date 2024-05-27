@@ -4,6 +4,7 @@ import (
 	"browser-mmo-backend/internal/constants"
 	"context"
 	"encoding/base64"
+	"errors"
 	"fmt"
 	"os"
 	"strings"
@@ -45,7 +46,7 @@ func ValidateAndExtractContentType(photo64 string) (string, string, error) {
 		}
 	}
 
-	return "", "", constants.InvalidBase64ImagePrefixError
+	return "", "", errors.New(constants.InvalidBase64ImagePrefixError)
 }
 
 func UploadFile(photo64, fileFolder, fileName string) (string, error) {
@@ -57,7 +58,7 @@ func UploadFile(photo64, fileFolder, fileName string) (string, error) {
 
 	client, err := storage.NewClient(ctx, opt)
 	if err != nil {
-		panic(constants.FirebaseClientError.Error())
+		panic(constants.FirebaseClientError)
 	}
 
 	contentType, prefix, err := ValidateAndExtractContentType(photo64)
@@ -98,10 +99,10 @@ func generateFirebaseUrl(fileFolder, fileName string) (string, error) {
 	baseUrl := GetFirebaseUrl()
 
 	if fileFolder == "" {
-		return "", constants.FileFolderEmptyError
+		return "", errors.New(constants.FileFolderEmptyError)
 	}
 	if fileName == "" {
-		return "", constants.FileNameEmptyError
+		return "", errors.New(constants.FileNameEmptyError)
 	}
 
 	url := fmt.Sprintf("%s%s%%2F%s?alt=media", baseUrl, fileFolder, fileName)
@@ -113,7 +114,7 @@ func GetJWTPrivateKey() []byte {
 	jwtPrivateKey := os.Getenv("JWT_PRIVATE_KEY")
 
 	if jwtPrivateKey == "" {
-		panic(constants.JWTPrivateKeyError.Error())
+		panic(constants.JWTPrivateKeyError)
 	}
 
 	return []byte(jwtPrivateKey)
@@ -123,7 +124,7 @@ func GetFirebaseUrl() string {
 	firebaseUrl := os.Getenv("FIREBASE_URL")
 
 	if firebaseUrl == "" {
-		panic(constants.FirebaseURLKeyError.Error())
+		panic(constants.FirebaseURLKeyError)
 	}
 
 	return firebaseUrl
@@ -133,7 +134,7 @@ func GetFirebaseBucketName() string {
 	firebaseBucketName := os.Getenv("FIREBASE_BUCKET_NAME")
 
 	if firebaseBucketName == "" {
-		panic(constants.FirebaseBucketNameError.Error())
+		panic(constants.FirebaseBucketNameError)
 	}
 
 	return firebaseBucketName
