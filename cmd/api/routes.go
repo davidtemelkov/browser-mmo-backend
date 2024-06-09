@@ -58,6 +58,11 @@ func (app *application) setupRoutes() *gin.Engine {
 		workRoutes.GET("/collect", app.collectWorkRewardsHandler)
 	}
 
+	monsterRoutes := r.Group("/monsters")
+	{
+		monsterRoutes.POST("/create", app.createMonsterHandler)
+	}
+
 	r.Run(":8080")
 
 	return r

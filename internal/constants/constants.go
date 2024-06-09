@@ -103,3 +103,9 @@ const (
 	QuestPrefix = "QUEST#"
 	Quest       = "QUEST"
 )
+
+// Monster DB constants
+const (
+	MonsterPrefix = "MONSTER#"
+	Monster       = "MONSTER"
+)
