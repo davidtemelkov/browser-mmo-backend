@@ -74,7 +74,9 @@ func Simulate(player Fighter, enemy Fighter) (string, bool) {
 
 		if second.Health <= 0 {
 			fightLog += fmt.Sprintf("%s is defeated!\n", second.Name)
-			return fightLog, first == player
+			// TODO: This would be more secure with IDs instead of Name
+			// Someone can name themselves Slime and break the logic
+			return fightLog, first.Name == player.Name
 		}
 
 		// Second attack
@@ -89,7 +91,7 @@ func Simulate(player Fighter, enemy Fighter) (string, bool) {
 
 		if first.Health <= 0 {
 			fightLog += fmt.Sprintf("%s is defeated!\n", first.Name)
-			return fightLog, second == player
+			return fightLog, second.Name == player.Name
 		}
 
 		round++
