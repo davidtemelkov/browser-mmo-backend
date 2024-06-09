@@ -3,10 +3,21 @@ package fightsimulator
 import (
 	"browser-mmo-backend/internal/data"
 	"fmt"
+	"math"
 	"math/rand"
 )
 
 type Fighter struct {
+	name          string
+	health        float32
+	damageMin     float32
+	damageMax     float32
+	critChance    float32
+	magicDamage   float32
+	hitFirstIndex float32
+}
+
+type FighterData struct {
 	name          string
 	health        float32
 	damageMin     float32
@@ -24,20 +35,20 @@ func (f *Fighter) criticalHit() bool {
 	return rand.Float32() < f.critChance
 }
 
-// Get player and enemy, simulate the fight and return a fight log
-func Simulate(playerData data.User, enemyData data.User) string {
+// Simulate the fight and return a fight log and a boolean indicating if the player won
+func Simulate(player *Fighter, enemy *Fighter) (string, bool) {
 	var fightLog string
-	player := NewFighter(playerData)
-	enemy := NewFighter(enemyData)
 
 	// Initial magic damage
 	fightLog += "Initial Magic Damage:\n"
 	if player.magicDamage > enemy.magicDamage {
 		enemy.health -= player.magicDamage
-		fightLog += fmt.Sprintf("%s deals %f magic damage to %s. %s's health is now %f.\n", player.name, player.magicDamage, enemy.name, enemy.name, enemy.health)
+		fightLog += fmt.Sprintf("%s deals %d magic damage to %s. %s's health is now %d.\n",
+			player.name, int(player.magicDamage), enemy.name, enemy.name, int(math.Round(float64(enemy.health))))
 	} else {
 		player.health -= enemy.magicDamage
-		fightLog += fmt.Sprintf("%s deals %f magic damage to %s. %s's health is now %f.\n", enemy.name, enemy.magicDamage, player.name, player.name, player.health)
+		fightLog += fmt.Sprintf("%s deals %d magic damage to %s. %s's health is now %d.\n",
+			enemy.name, int(enemy.magicDamage), player.name, player.name, int(math.Round(float64(player.health))))
 	}
 
 	// Determine who hits first
@@ -55,37 +66,40 @@ func Simulate(playerData data.User, enemyData data.User) string {
 		damage := first.dealDamage()
 		if first.criticalHit() {
 			damage *= 2
-			fightLog += fmt.Sprintf("Critical hit! ")
+			fightLog += "Critical hit! "
 		}
 		second.health -= damage
-		fightLog += fmt.Sprintf("%s deals %f damage to %s. %s's health is now %f.\n", first.name, damage, second.name, second.name, second.health)
+		fightLog += fmt.Sprintf("%s deals %d damage to %s. %s's health is now %d.\n",
+			first.name, int(math.Round(float64(damage))), second.name, second.name, int(math.Round(float64(second.health))))
 
 		if second.health <= 0 {
 			fightLog += fmt.Sprintf("%s is defeated!\n", second.name)
-			break
+			return fightLog, first == player
 		}
 
 		// Second attack
 		damage = second.dealDamage()
 		if second.criticalHit() {
 			damage *= 2
-			fightLog += fmt.Sprintf("Critical hit! ")
+			fightLog += "Critical hit! "
 		}
 		first.health -= damage
-		fightLog += fmt.Sprintf("%s deals %f damage to %s. %s's health is now %f.\n", second.name, damage, first.name, first.name, first.health)
+		fightLog += fmt.Sprintf("%s deals %d damage to %s. %s's health is now %d.\n",
+			second.name, int(math.Round(float64(damage))), first.name, first.name, int(math.Round(float64(first.health))))
 
 		if first.health <= 0 {
 			fightLog += fmt.Sprintf("%s is defeated!\n", first.name)
-			break
+			return fightLog, second == player
 		}
 
 		round++
 	}
 
-	return fightLog
+	// If somehow the loop exits without either being defeated
+	return fightLog, false
 }
 
-func NewFighter(playerData data.User) *Fighter {
+func NewFighterFromUser(playerData data.User) *Fighter {
 	return &Fighter{
 		name:          playerData.Name,
 		health:        float32(playerData.Constitution) + 100,
@@ -94,5 +108,17 @@ func NewFighter(playerData data.User) *Fighter {
 		critChance:    float32(playerData.Dexterity) * 0.01,
 		magicDamage:   float32(playerData.Intelligence),
 		hitFirstIndex: float32(playerData.Dexterity) + float32(playerData.Level),
+	}
+}
+
+func NewFighterFromMonster(monster data.GeneratedMonster) *Fighter {
+	return &Fighter{
+		name:          monster.Name,
+		health:        monster.Constitution + 100,
+		damageMin:     monster.Strength / 2,
+		damageMax:     monster.Strength,
+		critChance:    monster.Dexterity * 0.01,
+		magicDamage:   monster.Intelligence,
+		hitFirstIndex: monster.Dexterity + float32(monster.Level),
 	}
 }

@@ -3,6 +3,7 @@ package main
 import (
 	"browser-mmo-backend/internal/constants"
 	"browser-mmo-backend/internal/data"
+	"browser-mmo-backend/internal/fightsimulator"
 	"browser-mmo-backend/internal/services"
 	"net/http"
 
@@ -109,13 +110,32 @@ func (app *application) collectCurrentQuestRewardsHandler(c *gin.Context) {
 	userValue, _ := c.Get("user")
 	user, _ := userValue.(*data.User)
 
-	err := app.models.Quests.CollectCurrentQuestRewards(user)
+	generatedMonster, err := services.GenerateMonster(app.models.Monsters, *user)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, constants.InternalServerError)
 		return
 	}
 
-	c.IndentedJSON(http.StatusOK, "rewards collected")
+	userFighter := fightsimulator.NewFighterFromUser(*user)
+	monsterFighter := fightsimulator.NewFighterFromMonster(generatedMonster)
+
+	fightLog, playerWon := fightsimulator.Simulate(userFighter, monsterFighter)
+
+	if playerWon {
+		err = app.models.Quests.CollectCurrentQuestRewards(user)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, constants.InternalServerError)
+			return
+		}
+	} else {
+		err = app.models.Quests.CancelCurrentQuest(user)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, constants.InternalServerError)
+			return
+		}
+	}
+
+	c.IndentedJSON(http.StatusOK, fightLog)
 }
 
 func (app *application) resetQuestsHandler(c *gin.Context) {
