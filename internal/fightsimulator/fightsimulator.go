@@ -8,13 +8,13 @@ import (
 )
 
 type Fighter struct {
-	name          string
-	health        float32
-	damageMin     float32
-	damageMax     float32
-	critChance    float32
-	magicDamage   float32
-	hitFirstIndex float32
+	Name          string
+	Health        float32
+	DamageMin     float32
+	DamageMax     float32
+	CritChance    float32
+	MagicDamage   float32
+	HitFirstIndex float32
 }
 
 type FighterData struct {
@@ -28,38 +28,38 @@ type FighterData struct {
 }
 
 func (f *Fighter) dealDamage() float32 {
-	return f.damageMin + rand.Float32()*(f.damageMax-f.damageMin)
+	return f.DamageMin + rand.Float32()*(f.DamageMax-f.DamageMin)
 }
 
 func (f *Fighter) criticalHit() bool {
-	return rand.Float32() < f.critChance
+	return rand.Float32() < f.CritChance
 }
 
 // Simulate the fight and return a fight log and a boolean indicating if the player won
-func Simulate(player *Fighter, enemy *Fighter) (string, bool) {
+func Simulate(player Fighter, enemy Fighter) (string, bool) {
 	var fightLog string
 
 	// Initial magic damage
 	fightLog += "Initial Magic Damage:\n"
-	if player.magicDamage > enemy.magicDamage {
-		enemy.health -= player.magicDamage
+	if player.MagicDamage > enemy.MagicDamage {
+		enemy.Health -= player.MagicDamage
 		fightLog += fmt.Sprintf("%s deals %d magic damage to %s. %s's health is now %d.\n",
-			player.name, int(player.magicDamage), enemy.name, enemy.name, int(math.Round(float64(enemy.health))))
+			player.Name, int(player.MagicDamage), enemy.Name, enemy.Name, int(math.Round(float64(enemy.Health))))
 	} else {
-		player.health -= enemy.magicDamage
+		player.Health -= enemy.MagicDamage
 		fightLog += fmt.Sprintf("%s deals %d magic damage to %s. %s's health is now %d.\n",
-			enemy.name, int(enemy.magicDamage), player.name, player.name, int(math.Round(float64(player.health))))
+			enemy.Name, int(enemy.MagicDamage), player.Name, player.Name, int(math.Round(float64(player.Health))))
 	}
 
 	// Determine who hits first
 	first, second := player, enemy
-	if enemy.hitFirstIndex > player.hitFirstIndex {
+	if enemy.HitFirstIndex > player.HitFirstIndex {
 		first, second = enemy, player
 	}
 
 	// Fight rounds
 	round := 1
-	for player.health > 0 && enemy.health > 0 {
+	for player.Health > 0 && enemy.Health > 0 {
 		fightLog += fmt.Sprintf("Round %d:\n", round)
 
 		// First attack
@@ -68,12 +68,12 @@ func Simulate(player *Fighter, enemy *Fighter) (string, bool) {
 			damage *= 2
 			fightLog += "Critical hit! "
 		}
-		second.health -= damage
+		second.Health -= damage
 		fightLog += fmt.Sprintf("%s deals %d damage to %s. %s's health is now %d.\n",
-			first.name, int(math.Round(float64(damage))), second.name, second.name, int(math.Round(float64(second.health))))
+			first.Name, int(math.Round(float64(damage))), second.Name, second.Name, int(math.Round(float64(second.Health))))
 
-		if second.health <= 0 {
-			fightLog += fmt.Sprintf("%s is defeated!\n", second.name)
+		if second.Health <= 0 {
+			fightLog += fmt.Sprintf("%s is defeated!\n", second.Name)
 			return fightLog, first == player
 		}
 
@@ -83,12 +83,12 @@ func Simulate(player *Fighter, enemy *Fighter) (string, bool) {
 			damage *= 2
 			fightLog += "Critical hit! "
 		}
-		first.health -= damage
+		first.Health -= damage
 		fightLog += fmt.Sprintf("%s deals %d damage to %s. %s's health is now %d.\n",
-			second.name, int(math.Round(float64(damage))), first.name, first.name, int(math.Round(float64(first.health))))
+			second.Name, int(math.Round(float64(damage))), first.Name, first.Name, int(math.Round(float64(first.Health))))
 
-		if first.health <= 0 {
-			fightLog += fmt.Sprintf("%s is defeated!\n", first.name)
+		if first.Health <= 0 {
+			fightLog += fmt.Sprintf("%s is defeated!\n", first.Name)
 			return fightLog, second == player
 		}
 
@@ -99,26 +99,26 @@ func Simulate(player *Fighter, enemy *Fighter) (string, bool) {
 	return fightLog, false
 }
 
-func NewFighterFromUser(playerData data.User) *Fighter {
-	return &Fighter{
-		name:          playerData.Name,
-		health:        float32(playerData.Constitution) + 100,
-		damageMin:     float32(playerData.Strength) / 2,
-		damageMax:     float32(playerData.Strength),
-		critChance:    float32(playerData.Dexterity) * 0.01,
-		magicDamage:   float32(playerData.Intelligence),
-		hitFirstIndex: float32(playerData.Dexterity) + float32(playerData.Level),
+func NewFighterFromUser(playerData data.User) Fighter {
+	return Fighter{
+		Name:          playerData.Name,
+		Health:        float32(playerData.Constitution) + 100,
+		DamageMin:     float32(playerData.Strength) / 2,
+		DamageMax:     float32(playerData.Strength),
+		CritChance:    float32(playerData.Dexterity) * 0.01,
+		MagicDamage:   float32(playerData.Intelligence),
+		HitFirstIndex: float32(playerData.Dexterity) + float32(playerData.Level),
 	}
 }
 
-func NewFighterFromMonster(monster data.GeneratedMonster) *Fighter {
-	return &Fighter{
-		name:          monster.Name,
-		health:        monster.Constitution + 100,
-		damageMin:     monster.Strength / 2,
-		damageMax:     monster.Strength,
-		critChance:    monster.Dexterity * 0.01,
-		magicDamage:   monster.Intelligence,
-		hitFirstIndex: monster.Dexterity + float32(monster.Level),
+func NewFighterFromMonster(monster data.GeneratedMonster) Fighter {
+	return Fighter{
+		Name:          monster.Name,
+		Health:        monster.Constitution + 100,
+		DamageMin:     monster.Strength / 2,
+		DamageMax:     monster.Strength,
+		CritChance:    monster.Dexterity * 0.01,
+		MagicDamage:   monster.Intelligence,
+		HitFirstIndex: monster.Dexterity + float32(monster.Level),
 	}
 }

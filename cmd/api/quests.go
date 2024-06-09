@@ -135,7 +135,15 @@ func (app *application) collectCurrentQuestRewardsHandler(c *gin.Context) {
 		}
 	}
 
-	c.IndentedJSON(http.StatusOK, fightLog)
+	c.IndentedJSON(http.StatusOK,
+		gin.H{
+			"fightLog":        fightLog,
+			"fightWon":        playerWon,
+			"monsterName":     generatedMonster.Name,
+			"monsterImageUrl": generatedMonster.ImageURL,
+			"monsterLevel":    generatedMonster.Level,
+			"monsterHealth":   monsterFighter.Health,
+		})
 }
 
 func (app *application) resetQuestsHandler(c *gin.Context) {
