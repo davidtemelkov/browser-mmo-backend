@@ -620,6 +620,7 @@ func getItemAWSAttributes(item Item) map[string]types.AttributeValue {
 	switch item.WhatItem {
 	case constants.Weapon:
 		attributes = map[string]types.AttributeValue{
+			"WhatItem":                       &types.AttributeValueMemberS{Value: item.WhatItem},
 			constants.NameAttribute:          &types.AttributeValueMemberS{Value: item.Name},
 			constants.LevelAttribute:         &types.AttributeValueMemberN{Value: strconv.Itoa(item.Level)},
 			constants.DamageMinAttribute:     &types.AttributeValueMemberN{Value: strconv.Itoa(item.DamageMin)},
@@ -635,6 +636,7 @@ func getItemAWSAttributes(item Item) map[string]types.AttributeValue {
 		}
 	case constants.Shield:
 		attributes = map[string]types.AttributeValue{
+			"WhatItem":                      &types.AttributeValueMemberS{Value: item.WhatItem},
 			constants.NameAttribute:         &types.AttributeValueMemberS{Value: item.Name},
 			constants.LevelAttribute:        &types.AttributeValueMemberN{Value: strconv.Itoa(item.Level)},
 			constants.BlockChanceAttribute:  &types.AttributeValueMemberN{Value: strconv.Itoa(item.BlockChance)},
@@ -648,6 +650,7 @@ func getItemAWSAttributes(item Item) map[string]types.AttributeValue {
 		}
 	case constants.Accessory:
 		attributes = map[string]types.AttributeValue{
+			"WhatItem":                      &types.AttributeValueMemberS{Value: item.WhatItem},
 			constants.NameAttribute:         &types.AttributeValueMemberS{Value: item.Name},
 			constants.TypeAttribute:         &types.AttributeValueMemberS{Value: item.Type},
 			constants.LevelAttribute:        &types.AttributeValueMemberN{Value: strconv.Itoa(item.Level)},
@@ -661,6 +664,7 @@ func getItemAWSAttributes(item Item) map[string]types.AttributeValue {
 		}
 	case constants.Armour:
 		attributes = map[string]types.AttributeValue{
+			"WhatItem":                      &types.AttributeValueMemberS{Value: item.WhatItem},
 			constants.NameAttribute:         &types.AttributeValueMemberS{Value: item.Name},
 			constants.TypeAttribute:         &types.AttributeValueMemberS{Value: item.Type},
 			constants.LevelAttribute:        &types.AttributeValueMemberN{Value: strconv.Itoa(item.Level)},
