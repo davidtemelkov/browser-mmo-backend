@@ -17,7 +17,14 @@ var ITEM_TYPES = []string{
 	constants.Ring,
 }
 
-func GenerateItem(wp data.WeaponModel, acm data.AccessoryModel, sm data.ShieldModel, arm data.ArmourModel) error {
+func GenerateItem(wp data.WeaponModel,
+	acm data.AccessoryModel,
+	sm data.ShieldModel,
+	arm data.ArmourModel,
+	um data.UserModel,
+) (data.Item, error) {
+	var item data.Item
+
 	randIndex := rand.Intn(len(ITEM_TYPES))
 	selectedItemType := ITEM_TYPES[randIndex]
 	var statType int
@@ -47,21 +54,22 @@ func GenerateItem(wp data.WeaponModel, acm data.AccessoryModel, sm data.ShieldMo
 		if isLegendary {
 			legendaryWeapons, err := wp.GetAllLegendaryWeapons()
 			if err != nil {
-				return err
+				return data.Item{}, err
 			}
 			randIndex = rand.Intn(len(legendaryWeapons))
 			baseWeapon = legendaryWeapons[randIndex]
 		} else {
 			basicWeapons, err := wp.GetAllBasicWeapons()
 			if err != nil {
-				return err
+				return data.Item{}, err
 			}
 			randIndex = rand.Intn(len(basicWeapons))
 			baseWeapon = basicWeapons[randIndex]
 		}
 
 		// TODO: Add different generation logic based upon isLegendary and user stats
-		generatedWeapon := data.GeneratedWeapon{
+		item = data.Item{
+			WhatItem:      constants.Weapon,
 			Name:          baseWeapon.BaseName + suffix,
 			Level:         1,
 			DamageMin:     1,
@@ -76,29 +84,29 @@ func GenerateItem(wp data.WeaponModel, acm data.AccessoryModel, sm data.ShieldMo
 			Price:         1,
 		}
 
-		// TODO: Add generated item to user's inventory/store
-
+		return item, nil
 	case constants.Shield:
 		var baseShield data.Shield
 
 		if isLegendary {
 			legendaryShields, err := sm.GetAllLegendaryShields()
 			if err != nil {
-				return err
+				return data.Item{}, err
 			}
 			randIndex = rand.Intn(len(legendaryShields))
 			baseShield = legendaryShields[randIndex]
 		} else {
 			basicShields, err := sm.GetAllBasicShields()
 			if err != nil {
-				return err
+				return data.Item{}, err
 			}
 			randIndex = rand.Intn(len(basicShields))
 			baseShield = basicShields[randIndex]
 		}
 
 		// TODO: Add different generation logic based upon isLegendary and user stats
-		generatedShield := data.GeneratedShield{
+		item = data.Item{
+			WhatItem:     constants.Shield,
 			Name:         baseShield.BaseName + suffix,
 			Level:        1,
 			BlockChance:  1,
@@ -111,29 +119,29 @@ func GenerateItem(wp data.WeaponModel, acm data.AccessoryModel, sm data.ShieldMo
 			Price:        1,
 		}
 
-		// TODO: Add generated item to user's inventory/store
-
+		return item, nil
 	case constants.Accessory:
 		var baseAccessory data.Accessory
 
 		if isLegendary {
 			legendaryAccessories, err := acm.GetAllLegendaryAccessoriesOfType(selectedItemType)
 			if err != nil {
-				return err
+				return data.Item{}, nil
 			}
 			randIndex = rand.Intn(len(legendaryAccessories))
 			baseAccessory = legendaryAccessories[randIndex]
 		} else {
 			basicAccessories, err := acm.GetAllBasicAccessoriesOfType(selectedItemType)
 			if err != nil {
-				return err
+				return data.Item{}, err
 			}
 			randIndex = rand.Intn(len(basicAccessories))
 			baseAccessory = basicAccessories[randIndex]
 		}
 
 		// TODO: Add different generation logic based upon isLegendary and user stats
-		generatedAccessory := data.GeneratedAccessory{
+		item = data.Item{
+			WhatItem:     constants.Accessory,
 			Type:         selectedItemType,
 			Name:         baseAccessory.BaseName + suffix,
 			Level:        1,
@@ -146,29 +154,29 @@ func GenerateItem(wp data.WeaponModel, acm data.AccessoryModel, sm data.ShieldMo
 			Price:        1,
 		}
 
-		// TODO: Add generated item to user's inventory/store
-
+		return item, nil
 	default:
 		var baseArmour data.Armour
 
 		if isLegendary {
 			legendaryArmours, err := arm.GetAllLegendaryArmoursOfType(selectedItemType)
 			if err != nil {
-				return err
+				return data.Item{}, err
 			}
 			randIndex = rand.Intn(len(legendaryArmours))
 			baseArmour = legendaryArmours[randIndex]
 		} else {
 			basicArmours, err := arm.GetAllBasicArmoursOfType(selectedItemType)
 			if err != nil {
-				return err
+				return data.Item{}, err
 			}
 			randIndex = rand.Intn(len(basicArmours))
 			baseArmour = basicArmours[randIndex]
 		}
 
 		// TODO: Add different generation logic based upon isLegendary and user stats
-		generatedArmour := data.GeneratedAccessory{
+		item = data.Item{
+			WhatItem:     constants.Armour,
 			Type:         selectedItemType,
 			Name:         baseArmour.BaseName + suffix,
 			Level:        1,
@@ -181,8 +189,6 @@ func GenerateItem(wp data.WeaponModel, acm data.AccessoryModel, sm data.ShieldMo
 			Price:        1,
 		}
 
-		// TODO: Add generated item to user's inventory/store
+		return item, nil
 	}
-
-	return nil
 }

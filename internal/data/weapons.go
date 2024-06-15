@@ -40,9 +40,10 @@ type Weapon struct {
 
 // Temporary placement
 type Item struct {
-	ID            string `json:"id"`
+	WhatItem      string `json:"whatItem"`
 	Name          string `json:"name"`
-	Level         string `json:"level"`
+	Type          string `json:"type"`
+	Level         int    `json:"level"`
 	DamageMin     int    `json:"damageMin"`
 	DamageMax     int    `json:"damageMax"`
 	DamageAverage int    `json:"damageAverage"`

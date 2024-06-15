@@ -54,4 +54,5 @@ const (
 	DuplicateEmailError       = "duplicate email"
 	UserNotFoundError         = "user not found"
 	FailedLoginError          = "invalid email or password"
+	NoAvailableSlotError      = "no slot available"
 )

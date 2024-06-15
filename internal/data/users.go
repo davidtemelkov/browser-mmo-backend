@@ -5,6 +5,7 @@ import (
 	"browser-mmo-backend/internal/validator"
 	"context"
 	"errors"
+	"fmt"
 	"strconv"
 	"strings"
 
@@ -190,7 +191,6 @@ func (um UserModel) Insert(user *User) error {
 	for key, value := range user.Items {
 		item[constants.ItemsAttribute].(*types.AttributeValueMemberM).Value[key] = &types.AttributeValueMemberM{
 			Value: map[string]types.AttributeValue{
-				"ID":   &types.AttributeValueMemberS{Value: value.ID},
 				"Name": &types.AttributeValueMemberS{Value: value.Name},
 			},
 		}
@@ -199,7 +199,6 @@ func (um UserModel) Insert(user *User) error {
 	for key, value := range user.WeaponShop {
 		item[constants.WeaponShopAttribute].(*types.AttributeValueMemberM).Value[key] = &types.AttributeValueMemberM{
 			Value: map[string]types.AttributeValue{
-				"ID":   &types.AttributeValueMemberS{Value: value.ID},
 				"Name": &types.AttributeValueMemberS{Value: value.Name},
 			},
 		}
@@ -208,7 +207,6 @@ func (um UserModel) Insert(user *User) error {
 	for key, value := range user.MagicShop {
 		item[constants.MagicShopAttribute].(*types.AttributeValueMemberM).Value[key] = &types.AttributeValueMemberM{
 			Value: map[string]types.AttributeValue{
-				"ID":   &types.AttributeValueMemberS{Value: value.ID},
 				"Name": &types.AttributeValueMemberS{Value: value.Name},
 			},
 		}
@@ -217,7 +215,6 @@ func (um UserModel) Insert(user *User) error {
 	for key, value := range user.Inventory {
 		item[constants.InventoryAttribute].(*types.AttributeValueMemberM).Value[key] = &types.AttributeValueMemberM{
 			Value: map[string]types.AttributeValue{
-				"ID":   &types.AttributeValueMemberS{Value: value.ID},
 				"Name": &types.AttributeValueMemberS{Value: value.Name},
 			},
 		}
@@ -471,4 +468,211 @@ func (um UserModel) UpgradeIntelligence(user *User) (*User, error) {
 	}
 
 	return user, nil
+}
+
+func (um UserModel) AddItemToInventory(user *User, item Item) error {
+	var slotKey string
+	for key, slotItem := range user.Inventory {
+		if slotItem.Price == 0 {
+			slotKey = key
+			break
+		}
+	}
+
+	if slotKey == "" {
+		return errors.New(constants.NoAvailableSlotError)
+	}
+
+	key := map[string]types.AttributeValue{
+		constants.PK: &types.AttributeValueMemberS{
+			Value: constants.UserPrefix + user.Email,
+		},
+		constants.SK: &types.AttributeValueMemberS{
+			Value: constants.UserPrefix + user.Email,
+		},
+	}
+
+	updateExpression := fmt.Sprintf("SET %s.#slot = :item", constants.InventoryAttribute)
+	expressionAttributeValues := map[string]types.AttributeValue{
+		":item": &types.AttributeValueMemberM{
+			Value: getItemAWSAttributes(item),
+		},
+	}
+	expressionAttributeNames := map[string]string{
+		"#slot": slotKey,
+	}
+
+	input := &dynamodb.UpdateItemInput{
+		TableName:                 aws.String(constants.TableName),
+		Key:                       key,
+		UpdateExpression:          aws.String(updateExpression),
+		ExpressionAttributeValues: expressionAttributeValues,
+		ExpressionAttributeNames:  expressionAttributeNames,
+	}
+
+	_, err := um.DB.UpdateItem(um.CTX, input)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (um UserModel) AddItemToWeaponShop(user *User, item Item) error {
+	var slotKey string
+	for key, slotItem := range user.WeaponShop {
+		if slotItem.Price == 0 {
+			slotKey = key
+			break
+		}
+	}
+
+	if slotKey == "" {
+		return errors.New(constants.NoAvailableSlotError)
+	}
+
+	key := map[string]types.AttributeValue{
+		constants.PK: &types.AttributeValueMemberS{
+			Value: constants.UserPrefix + user.Email,
+		},
+		constants.SK: &types.AttributeValueMemberS{
+			Value: constants.UserPrefix + user.Email,
+		},
+	}
+
+	updateExpression := fmt.Sprintf("SET %s.#slot = :item", constants.WeaponShopAttribute)
+	expressionAttributeValues := map[string]types.AttributeValue{
+		":item": &types.AttributeValueMemberM{
+			Value: getItemAWSAttributes(item),
+		},
+	}
+	expressionAttributeNames := map[string]string{
+		"#slot": slotKey,
+	}
+
+	input := &dynamodb.UpdateItemInput{
+		TableName:                 aws.String(constants.TableName),
+		Key:                       key,
+		UpdateExpression:          aws.String(updateExpression),
+		ExpressionAttributeValues: expressionAttributeValues,
+		ExpressionAttributeNames:  expressionAttributeNames,
+	}
+
+	_, err := um.DB.UpdateItem(um.CTX, input)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (um UserModel) AddItemToMagicShop(user *User, item Item) error {
+	var slotKey string
+	for key, slotItem := range user.MagicShop {
+		if slotItem.Price == 0 {
+			slotKey = key
+			break
+		}
+	}
+
+	if slotKey == "" {
+		return errors.New(constants.NoAvailableSlotError)
+	}
+
+	key := map[string]types.AttributeValue{
+		constants.PK: &types.AttributeValueMemberS{
+			Value: constants.UserPrefix + user.Email,
+		},
+		constants.SK: &types.AttributeValueMemberS{
+			Value: constants.UserPrefix + user.Email,
+		},
+	}
+
+	updateExpression := fmt.Sprintf("SET %s.#slot = :item", constants.MagicShopAttribute)
+	expressionAttributeValues := map[string]types.AttributeValue{
+		":item": &types.AttributeValueMemberM{
+			Value: getItemAWSAttributes(item),
+		},
+	}
+	expressionAttributeNames := map[string]string{
+		"#slot": slotKey,
+	}
+
+	input := &dynamodb.UpdateItemInput{
+		TableName:                 aws.String(constants.TableName),
+		Key:                       key,
+		UpdateExpression:          aws.String(updateExpression),
+		ExpressionAttributeValues: expressionAttributeValues,
+		ExpressionAttributeNames:  expressionAttributeNames,
+	}
+
+	_, err := um.DB.UpdateItem(um.CTX, input)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func getItemAWSAttributes(item Item) map[string]types.AttributeValue {
+	var attributes = map[string]types.AttributeValue{}
+
+	switch item.WhatItem {
+	case constants.Weapon:
+		attributes = map[string]types.AttributeValue{
+			constants.NameAttribute:          &types.AttributeValueMemberS{Value: item.Name},
+			constants.LevelAttribute:         &types.AttributeValueMemberN{Value: strconv.Itoa(item.Level)},
+			constants.DamageMinAttribute:     &types.AttributeValueMemberN{Value: strconv.Itoa(item.DamageMin)},
+			constants.DamageMaxAttribute:     &types.AttributeValueMemberN{Value: strconv.Itoa(item.DamageMax)},
+			constants.DamageAverageAttribute: &types.AttributeValueMemberN{Value: strconv.Itoa(item.DamageAverage)},
+			constants.StrengthAttribute:      &types.AttributeValueMemberN{Value: strconv.Itoa(item.Strength)},
+			constants.DexterityAttribute:     &types.AttributeValueMemberN{Value: strconv.Itoa(item.Dexterity)},
+			constants.ConstitutionAttribute:  &types.AttributeValueMemberN{Value: strconv.Itoa(item.Constitution)},
+			constants.IntelligenceAttribute:  &types.AttributeValueMemberN{Value: strconv.Itoa(item.Intelligence)},
+			constants.IsLegendaryAttribute:   &types.AttributeValueMemberBOOL{Value: item.IsLegendary},
+			constants.ImageURLAttribute:      &types.AttributeValueMemberS{Value: item.ImageURL},
+			constants.PriceAttribute:         &types.AttributeValueMemberN{Value: strconv.Itoa(item.Price)},
+		}
+	case constants.Shield:
+		attributes = map[string]types.AttributeValue{
+			constants.NameAttribute:         &types.AttributeValueMemberS{Value: item.Name},
+			constants.LevelAttribute:        &types.AttributeValueMemberN{Value: strconv.Itoa(item.Level)},
+			constants.BlockChanceAttribute:  &types.AttributeValueMemberN{Value: strconv.Itoa(item.BlockChance)},
+			constants.StrengthAttribute:     &types.AttributeValueMemberN{Value: strconv.Itoa(item.Strength)},
+			constants.DexterityAttribute:    &types.AttributeValueMemberN{Value: strconv.Itoa(item.Dexterity)},
+			constants.ConstitutionAttribute: &types.AttributeValueMemberN{Value: strconv.Itoa(item.Constitution)},
+			constants.IntelligenceAttribute: &types.AttributeValueMemberN{Value: strconv.Itoa(item.Intelligence)},
+			constants.IsLegendaryAttribute:  &types.AttributeValueMemberBOOL{Value: item.IsLegendary},
+			constants.ImageURLAttribute:     &types.AttributeValueMemberS{Value: item.ImageURL},
+			constants.PriceAttribute:        &types.AttributeValueMemberN{Value: strconv.Itoa(item.Price)},
+		}
+	case constants.Accessory:
+		attributes = map[string]types.AttributeValue{
+			constants.NameAttribute:         &types.AttributeValueMemberS{Value: item.Name},
+			constants.TypeAttribute:         &types.AttributeValueMemberS{Value: item.Type},
+			constants.LevelAttribute:        &types.AttributeValueMemberN{Value: strconv.Itoa(item.Level)},
+			constants.StrengthAttribute:     &types.AttributeValueMemberN{Value: strconv.Itoa(item.Strength)},
+			constants.DexterityAttribute:    &types.AttributeValueMemberN{Value: strconv.Itoa(item.Dexterity)},
+			constants.ConstitutionAttribute: &types.AttributeValueMemberN{Value: strconv.Itoa(item.Constitution)},
+			constants.IntelligenceAttribute: &types.AttributeValueMemberN{Value: strconv.Itoa(item.Intelligence)},
+			constants.IsLegendaryAttribute:  &types.AttributeValueMemberBOOL{Value: item.IsLegendary},
+			constants.ImageURLAttribute:     &types.AttributeValueMemberS{Value: item.ImageURL},
+			constants.PriceAttribute:        &types.AttributeValueMemberN{Value: strconv.Itoa(item.Price)},
+		}
+	case constants.Armour:
+		attributes = map[string]types.AttributeValue{
+			constants.NameAttribute:         &types.AttributeValueMemberS{Value: item.Name},
+			constants.TypeAttribute:         &types.AttributeValueMemberS{Value: item.Type},
+			constants.LevelAttribute:        &types.AttributeValueMemberN{Value: strconv.Itoa(item.Level)},
+			constants.StrengthAttribute:     &types.AttributeValueMemberN{Value: strconv.Itoa(item.Strength)},
+			constants.DexterityAttribute:    &types.AttributeValueMemberN{Value: strconv.Itoa(item.Dexterity)},
+			constants.ConstitutionAttribute: &types.AttributeValueMemberN{Value: strconv.Itoa(item.Constitution)},
+			constants.IntelligenceAttribute: &types.AttributeValueMemberN{Value: strconv.Itoa(item.Intelligence)},
+			constants.IsLegendaryAttribute:  &types.AttributeValueMemberBOOL{Value: item.IsLegendary},
+			constants.ImageURLAttribute:     &types.AttributeValueMemberS{Value: item.ImageURL},
+			constants.PriceAttribute:        &types.AttributeValueMemberN{Value: strconv.Itoa(item.Price)},
+		}
+	}
+
+	return attributes
 }

@@ -4,6 +4,7 @@ import (
 	"browser-mmo-backend/internal/constants"
 	"browser-mmo-backend/internal/data"
 	"browser-mmo-backend/internal/fightsimulator"
+	"browser-mmo-backend/internal/items"
 	"browser-mmo-backend/internal/monsters"
 	"browser-mmo-backend/internal/quests"
 	"net/http"
@@ -125,6 +126,23 @@ func (app *application) collectCurrentQuestRewardsHandler(c *gin.Context) {
 	if playerWon {
 		err = app.models.Quests.CollectCurrentQuestRewards(user)
 		if err != nil {
+			c.JSON(http.StatusInternalServerError, constants.InternalServerError)
+			return
+		}
+
+		item, err := items.GenerateItem(app.models.Weapons, app.models.Accessories, app.models.Shields, app.models.Armours, app.models.Users)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, constants.InternalServerError)
+			return
+		}
+
+		err = app.models.Users.AddItemToInventory(user, item)
+		if err != nil {
+			if err.Error() == constants.NoAvailableSlotError {
+				c.JSON(http.StatusConflict, constants.NoAvailableSlotError)
+				return
+			}
+
 			c.JSON(http.StatusInternalServerError, constants.InternalServerError)
 			return
 		}

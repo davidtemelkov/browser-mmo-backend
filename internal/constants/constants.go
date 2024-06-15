@@ -57,6 +57,7 @@ const (
 	BaseNameAttribute    = "BaseName"
 	MinLevelAttribute    = "MinLevel"
 	IsLegendaryAttribute = "IsLegendary"
+	PriceAttribute       = "Price"
 	TypeAttribute        = "Type"
 	Ring                 = "Ring"
 	Amulet               = "Amulet"
@@ -74,6 +75,9 @@ const (
 	DamageLowRangeMaxAttribute  = "DMGLowMax"
 	DamageHighRangeMinAttribute = "DMGHighMix"
 	DamageHighRangeMaxAttribute = "DMGHighMax"
+	DamageMinAttribute          = "DamageMin"
+	DamageMaxAttribute          = "DamageMax"
+	DamageAverageAttribute      = "DamageAverage"
 )
 
 // Accessory DB constants
@@ -96,6 +100,7 @@ const (
 	Shield                        = "SHIELD"
 	ShieldBlockChanceMinAttribute = "ShieldMinBlockChance"
 	ShieldBlockChanceMaxAttribute = "ShieldMaxBlockChance"
+	BlockChanceAttribute          = "BlockChance"
 )
 
 // Quest DB constants
