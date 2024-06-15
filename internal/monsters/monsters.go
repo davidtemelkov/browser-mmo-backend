@@ -1,4 +1,4 @@
-package services
+package monsters
 
 import (
 	"browser-mmo-backend/internal/data"

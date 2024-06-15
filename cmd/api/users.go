@@ -3,7 +3,7 @@ package main
 import (
 	"browser-mmo-backend/internal/constants"
 	"browser-mmo-backend/internal/data"
-	"browser-mmo-backend/internal/services"
+	"browser-mmo-backend/internal/users"
 	"browser-mmo-backend/internal/utils"
 	"browser-mmo-backend/internal/validator"
 	"net/http"
@@ -12,14 +12,14 @@ import (
 )
 
 func (app *application) registerUserHandler(c *gin.Context) {
-	var input services.UserInput
+	var input users.UserInput
 
 	if err := c.BindJSON(&input); err != nil {
 		c.JSON(http.StatusInternalServerError, constants.InvalidJSONFormatError)
 		return
 	}
 
-	user := services.GetInitialUser(input)
+	user := users.GetInitialUser(input)
 
 	err := user.Password.Set(input.Password)
 	if err != nil {

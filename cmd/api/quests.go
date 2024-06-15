@@ -4,7 +4,8 @@ import (
 	"browser-mmo-backend/internal/constants"
 	"browser-mmo-backend/internal/data"
 	"browser-mmo-backend/internal/fightsimulator"
-	"browser-mmo-backend/internal/services"
+	"browser-mmo-backend/internal/monsters"
+	"browser-mmo-backend/internal/quests"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -47,7 +48,7 @@ func (app *application) generateQuestsHandler(c *gin.Context) {
 		return
 	}
 
-	generatedQuests, err := services.GenerateQuestsForUser(allQuests)
+	generatedQuests, err := quests.GenerateQuestsForUser(allQuests)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, constants.InternalServerError)
 		return
@@ -110,7 +111,7 @@ func (app *application) collectCurrentQuestRewardsHandler(c *gin.Context) {
 	userValue, _ := c.Get("user")
 	user, _ := userValue.(*data.User)
 
-	generatedMonster, err := services.GenerateMonster(app.models.Monsters, *user)
+	generatedMonster, err := monsters.GenerateMonster(app.models.Monsters, *user)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, constants.InternalServerError)
 		return

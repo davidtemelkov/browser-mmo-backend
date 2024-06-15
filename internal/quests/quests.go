@@ -1,4 +1,4 @@
-package services
+package quests
 
 import (
 	"browser-mmo-backend/internal/data"
