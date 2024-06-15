@@ -109,22 +109,35 @@ func (wm WeaponModel) Insert(weapon *Weapon) error {
 	return nil
 }
 
-// Query weapons by legendary status
 func (wm WeaponModel) queryWeaponsByIsLegendary(isLegendary bool) ([]Weapon, error) {
-	filterExpression := "IsLegendary = :isLegendary"
+	keyConditionExpression := "#pk = :pk AND begins_with(#sk, :sk)"
+	expressionAttributeNames := map[string]string{
+		"#pk": constants.PK,
+		"#sk": constants.SK,
+	}
 	expressionAttributeValues := map[string]types.AttributeValue{
+		":pk": &types.AttributeValueMemberS{
+			Value: constants.ItemPrefix + constants.Weapon,
+		},
+		":sk": &types.AttributeValueMemberS{
+			Value: constants.WeaponPrefix,
+		},
 		":isLegendary": &types.AttributeValueMemberBOOL{
 			Value: isLegendary,
 		},
 	}
 
-	queryInput := &dynamodb.ScanInput{
+	filterExpression := "IsLegendary = :isLegendary"
+
+	queryInput := &dynamodb.QueryInput{
 		TableName:                 aws.String(constants.TableName),
-		FilterExpression:          aws.String(filterExpression),
+		KeyConditionExpression:    aws.String(keyConditionExpression),
+		ExpressionAttributeNames:  expressionAttributeNames,
 		ExpressionAttributeValues: expressionAttributeValues,
+		FilterExpression:          aws.String(filterExpression),
 	}
 
-	result, err := wm.DB.Scan(wm.CTX, queryInput)
+	result, err := wm.DB.Query(wm.CTX, queryInput)
 	if err != nil {
 		return nil, err
 	}

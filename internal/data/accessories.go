@@ -77,8 +77,18 @@ func (am AccessoryModel) Insert(accessory *Accessory) error {
 }
 
 func (am AccessoryModel) queryAccessoriesByTypeAndIsLegendary(accessoryType string, isLegendary bool) ([]Accessory, error) {
-	filterExpression := "Type = :type AND IsLegendary = :isLegendary"
+	keyConditionExpression := "#pk = :pk AND begins_with(#sk, :sk)"
+	expressionAttributeNames := map[string]string{
+		"#pk": constants.PK,
+		"#sk": constants.SK,
+	}
 	expressionAttributeValues := map[string]types.AttributeValue{
+		":pk": &types.AttributeValueMemberS{
+			Value: constants.ItemPrefix + constants.Accessory,
+		},
+		":sk": &types.AttributeValueMemberS{
+			Value: constants.AccessoryPrefix,
+		},
 		":type": &types.AttributeValueMemberS{
 			Value: accessoryType,
 		},
@@ -87,13 +97,17 @@ func (am AccessoryModel) queryAccessoriesByTypeAndIsLegendary(accessoryType stri
 		},
 	}
 
-	queryInput := &dynamodb.ScanInput{
+	filterExpression := "Type = :type AND IsLegendary = :isLegendary"
+
+	queryInput := &dynamodb.QueryInput{
 		TableName:                 aws.String(constants.TableName),
-		FilterExpression:          aws.String(filterExpression),
+		KeyConditionExpression:    aws.String(keyConditionExpression),
+		ExpressionAttributeNames:  expressionAttributeNames,
 		ExpressionAttributeValues: expressionAttributeValues,
+		FilterExpression:          aws.String(filterExpression),
 	}
 
-	result, err := am.DB.Scan(am.CTX, queryInput)
+	result, err := am.DB.Query(am.CTX, queryInput)
 	if err != nil {
 		return nil, err
 	}

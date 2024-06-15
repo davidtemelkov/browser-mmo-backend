@@ -80,22 +80,35 @@ func (sm ShieldModel) Insert(shield *Shield) error {
 	return nil
 }
 
-// Query shields by legendary status
 func (sm ShieldModel) queryShieldsByIsLegendary(isLegendary bool) ([]Shield, error) {
-	filterExpression := "IsLegendary = :isLegendary"
+	keyConditionExpression := "#pk = :pk AND begins_with(#sk, :sk)"
+	expressionAttributeNames := map[string]string{
+		"#pk": constants.PK,
+		"#sk": constants.SK,
+	}
 	expressionAttributeValues := map[string]types.AttributeValue{
+		":pk": &types.AttributeValueMemberS{
+			Value: constants.ItemPrefix + constants.Shield,
+		},
+		":sk": &types.AttributeValueMemberS{
+			Value: constants.Shield,
+		},
 		":isLegendary": &types.AttributeValueMemberBOOL{
 			Value: isLegendary,
 		},
 	}
 
-	queryInput := &dynamodb.ScanInput{
+	filterExpression := "IsLegendary = :isLegendary"
+
+	queryInput := &dynamodb.QueryInput{
 		TableName:                 aws.String(constants.TableName),
-		FilterExpression:          aws.String(filterExpression),
+		KeyConditionExpression:    aws.String(keyConditionExpression),
+		ExpressionAttributeNames:  expressionAttributeNames,
 		ExpressionAttributeValues: expressionAttributeValues,
+		FilterExpression:          aws.String(filterExpression),
 	}
 
-	result, err := sm.DB.Scan(sm.CTX, queryInput)
+	result, err := sm.DB.Query(sm.CTX, queryInput)
 	if err != nil {
 		return nil, err
 	}

@@ -86,10 +86,19 @@ func (am ArmourModel) Insert(armour *Armour) error {
 	return nil
 }
 
-// Query armours by type and legendary status
 func (am ArmourModel) queryArmoursByTypeAndIsLegendary(armourType string, isLegendary bool) ([]Armour, error) {
-	filterExpression := "Type = :type AND IsLegendary = :isLegendary"
+	keyConditionExpression := "#pk = :pk AND begins_with(#sk, :sk)"
+	expressionAttributeNames := map[string]string{
+		"#pk": constants.PK,
+		"#sk": constants.SK,
+	}
 	expressionAttributeValues := map[string]types.AttributeValue{
+		":pk": &types.AttributeValueMemberS{
+			Value: constants.ItemPrefix + constants.Armour,
+		},
+		":sk": &types.AttributeValueMemberS{
+			Value: constants.ArmourPrefix,
+		},
 		":type": &types.AttributeValueMemberS{
 			Value: armourType,
 		},
@@ -98,13 +107,17 @@ func (am ArmourModel) queryArmoursByTypeAndIsLegendary(armourType string, isLege
 		},
 	}
 
-	queryInput := &dynamodb.ScanInput{
+	filterExpression := "Type = :type AND IsLegendary = :isLegendary"
+
+	queryInput := &dynamodb.QueryInput{
 		TableName:                 aws.String(constants.TableName),
-		FilterExpression:          aws.String(filterExpression),
+		KeyConditionExpression:    aws.String(keyConditionExpression),
+		ExpressionAttributeNames:  expressionAttributeNames,
 		ExpressionAttributeValues: expressionAttributeValues,
+		FilterExpression:          aws.String(filterExpression),
 	}
 
-	result, err := am.DB.Scan(am.CTX, queryInput)
+	result, err := am.DB.Query(am.CTX, queryInput)
 	if err != nil {
 		return nil, err
 	}
