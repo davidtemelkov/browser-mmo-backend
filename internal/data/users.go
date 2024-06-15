@@ -648,25 +648,10 @@ func getItemAWSAttributes(item Item) map[string]types.AttributeValue {
 			constants.ImageURLAttribute:     &types.AttributeValueMemberS{Value: item.ImageURL},
 			constants.PriceAttribute:        &types.AttributeValueMemberN{Value: strconv.Itoa(item.Price)},
 		}
-	case constants.Accessory:
+	default:
 		attributes = map[string]types.AttributeValue{
 			"WhatItem":                      &types.AttributeValueMemberS{Value: item.WhatItem},
 			constants.NameAttribute:         &types.AttributeValueMemberS{Value: item.Name},
-			constants.TypeAttribute:         &types.AttributeValueMemberS{Value: item.Type},
-			constants.LevelAttribute:        &types.AttributeValueMemberN{Value: strconv.Itoa(item.Level)},
-			constants.StrengthAttribute:     &types.AttributeValueMemberN{Value: strconv.Itoa(item.Strength)},
-			constants.DexterityAttribute:    &types.AttributeValueMemberN{Value: strconv.Itoa(item.Dexterity)},
-			constants.ConstitutionAttribute: &types.AttributeValueMemberN{Value: strconv.Itoa(item.Constitution)},
-			constants.IntelligenceAttribute: &types.AttributeValueMemberN{Value: strconv.Itoa(item.Intelligence)},
-			constants.IsLegendaryAttribute:  &types.AttributeValueMemberBOOL{Value: item.IsLegendary},
-			constants.ImageURLAttribute:     &types.AttributeValueMemberS{Value: item.ImageURL},
-			constants.PriceAttribute:        &types.AttributeValueMemberN{Value: strconv.Itoa(item.Price)},
-		}
-	case constants.Armour:
-		attributes = map[string]types.AttributeValue{
-			"WhatItem":                      &types.AttributeValueMemberS{Value: item.WhatItem},
-			constants.NameAttribute:         &types.AttributeValueMemberS{Value: item.Name},
-			constants.TypeAttribute:         &types.AttributeValueMemberS{Value: item.Type},
 			constants.LevelAttribute:        &types.AttributeValueMemberN{Value: strconv.Itoa(item.Level)},
 			constants.StrengthAttribute:     &types.AttributeValueMemberN{Value: strconv.Itoa(item.Strength)},
 			constants.DexterityAttribute:    &types.AttributeValueMemberN{Value: strconv.Itoa(item.Dexterity)},

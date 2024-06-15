@@ -27,6 +27,7 @@ func (app *application) createArmourHandler(c *gin.Context) {
 
 	armour := &data.Armour{
 		ID:              uuid.New().String(),
+		Type:            input.Type,
 		BaseName:        input.BaseName,
 		MinLevel:        input.MinLevel,
 		ArmourAmountMin: input.ArmourAmountMin,

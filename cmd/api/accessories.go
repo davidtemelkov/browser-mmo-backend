@@ -25,6 +25,7 @@ func (app *application) createAccessoryHandler(c *gin.Context) {
 
 	accessory := &data.Accessory{
 		ID:          uuid.New().String(),
+		Type:        input.Type,
 		BaseName:    input.BaseName,
 		MinLevel:    input.MinLevel,
 		IsLegendary: input.IsLegendary,

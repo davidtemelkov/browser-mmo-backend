@@ -69,7 +69,7 @@ func GenerateItem(wp data.WeaponModel,
 
 		// TODO: Add different generation logic based upon isLegendary and user stats
 		item = data.Item{
-			WhatItem:      constants.Weapon,
+			WhatItem:      selectedItemType,
 			Name:          baseWeapon.BaseName + suffix,
 			Level:         1,
 			DamageMin:     1,
@@ -106,7 +106,7 @@ func GenerateItem(wp data.WeaponModel,
 
 		// TODO: Add different generation logic based upon isLegendary and user stats
 		item = data.Item{
-			WhatItem:     constants.Shield,
+			WhatItem:     selectedItemType,
 			Name:         baseShield.BaseName + suffix,
 			Level:        1,
 			BlockChance:  1,
@@ -141,8 +141,7 @@ func GenerateItem(wp data.WeaponModel,
 
 		// TODO: Add different generation logic based upon isLegendary and user stats
 		item = data.Item{
-			WhatItem:     constants.Accessory,
-			Type:         selectedItemType,
+			WhatItem:     selectedItemType,
 			Name:         baseAccessory.BaseName + suffix,
 			Level:        1,
 			Strength:     0,
@@ -176,8 +175,7 @@ func GenerateItem(wp data.WeaponModel,
 
 		// TODO: Add different generation logic based upon isLegendary and user stats
 		item = data.Item{
-			WhatItem:     constants.Armour,
-			Type:         selectedItemType,
+			WhatItem:     selectedItemType,
 			Name:         baseArmour.BaseName + suffix,
 			Level:        1,
 			Strength:     0,

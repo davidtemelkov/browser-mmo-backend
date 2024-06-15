@@ -42,7 +42,6 @@ type Weapon struct {
 type Item struct {
 	WhatItem      string `json:"whatItem"`
 	Name          string `json:"name"`
-	Type          string `json:"type"`
 	Level         int    `json:"level"`
 	DamageMin     int    `json:"damageMin"`
 	DamageMax     int    `json:"damageMax"`
