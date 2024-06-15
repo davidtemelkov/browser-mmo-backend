@@ -10,22 +10,20 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb/types"
 )
 
-// Maybe when generating a drop for a player
-// type Weapon struct {
-// 	ID           string
-// 	Name         string
-// 	Level        int
-// 	DamageMin    int
-// 	DamageMax    int
-// 	DamageMean   int
-// 	IsLegendary  bool
-// 	ImageURL     string
-// 	Strength     int
-// 	Dexterity    int
-// 	Constitution int
-// 	Intelligence int
-// 	Price        int
-// }
+type GeneratedWeapon struct {
+	Name          string
+	Level         int
+	DamageMin     int
+	DamageMax     int
+	DamageAverage int
+	IsLegendary   bool
+	ImageURL      string
+	Strength      int
+	Dexterity     int
+	Constitution  int
+	Intelligence  int
+	Price         int
+}
 
 // Base weapons
 type Weapon struct {
@@ -109,4 +107,76 @@ func (wm WeaponModel) Insert(weapon *Weapon) error {
 	}
 
 	return nil
+}
+
+// Query weapons by legendary status
+func (wm WeaponModel) queryWeaponsByIsLegendary(isLegendary bool) ([]Weapon, error) {
+	filterExpression := "IsLegendary = :isLegendary"
+	expressionAttributeValues := map[string]types.AttributeValue{
+		":isLegendary": &types.AttributeValueMemberBOOL{
+			Value: isLegendary,
+		},
+	}
+
+	queryInput := &dynamodb.ScanInput{
+		TableName:                 aws.String(constants.TableName),
+		FilterExpression:          aws.String(filterExpression),
+		ExpressionAttributeValues: expressionAttributeValues,
+	}
+
+	result, err := wm.DB.Scan(wm.CTX, queryInput)
+	if err != nil {
+		return nil, err
+	}
+
+	weapons := []Weapon{}
+	for _, item := range result.Items {
+		minLevel, err := strconv.Atoi(item[constants.MinLevelAttribute].(*types.AttributeValueMemberN).Value)
+		if err != nil {
+			return nil, err
+		}
+
+		damageLowRangeMin, err := strconv.Atoi(item[constants.DamageLowRangeMinAttribute].(*types.AttributeValueMemberN).Value)
+		if err != nil {
+			return nil, err
+		}
+
+		damageLowRangeMax, err := strconv.Atoi(item[constants.DamageLowRangeMaxAttribute].(*types.AttributeValueMemberN).Value)
+		if err != nil {
+			return nil, err
+		}
+
+		damageHighRangeMin, err := strconv.Atoi(item[constants.DamageHighRangeMinAttribute].(*types.AttributeValueMemberN).Value)
+		if err != nil {
+			return nil, err
+		}
+
+		damageHighRangeMax, err := strconv.Atoi(item[constants.DamageHighRangeMaxAttribute].(*types.AttributeValueMemberN).Value)
+		if err != nil {
+			return nil, err
+		}
+
+		weapon := Weapon{
+			ID:                 item[constants.SK].(*types.AttributeValueMemberS).Value,
+			BaseName:           item[constants.BaseNameAttribute].(*types.AttributeValueMemberS).Value,
+			MinLevel:           minLevel,
+			DamageLowRangeMin:  damageLowRangeMin,
+			DamageLowRangeMax:  damageLowRangeMax,
+			DamageHighRangeMin: damageHighRangeMin,
+			DamageHighRangeMax: damageHighRangeMax,
+			IsLegendary:        item[constants.IsLegendaryAttribute].(*types.AttributeValueMemberBOOL).Value,
+			ImageURL:           item[constants.ImageURLAttribute].(*types.AttributeValueMemberS).Value,
+		}
+		weapons = append(weapons, weapon)
+	}
+
+	return weapons, nil
+}
+
+func (wm WeaponModel) GetAllBasicWeapons() ([]Weapon, error) {
+	return wm.queryWeaponsByIsLegendary(false)
+}
+
+func (wm WeaponModel) GetAllLegendaryWeapons() ([]Weapon, error) {
+	return wm.queryWeaponsByIsLegendary(true)
 }

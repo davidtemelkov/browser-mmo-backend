@@ -21,6 +21,19 @@ type Shield struct {
 	ImageURL       string
 }
 
+type GeneratedShield struct {
+	Name         string
+	Level        int
+	BlockChance  int
+	IsLegendary  bool
+	ImageURL     string
+	Strength     int
+	Dexterity    int
+	Constitution int
+	Intelligence int
+	Price        int
+}
+
 type ShieldModel struct {
 	DB  *dynamodb.Client
 	CTX context.Context
@@ -65,4 +78,64 @@ func (sm ShieldModel) Insert(shield *Shield) error {
 	}
 
 	return nil
+}
+
+// Query shields by legendary status
+func (sm ShieldModel) queryShieldsByIsLegendary(isLegendary bool) ([]Shield, error) {
+	filterExpression := "IsLegendary = :isLegendary"
+	expressionAttributeValues := map[string]types.AttributeValue{
+		":isLegendary": &types.AttributeValueMemberBOOL{
+			Value: isLegendary,
+		},
+	}
+
+	queryInput := &dynamodb.ScanInput{
+		TableName:                 aws.String(constants.TableName),
+		FilterExpression:          aws.String(filterExpression),
+		ExpressionAttributeValues: expressionAttributeValues,
+	}
+
+	result, err := sm.DB.Scan(sm.CTX, queryInput)
+	if err != nil {
+		return nil, err
+	}
+
+	shields := []Shield{}
+	for _, item := range result.Items {
+		minLevel, err := strconv.Atoi(item[constants.MinLevelAttribute].(*types.AttributeValueMemberN).Value)
+		if err != nil {
+			return nil, err
+		}
+
+		blockChanceMin, err := strconv.Atoi(item[constants.ShieldBlockChanceMinAttribute].(*types.AttributeValueMemberN).Value)
+		if err != nil {
+			return nil, err
+		}
+
+		blockChanceMax, err := strconv.Atoi(item[constants.ShieldBlockChanceMaxAttribute].(*types.AttributeValueMemberN).Value)
+		if err != nil {
+			return nil, err
+		}
+
+		shield := Shield{
+			ID:             item[constants.SK].(*types.AttributeValueMemberS).Value,
+			BaseName:       item[constants.BaseNameAttribute].(*types.AttributeValueMemberS).Value,
+			MinLevel:       minLevel,
+			BlockChanceMin: blockChanceMin,
+			BlockChanceMax: blockChanceMax,
+			IsLegendary:    item[constants.IsLegendaryAttribute].(*types.AttributeValueMemberBOOL).Value,
+			ImageURL:       item[constants.ImageURLAttribute].(*types.AttributeValueMemberS).Value,
+		}
+		shields = append(shields, shield)
+	}
+
+	return shields, nil
+}
+
+func (sm ShieldModel) GetAllBasicShields() ([]Shield, error) {
+	return sm.queryShieldsByIsLegendary(false)
+}
+
+func (sm ShieldModel) GetAllLegendaryShields() ([]Shield, error) {
+	return sm.queryShieldsByIsLegendary(true)
 }
