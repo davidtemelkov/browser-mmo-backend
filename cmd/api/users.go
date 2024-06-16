@@ -7,7 +7,6 @@ import (
 	"browser-mmo-backend/internal/users"
 	"browser-mmo-backend/internal/utils"
 	"browser-mmo-backend/internal/validator"
-	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -223,7 +222,6 @@ func (app *application) generateMagicShop(c *gin.Context) {
 	for i := 0; i < 6; i++ {
 		item, err := items.GenerateItem(app.models.Weapons, app.models.Accessories, app.models.Shields, app.models.Armours, app.models.Users)
 		if err != nil {
-			fmt.Println(err.Error())
 			c.JSON(http.StatusInternalServerError, constants.InternalServerError)
 			return
 		}
@@ -233,10 +231,24 @@ func (app *application) generateMagicShop(c *gin.Context) {
 
 	err := app.models.Users.GenerateMagicShop(user, generatedItems)
 	if err != nil {
-		fmt.Println(err.Error())
 		c.JSON(http.StatusInternalServerError, constants.InternalServerError)
 		return
 	}
 
 	c.JSON(http.StatusOK, "generated weapon shop")
+}
+
+func (app *application) equipItem(c *gin.Context) {
+	userValue, _ := c.Get("user")
+	user, _ := userValue.(*data.User)
+
+	slotKey := c.Param("slotKey")
+
+	err := app.models.Users.EquipItem(user, slotKey)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, constants.InternalServerError)
+		return
+	}
+
+	c.JSON(http.StatusOK, "item equipped")
 }

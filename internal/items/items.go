@@ -12,8 +12,8 @@ var ITEM_TYPES = []string{
 	constants.Amulet,
 	constants.Gloves,
 	constants.Boots,
-	constants.Weapon,
-	constants.Shield,
+	constants.WeaponNotAllCaps,
+	constants.ShieldNotAllCaps,
 	constants.Ring,
 }
 

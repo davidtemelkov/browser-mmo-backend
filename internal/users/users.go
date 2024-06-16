@@ -28,7 +28,7 @@ func GetInitialUser(input UserInput) *data.User {
 		Dexterity:    1,
 		Constitution: 1,
 		Intelligence: 1,
-		Items: map[string]data.Item{
+		EquippedItems: map[string]data.Item{
 			"Helmet":     {Name: "Empty Helmet"},
 			"Chestplate": {Name: "Empty Chestplate"},
 			"Amulet":     {Name: "Empty Amulet"},

@@ -32,7 +32,7 @@ const (
 	DexterityAttribute       = "Dexterity"
 	ConstitutionAttribute    = "Constitution"
 	IntelligenceAttribute    = "Intelligence"
-	ItemsAttribute           = "Items"
+	EquippedItemsAttribute   = "EquippedItems"
 	WeaponShopAttribute      = "WeaponShop"
 	MagicShopAttribute       = "MagicShop"
 	MountAttribute           = "Mount"
@@ -71,6 +71,7 @@ const (
 const (
 	WeaponPrefix                = "WEAPON#"
 	Weapon                      = "WEAPON"
+	WeaponNotAllCaps            = "Weapon"
 	DamageLowRangeMinAttribute  = "DMGLowMin"
 	DamageLowRangeMaxAttribute  = "DMGLowMax"
 	DamageHighRangeMinAttribute = "DMGHighMix"
@@ -98,6 +99,7 @@ const (
 const (
 	ShieldPrefix                  = "SHIELD#"
 	Shield                        = "SHIELD"
+	ShieldNotAllCaps              = "Shield"
 	ShieldBlockChanceMinAttribute = "ShieldMinBlockChance"
 	ShieldBlockChanceMaxAttribute = "ShieldMaxBlockChance"
 	BlockChanceAttribute          = "BlockChance"

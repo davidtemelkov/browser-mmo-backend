@@ -31,7 +31,7 @@ type User struct {
 	Dexterity       int                       `json:"dexterity" dynamodbav:"Dexterity"`
 	Constitution    int                       `json:"constitution" dynamodbav:"Constitution"`
 	Intelligence    int                       `json:"intelligence" dynamodbav:"Intelligence"`
-	Items           map[string]Item           `json:"items" dynamodbav:"Items"`
+	EquippedItems   map[string]Item           `json:"equippedItems" dynamodbav:"EquippedItems"`
 	WeaponShop      map[string]Item           `json:"weaponShop" dynamodbav:"WeaponShop"`
 	MagicShop       map[string]Item           `json:"magicShop" dynamodbav:"MagicShop"`
 	Mount           string                    `json:"mount" dynamodbav:"Mount"`
@@ -153,7 +153,7 @@ func (um UserModel) Insert(user *User) error {
 		constants.IntelligenceAttribute: &types.AttributeValueMemberN{
 			Value: strconv.Itoa(user.Intelligence),
 		},
-		constants.ItemsAttribute: &types.AttributeValueMemberM{
+		constants.EquippedItemsAttribute: &types.AttributeValueMemberM{
 			Value: map[string]types.AttributeValue{},
 		},
 		constants.WeaponShopAttribute: &types.AttributeValueMemberM{
@@ -188,8 +188,8 @@ func (um UserModel) Insert(user *User) error {
 		},
 	}
 
-	for key, value := range user.Items {
-		item[constants.ItemsAttribute].(*types.AttributeValueMemberM).Value[key] = &types.AttributeValueMemberM{
+	for key, value := range user.EquippedItems {
+		item[constants.EquippedItemsAttribute].(*types.AttributeValueMemberM).Value[key] = &types.AttributeValueMemberM{
 			Value: map[string]types.AttributeValue{
 				"Name": &types.AttributeValueMemberS{Value: value.Name},
 			},
@@ -688,6 +688,54 @@ func (um UserModel) GenerateMagicShop(user *User, items []Item) error {
 		Key:                       key,
 		UpdateExpression:          aws.String(updateExpression),
 		ExpressionAttributeValues: expressionAttributeValues,
+	}
+
+	_, err := um.DB.UpdateItem(um.CTX, input)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (um *UserModel) EquipItem(user *User, inventoryKey string) error {
+	inventoryItem, exists := user.Inventory[inventoryKey]
+	if !exists {
+		return errors.New("item not found in inventory")
+	}
+
+	equippedItem, slotOccupied := user.EquippedItems[inventoryItem.WhatItem]
+
+	key := map[string]types.AttributeValue{
+		constants.PK: &types.AttributeValueMemberS{Value: constants.UserPrefix + user.Email},
+		constants.SK: &types.AttributeValueMemberS{Value: constants.UserPrefix + user.Email},
+	}
+
+	var updateExpression strings.Builder
+	expressionAttributeValues := make(map[string]types.AttributeValue)
+	expressionAttributeNames := make(map[string]string)
+
+	updateExpression.WriteString(fmt.Sprintf("SET %s.#slot = :newItem", constants.EquippedItemsAttribute))
+	expressionAttributeValues[":newItem"] = &types.AttributeValueMemberM{Value: getItemAWSAttributes(inventoryItem)}
+	expressionAttributeNames["#slot"] = inventoryItem.WhatItem
+
+	if slotOccupied {
+		updateExpression.WriteString(fmt.Sprintf(", %s.#invKey = :equippedItem", constants.InventoryAttribute))
+		expressionAttributeValues[":equippedItem"] = &types.AttributeValueMemberM{Value: getItemAWSAttributes(equippedItem)}
+	} else {
+		emptyItem := Item{Name: "Empty Item"}
+		updateExpression.WriteString(fmt.Sprintf(", %s.#invKey = :emptyItem", constants.InventoryAttribute))
+		expressionAttributeValues[":emptyItem"] = &types.AttributeValueMemberM{Value: getItemAWSAttributes(emptyItem)}
+	}
+
+	expressionAttributeNames["#invKey"] = inventoryKey
+
+	input := &dynamodb.UpdateItemInput{
+		TableName:                 aws.String(constants.TableName),
+		Key:                       key,
+		UpdateExpression:          aws.String(updateExpression.String()),
+		ExpressionAttributeValues: expressionAttributeValues,
+		ExpressionAttributeNames:  expressionAttributeNames,
 	}
 
 	_, err := um.DB.UpdateItem(um.CTX, input)
