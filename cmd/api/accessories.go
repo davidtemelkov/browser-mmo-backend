@@ -12,7 +12,7 @@ import (
 func (app *application) createAccessoryHandler(c *gin.Context) {
 	var input struct {
 		BaseName    string `json:"base_name"`
-		Type        string `json:"type"`
+		WhatItem    string `json:"whatItem"`
 		MinLevel    int    `json:"min_level"`
 		IsLegendary bool   `json:"is_legendary"`
 		ImageURL    string `json:"imageURL"`
@@ -25,7 +25,7 @@ func (app *application) createAccessoryHandler(c *gin.Context) {
 
 	accessory := &data.Accessory{
 		ID:          uuid.New().String(),
-		Type:        input.Type,
+		WhatItem:    input.WhatItem,
 		BaseName:    input.BaseName,
 		MinLevel:    input.MinLevel,
 		IsLegendary: input.IsLegendary,

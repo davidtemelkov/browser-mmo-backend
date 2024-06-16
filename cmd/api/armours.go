@@ -12,7 +12,7 @@ import (
 func (app *application) createArmourHandler(c *gin.Context) {
 	var input struct {
 		BaseName        string `json:"base_name"`
-		Type            string `json:"type"`
+		WhatItem        string `json:"whatItem"`
 		MinLevel        int    `json:"min_level"`
 		ArmourAmountMin int    `json:"armour_amount_min"`
 		ArmourAmountMax int    `json:"armour_amount_max"`
@@ -27,7 +27,7 @@ func (app *application) createArmourHandler(c *gin.Context) {
 
 	armour := &data.Armour{
 		ID:              uuid.New().String(),
-		Type:            input.Type,
+		WhatItem:        input.WhatItem,
 		BaseName:        input.BaseName,
 		MinLevel:        input.MinLevel,
 		ArmourAmountMin: input.ArmourAmountMin,

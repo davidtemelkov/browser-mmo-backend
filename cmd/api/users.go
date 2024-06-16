@@ -3,9 +3,11 @@ package main
 import (
 	"browser-mmo-backend/internal/constants"
 	"browser-mmo-backend/internal/data"
+	"browser-mmo-backend/internal/items"
 	"browser-mmo-backend/internal/users"
 	"browser-mmo-backend/internal/utils"
 	"browser-mmo-backend/internal/validator"
+	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -185,4 +187,56 @@ func (app *application) upgradeIntelligenceHandler(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, result)
+}
+
+// TODO: Make logic for only weaponShop items to be generated and added
+func (app *application) generateWeaponShop(c *gin.Context) {
+	userValue, _ := c.Get("user")
+	user, _ := userValue.(*data.User)
+
+	var generatedItems []data.Item
+	for i := 0; i < 6; i++ {
+		item, err := items.GenerateItem(app.models.Weapons, app.models.Accessories, app.models.Shields, app.models.Armours, app.models.Users)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, constants.InternalServerError)
+			return
+		}
+
+		generatedItems = append(generatedItems, item)
+	}
+
+	err := app.models.Users.GenerateWeaponShop(user, generatedItems)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, constants.InternalServerError)
+		return
+	}
+
+	c.JSON(http.StatusOK, "generated weapon shop")
+}
+
+// TODO: Make logic for only magicShop items to be generated and added
+func (app *application) generateMagicShop(c *gin.Context) {
+	userValue, _ := c.Get("user")
+	user, _ := userValue.(*data.User)
+
+	var generatedItems []data.Item
+	for i := 0; i < 6; i++ {
+		item, err := items.GenerateItem(app.models.Weapons, app.models.Accessories, app.models.Shields, app.models.Armours, app.models.Users)
+		if err != nil {
+			fmt.Println(err.Error())
+			c.JSON(http.StatusInternalServerError, constants.InternalServerError)
+			return
+		}
+
+		generatedItems = append(generatedItems, item)
+	}
+
+	err := app.models.Users.GenerateMagicShop(user, generatedItems)
+	if err != nil {
+		fmt.Println(err.Error())
+		c.JSON(http.StatusInternalServerError, constants.InternalServerError)
+		return
+	}
+
+	c.JSON(http.StatusOK, "generated weapon shop")
 }

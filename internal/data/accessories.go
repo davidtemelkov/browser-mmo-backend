@@ -13,7 +13,7 @@ import (
 // Base accessories
 type Accessory struct {
 	ID          string
-	Type        string
+	WhatItem    string
 	BaseName    string
 	MinLevel    int
 	IsLegendary bool
@@ -46,8 +46,8 @@ func (am AccessoryModel) Insert(accessory *Accessory) error {
 		constants.SK: &types.AttributeValueMemberS{
 			Value: constants.AccessoryPrefix + accessory.ID,
 		},
-		constants.TypeAttribute: &types.AttributeValueMemberS{
-			Value: accessory.Type,
+		constants.WhatItemAttribute: &types.AttributeValueMemberS{
+			Value: accessory.WhatItem,
 		},
 		constants.BaseNameAttribute: &types.AttributeValueMemberS{
 			Value: accessory.BaseName,
@@ -89,7 +89,7 @@ func (am AccessoryModel) queryAccessoriesByTypeAndIsLegendary(accessoryType stri
 		":sk": &types.AttributeValueMemberS{
 			Value: constants.AccessoryPrefix,
 		},
-		":type": &types.AttributeValueMemberS{
+		":whatItem": &types.AttributeValueMemberS{
 			Value: accessoryType,
 		},
 		":isLegendary": &types.AttributeValueMemberBOOL{
@@ -97,7 +97,7 @@ func (am AccessoryModel) queryAccessoriesByTypeAndIsLegendary(accessoryType stri
 		},
 	}
 
-	filterExpression := "Type = :type AND IsLegendary = :isLegendary"
+	filterExpression := "WhatItem = :whatItem AND IsLegendary = :isLegendary"
 
 	queryInput := &dynamodb.QueryInput{
 		TableName:                 aws.String(constants.TableName),
@@ -121,7 +121,7 @@ func (am AccessoryModel) queryAccessoriesByTypeAndIsLegendary(accessoryType stri
 
 		accessory := Accessory{
 			ID:          item[constants.SK].(*types.AttributeValueMemberS).Value,
-			Type:        item[constants.TypeAttribute].(*types.AttributeValueMemberS).Value,
+			WhatItem:    item[constants.WhatItemAttribute].(*types.AttributeValueMemberS).Value,
 			BaseName:    item[constants.BaseNameAttribute].(*types.AttributeValueMemberS).Value,
 			MinLevel:    minLevel,
 			IsLegendary: item[constants.IsLegendaryAttribute].(*types.AttributeValueMemberBOOL).Value,

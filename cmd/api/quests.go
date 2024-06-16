@@ -130,6 +130,8 @@ func (app *application) collectCurrentQuestRewardsHandler(c *gin.Context) {
 			return
 		}
 
+		// TODO: Add this logic when generating quests so user can see what item
+		// they will get, also make quest reward a little worse if there is an item
 		item, err := items.GenerateItem(app.models.Weapons, app.models.Accessories, app.models.Shields, app.models.Armours, app.models.Users)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, constants.InternalServerError)

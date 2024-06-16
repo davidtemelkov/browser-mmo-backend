@@ -518,6 +518,8 @@ func (um UserModel) AddItemToInventory(user *User, item Item) error {
 	return nil
 }
 
+// TODO: Rework this to buy item from store and this would transfer an item to the
+// user inventory and generate a new one for the shop
 func (um UserModel) AddItemToWeaponShop(user *User, item Item) error {
 	var slotKey string
 	for key, slotItem := range user.WeaponShop {
@@ -566,6 +568,8 @@ func (um UserModel) AddItemToWeaponShop(user *User, item Item) error {
 	return nil
 }
 
+// TODO: Rework this to buy item from store and this would transfer an item to the
+// user inventory and generate a new one for the shop
 func (um UserModel) AddItemToMagicShop(user *User, item Item) error {
 	var slotKey string
 	for key, slotItem := range user.MagicShop {
@@ -614,13 +618,93 @@ func (um UserModel) AddItemToMagicShop(user *User, item Item) error {
 	return nil
 }
 
+func (um UserModel) GenerateWeaponShop(user *User, items []Item) error {
+	newWeaponShop := make(map[string]Item)
+	for i, item := range items {
+		slotKey := fmt.Sprintf("Item%d", i+1)
+		newWeaponShop[slotKey] = item
+	}
+
+	user.WeaponShop = newWeaponShop
+
+	key := map[string]types.AttributeValue{
+		constants.PK: &types.AttributeValueMemberS{
+			Value: constants.UserPrefix + user.Email,
+		},
+		constants.SK: &types.AttributeValueMemberS{
+			Value: constants.UserPrefix + user.Email,
+		},
+	}
+
+	updateExpression := "SET " + constants.WeaponShopAttribute + " = :weaponShop"
+	expressionAttributeValues := map[string]types.AttributeValue{
+		":weaponShop": &types.AttributeValueMemberM{
+			Value: getAWSAttributesFromMap(newWeaponShop),
+		},
+	}
+
+	input := &dynamodb.UpdateItemInput{
+		TableName:                 aws.String(constants.TableName),
+		Key:                       key,
+		UpdateExpression:          aws.String(updateExpression),
+		ExpressionAttributeValues: expressionAttributeValues,
+	}
+
+	_, err := um.DB.UpdateItem(um.CTX, input)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (um UserModel) GenerateMagicShop(user *User, items []Item) error {
+	newMagicShop := make(map[string]Item)
+	for i, item := range items {
+		slotKey := fmt.Sprintf("Item%d", i+1)
+		newMagicShop[slotKey] = item
+	}
+
+	user.MagicShop = newMagicShop
+
+	key := map[string]types.AttributeValue{
+		constants.PK: &types.AttributeValueMemberS{
+			Value: constants.UserPrefix + user.Email,
+		},
+		constants.SK: &types.AttributeValueMemberS{
+			Value: constants.UserPrefix + user.Email,
+		},
+	}
+
+	updateExpression := "SET " + constants.MagicShopAttribute + " = :magicShop"
+	expressionAttributeValues := map[string]types.AttributeValue{
+		":magicShop": &types.AttributeValueMemberM{
+			Value: getAWSAttributesFromMap(newMagicShop),
+		},
+	}
+
+	input := &dynamodb.UpdateItemInput{
+		TableName:                 aws.String(constants.TableName),
+		Key:                       key,
+		UpdateExpression:          aws.String(updateExpression),
+		ExpressionAttributeValues: expressionAttributeValues,
+	}
+
+	_, err := um.DB.UpdateItem(um.CTX, input)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func getItemAWSAttributes(item Item) map[string]types.AttributeValue {
 	var attributes = map[string]types.AttributeValue{}
 
 	switch item.WhatItem {
 	case constants.Weapon:
 		attributes = map[string]types.AttributeValue{
-			"WhatItem":                       &types.AttributeValueMemberS{Value: item.WhatItem},
+			constants.WhatItemAttribute:      &types.AttributeValueMemberS{Value: item.WhatItem},
 			constants.NameAttribute:          &types.AttributeValueMemberS{Value: item.Name},
 			constants.LevelAttribute:         &types.AttributeValueMemberN{Value: strconv.Itoa(item.Level)},
 			constants.DamageMinAttribute:     &types.AttributeValueMemberN{Value: strconv.Itoa(item.DamageMin)},
@@ -636,7 +720,7 @@ func getItemAWSAttributes(item Item) map[string]types.AttributeValue {
 		}
 	case constants.Shield:
 		attributes = map[string]types.AttributeValue{
-			"WhatItem":                      &types.AttributeValueMemberS{Value: item.WhatItem},
+			constants.WhatItemAttribute:     &types.AttributeValueMemberS{Value: item.WhatItem},
 			constants.NameAttribute:         &types.AttributeValueMemberS{Value: item.Name},
 			constants.LevelAttribute:        &types.AttributeValueMemberN{Value: strconv.Itoa(item.Level)},
 			constants.BlockChanceAttribute:  &types.AttributeValueMemberN{Value: strconv.Itoa(item.BlockChance)},
@@ -650,7 +734,7 @@ func getItemAWSAttributes(item Item) map[string]types.AttributeValue {
 		}
 	default:
 		attributes = map[string]types.AttributeValue{
-			"WhatItem":                      &types.AttributeValueMemberS{Value: item.WhatItem},
+			constants.WhatItemAttribute:     &types.AttributeValueMemberS{Value: item.WhatItem},
 			constants.NameAttribute:         &types.AttributeValueMemberS{Value: item.Name},
 			constants.LevelAttribute:        &types.AttributeValueMemberN{Value: strconv.Itoa(item.Level)},
 			constants.StrengthAttribute:     &types.AttributeValueMemberN{Value: strconv.Itoa(item.Strength)},
@@ -664,4 +748,13 @@ func getItemAWSAttributes(item Item) map[string]types.AttributeValue {
 	}
 
 	return attributes
+}
+
+func getAWSAttributesFromMap(shop map[string]Item) map[string]types.AttributeValue {
+	awsAttributes := make(map[string]types.AttributeValue)
+	for k, v := range shop {
+		awsAttributes[k] = &types.AttributeValueMemberM{Value: getItemAWSAttributes(v)}
+	}
+
+	return awsAttributes
 }

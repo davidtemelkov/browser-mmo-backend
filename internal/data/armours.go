@@ -13,7 +13,7 @@ import (
 // Base armours
 type Armour struct {
 	ID              string
-	Type            string
+	WhatItem        string
 	BaseName        string
 	MinLevel        int
 	ArmourAmountMin int
@@ -50,8 +50,8 @@ func (am ArmourModel) Insert(armour *Armour) error {
 		constants.SK: &types.AttributeValueMemberS{
 			Value: constants.ArmourPrefix + armour.ID,
 		},
-		constants.TypeAttribute: &types.AttributeValueMemberS{
-			Value: armour.Type,
+		constants.WhatItemAttribute: &types.AttributeValueMemberS{
+			Value: armour.WhatItem,
 		},
 		constants.BaseNameAttribute: &types.AttributeValueMemberS{
 			Value: armour.BaseName,
@@ -99,7 +99,7 @@ func (am ArmourModel) queryArmoursByTypeAndIsLegendary(armourType string, isLege
 		":sk": &types.AttributeValueMemberS{
 			Value: constants.ArmourPrefix,
 		},
-		":type": &types.AttributeValueMemberS{
+		":whatItem": &types.AttributeValueMemberS{
 			Value: armourType,
 		},
 		":isLegendary": &types.AttributeValueMemberBOOL{
@@ -107,7 +107,7 @@ func (am ArmourModel) queryArmoursByTypeAndIsLegendary(armourType string, isLege
 		},
 	}
 
-	filterExpression := "Type = :type AND IsLegendary = :isLegendary"
+	filterExpression := "WhatItem = :whatItem AND IsLegendary = :isLegendary"
 
 	queryInput := &dynamodb.QueryInput{
 		TableName:                 aws.String(constants.TableName),
@@ -141,7 +141,7 @@ func (am ArmourModel) queryArmoursByTypeAndIsLegendary(armourType string, isLege
 
 		armour := Armour{
 			ID:              item[constants.SK].(*types.AttributeValueMemberS).Value,
-			Type:            item[constants.TypeAttribute].(*types.AttributeValueMemberS).Value,
+			WhatItem:        item[constants.WhatItemAttribute].(*types.AttributeValueMemberS).Value,
 			BaseName:        item[constants.BaseNameAttribute].(*types.AttributeValueMemberS).Value,
 			MinLevel:        minLevel,
 			ArmourAmountMin: armourAmountMin,

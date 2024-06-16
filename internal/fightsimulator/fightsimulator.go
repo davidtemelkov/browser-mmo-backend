@@ -17,16 +17,6 @@ type Fighter struct {
 	HitFirstIndex float32
 }
 
-type FighterData struct {
-	name          string
-	health        float32
-	damageMin     float32
-	damageMax     float32
-	critChance    float32
-	magicDamage   float32
-	hitFirstIndex float32
-}
-
 func (f *Fighter) dealDamage() float32 {
 	return f.DamageMin + rand.Float32()*(f.DamageMax-f.DamageMin)
 }

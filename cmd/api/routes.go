@@ -27,6 +27,8 @@ func (app *application) setupRoutes() *gin.Engine {
 		usersRoutes.PATCH("/dexterity", app.upgradeDexterityHandler)
 		usersRoutes.PATCH("/constitution", app.upgradeConstitutionHandler)
 		usersRoutes.PATCH("/intelligence", app.upgradeIntelligenceHandler)
+		usersRoutes.POST("/shops/weapon", app.generateWeaponShop)
+		usersRoutes.POST("/shops/magic", app.generateMagicShop)
 	}
 
 	itemsRoutes := r.Group("/items")

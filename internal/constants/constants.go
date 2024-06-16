@@ -58,7 +58,7 @@ const (
 	MinLevelAttribute    = "MinLevel"
 	IsLegendaryAttribute = "IsLegendary"
 	PriceAttribute       = "Price"
-	TypeAttribute        = "Type"
+	WhatItemAttribute    = "WhatItem"
 	Ring                 = "Ring"
 	Amulet               = "Amulet"
 	Gloves               = "Gloves"

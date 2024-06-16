@@ -120,7 +120,41 @@ func GenerateItem(wp data.WeaponModel,
 		}
 
 		return item, nil
-	case constants.Accessory:
+	case constants.Ring:
+		var baseAccessory data.Accessory
+
+		if isLegendary {
+			legendaryAccessories, err := acm.GetAllLegendaryAccessoriesOfType(selectedItemType)
+			if err != nil {
+				return data.Item{}, nil
+			}
+			randIndex = rand.Intn(len(legendaryAccessories))
+			baseAccessory = legendaryAccessories[randIndex]
+		} else {
+			basicAccessories, err := acm.GetAllBasicAccessoriesOfType(selectedItemType)
+			if err != nil {
+				return data.Item{}, err
+			}
+			randIndex = rand.Intn(len(basicAccessories))
+			baseAccessory = basicAccessories[randIndex]
+		}
+
+		// TODO: Add different generation logic based upon isLegendary and user stats
+		item = data.Item{
+			WhatItem:     selectedItemType,
+			Name:         baseAccessory.BaseName + suffix,
+			Level:        1,
+			Strength:     0,
+			Dexterity:    0,
+			Constitution: 0,
+			Intelligence: 0,
+			IsLegendary:  isLegendary,
+			ImageURL:     baseAccessory.ImageURL,
+			Price:        1,
+		}
+
+		return item, nil
+	case constants.Amulet:
 		var baseAccessory data.Accessory
 
 		if isLegendary {
