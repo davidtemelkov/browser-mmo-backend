@@ -29,7 +29,10 @@ func (app *application) setupRoutes() *gin.Engine {
 		usersRoutes.PATCH("/intelligence", app.upgradeIntelligenceHandler)
 		usersRoutes.POST("/shops/weapon", app.generateWeaponShop)
 		usersRoutes.POST("/shops/magic", app.generateMagicShop)
+		usersRoutes.PATCH("/shops/weapon/:slotKey", app.buyWeaponShopItem)
+		usersRoutes.PATCH("/shops/magic/:slotKey", app.buyMagicShopItem)
 		usersRoutes.PATCH("/equip/:slotKey", app.equipItem)
+		usersRoutes.PATCH("/sell/:slotKey", app.sellItem)
 	}
 
 	itemsRoutes := r.Group("/items")

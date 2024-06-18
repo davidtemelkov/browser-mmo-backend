@@ -256,3 +256,60 @@ func (app *application) equipItem(c *gin.Context) {
 
 	c.JSON(http.StatusOK, "item equipped")
 }
+
+func (app *application) buyMagicShopItem(c *gin.Context) {
+	userValue, _ := c.Get("user")
+	user, _ := userValue.(*data.User)
+
+	slotKey := c.Param("slotKey")
+
+	replacementItem, err := items.GenerateItem(app.models.Weapons, app.models.Accessories, app.models.Shields, app.models.Armours, app.models.Users)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, constants.InternalServerError)
+		return
+	}
+
+	err = app.models.Users.BuyItem(user, slotKey, constants.MagicShopAttribute, replacementItem)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, constants.InternalServerError)
+		return
+	}
+
+	c.JSON(http.StatusOK, "item bought")
+}
+
+func (app *application) buyWeaponShopItem(c *gin.Context) {
+	userValue, _ := c.Get("user")
+	user, _ := userValue.(*data.User)
+
+	slotKey := c.Param("slotKey")
+
+	replacementItem, err := items.GenerateItem(app.models.Weapons, app.models.Accessories, app.models.Shields, app.models.Armours, app.models.Users)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, constants.InternalServerError)
+		return
+	}
+
+	err = app.models.Users.BuyItem(user, slotKey, constants.WeaponShopAttribute, replacementItem)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, constants.InternalServerError)
+		return
+	}
+
+	c.JSON(http.StatusOK, "item bought")
+}
+
+func (app *application) sellItem(c *gin.Context) {
+	userValue, _ := c.Get("user")
+	user, _ := userValue.(*data.User)
+
+	slotKey := c.Param("slotKey")
+
+	err := app.models.Users.SellItem(user, slotKey)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, constants.InternalServerError)
+		return
+	}
+
+	c.JSON(http.StatusOK, "item sold")
+}

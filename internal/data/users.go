@@ -755,6 +755,124 @@ func (um *UserModel) EquipItem(user *User, inventoryKey string) error {
 	return nil
 }
 
+func (um UserModel) SellItem(user *User, slotKey string) error {
+	item, exists := user.Inventory[slotKey]
+	if !exists || item.Name == "" {
+		return errors.New("item not found in inventory")
+	}
+
+	user.Gold += item.Price
+	user.Inventory[slotKey] = Item{} // Clearing the item slot
+
+	key := map[string]types.AttributeValue{
+		constants.PK: &types.AttributeValueMemberS{
+			Value: constants.UserPrefix + user.Email,
+		},
+		constants.SK: &types.AttributeValueMemberS{
+			Value: constants.UserPrefix + user.Email,
+		},
+	}
+
+	updateExpression := fmt.Sprintf("SET %s.#slot = :emptyItem, %s = :gold",
+		constants.InventoryAttribute, constants.GoldAttribute)
+	expressionAttributeValues := map[string]types.AttributeValue{
+		":emptyItem": &types.AttributeValueMemberM{Value: map[string]types.AttributeValue{}},
+		":gold":      &types.AttributeValueMemberN{Value: strconv.Itoa(user.Gold)},
+	}
+	expressionAttributeNames := map[string]string{
+		"#slot": slotKey,
+	}
+
+	input := &dynamodb.UpdateItemInput{
+		TableName:                 aws.String(constants.TableName),
+		Key:                       key,
+		UpdateExpression:          aws.String(updateExpression),
+		ExpressionAttributeValues: expressionAttributeValues,
+		ExpressionAttributeNames:  expressionAttributeNames,
+	}
+
+	_, err := um.DB.UpdateItem(um.CTX, input)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (um UserModel) BuyItem(user *User, slotKey, shopType string, newItem Item) error {
+	var item Item
+	var shop map[string]Item
+	if shopType == constants.WeaponShopAttribute {
+		shop = user.WeaponShop
+	} else if shopType == constants.MagicShopAttribute {
+		shop = user.MagicShop
+	} else {
+		return errors.New("invalid shop type")
+	}
+
+	item, exists := shop[slotKey]
+	if !exists || item.Name == "" {
+		return errors.New("item not found in shop")
+	}
+
+	if user.Gold < item.Price {
+		return errors.New("not enough gold")
+	}
+
+	var emptySlotKey string
+	for k, v := range user.Inventory {
+		if v.Price == 0 {
+			emptySlotKey = k
+			break
+		}
+	}
+
+	// If no empty slot is found, return an error
+	if emptySlotKey == "" {
+		return errors.New("no empty slot in inventory")
+	}
+
+	user.Gold -= item.Price
+	user.Inventory[emptySlotKey] = item
+
+	shop[slotKey] = newItem
+
+	key := map[string]types.AttributeValue{
+		constants.PK: &types.AttributeValueMemberS{
+			Value: constants.UserPrefix + user.Email,
+		},
+		constants.SK: &types.AttributeValueMemberS{
+			Value: constants.UserPrefix + user.Email,
+		},
+	}
+
+	updateExpression := fmt.Sprintf("SET %s.#slot = :newShopItem, %s = :gold, %s.#slot = :newInventoryItem",
+		shopType, constants.GoldAttribute, constants.InventoryAttribute)
+	expressionAttributeValues := map[string]types.AttributeValue{
+		":newShopItem":      &types.AttributeValueMemberM{Value: getItemAWSAttributes(newItem)},
+		":newInventoryItem": &types.AttributeValueMemberM{Value: getItemAWSAttributes(item)},
+		":gold":             &types.AttributeValueMemberN{Value: strconv.Itoa(user.Gold)},
+	}
+	expressionAttributeNames := map[string]string{
+		"#slot": slotKey,
+	}
+
+	input := &dynamodb.UpdateItemInput{
+		TableName:                 aws.String(constants.TableName),
+		Key:                       key,
+		UpdateExpression:          aws.String(updateExpression),
+		ExpressionAttributeValues: expressionAttributeValues,
+		ExpressionAttributeNames:  expressionAttributeNames,
+	}
+
+	_, err := um.DB.UpdateItem(um.CTX, input)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func getItemAWSAttributes(item Item) map[string]types.AttributeValue {
 	var attributes = map[string]types.AttributeValue{}
 
