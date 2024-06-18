@@ -101,6 +101,7 @@ func (app *application) loginUserHandler(c *gin.Context) {
 	c.JSON(http.StatusOK, jwt)
 }
 
+// TODO: Remove unnecessary pointers to user structs and all others
 func (app *application) getUserHandler(c *gin.Context) {
 	email := c.Param("email")
 
@@ -112,6 +113,9 @@ func (app *application) getUserHandler(c *gin.Context) {
 		c.JSON(http.StatusForbidden, constants.UserIsNotAuthorizedError)
 		return
 	}
+
+	// TODO: Move this somewhere more consistant so it is updated more frequently
+	*user = users.CalculateTotalStats(*user)
 
 	c.JSON(http.StatusOK, user)
 }

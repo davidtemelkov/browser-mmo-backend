@@ -48,7 +48,7 @@ func GenerateItem(wp data.WeaponModel,
 	}
 
 	switch selectedItemType {
-	case constants.Weapon:
+	case constants.WeaponNotAllCaps:
 		var baseWeapon data.Weapon
 
 		if isLegendary {
@@ -85,7 +85,7 @@ func GenerateItem(wp data.WeaponModel,
 		}
 
 		return item, nil
-	case constants.Shield:
+	case constants.ShieldNotAllCaps:
 		var baseShield data.Shield
 
 		if isLegendary {

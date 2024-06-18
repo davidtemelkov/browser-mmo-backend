@@ -87,3 +87,25 @@ func GetInitialUser(input UserInput) *data.User {
 		DailyQuestCount: 0,
 	}
 }
+
+func CalculateTotalStats(user data.User) data.User {
+	// TODO: User really should be keeping these, maybe on item equip and stat upgrade
+	user.TotalStrength += user.Strength
+	user.TotalDexterity += user.Dexterity
+	user.TotalConstitution += user.Constitution
+	user.TotalIntelligence += user.Intelligence
+
+	for _, item := range user.EquippedItems {
+		user.TotalStrength += item.Strength
+		user.TotalDexterity += item.Dexterity
+		user.TotalConstitution += item.Constitution
+		user.TotalIntelligence += item.Intelligence
+		user.BlockChance += item.BlockChance
+		user.ArmourAmount += item.ArmourAmount
+		user.DamageMin += item.DamageMin
+		user.DamageMax += item.DamageMax
+		user.DamageAverage += item.DamageAverage
+	}
+
+	return user
+}

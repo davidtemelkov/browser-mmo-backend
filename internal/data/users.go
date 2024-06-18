@@ -17,36 +17,45 @@ import (
 )
 
 type User struct {
-	Name            string                    `json:"name" dynamodbav:"Username"`
-	Email           string                    `json:"email" dynamodbav:"Email"`
-	Password        Password                  `json:"-"`
-	PasswordHash    string                    `json:"-" dynamodbav:"PasswordHash"`
-	CreatedOn       string                    `json:"createdOn,omitempty" dynamodbav:"CreatedOn"`
-	ImageURL        string                    `json:"imageURL" dynamodbav:"ImageURL"`
-	Level           int                       `json:"level" dynamodbav:"Level"`
-	Gold            int                       `json:"gold" dynamodbav:"Gold"`
-	EXP             int                       `json:"EXP" dynamodbav:"EXP"`
-	BigDPoints      int                       `json:"bigDPoints" dynamodbav:"BigDPoints"`
-	Strength        int                       `json:"strength" dynamodbav:"Strength"`
-	Dexterity       int                       `json:"dexterity" dynamodbav:"Dexterity"`
-	Constitution    int                       `json:"constitution" dynamodbav:"Constitution"`
-	Intelligence    int                       `json:"intelligence" dynamodbav:"Intelligence"`
-	EquippedItems   map[string]Item           `json:"equippedItems" dynamodbav:"EquippedItems"`
-	WeaponShop      map[string]Item           `json:"weaponShop" dynamodbav:"WeaponShop"`
-	MagicShop       map[string]Item           `json:"magicShop" dynamodbav:"MagicShop"`
-	Mount           string                    `json:"mount" dynamodbav:"Mount"`
-	MountImageURL   string                    `json:"mountImageURL" dynamodbav:"MountImageURL"`
-	Inventory       map[string]Item           `json:"inventory" dynamodbav:"Inventory"`
-	IsQuesting      bool                      `json:"isQuesting" dynamodbav:"IsQuesting"`
-	IsWorking       bool                      `json:"isWorking" dynamodbav:"IsWorking"`
-	Quests          map[string]GeneratedQuest `json:"quests" dynamodbav:"Quests"`
-	CurrentQuest    map[string]GeneratedQuest `json:"currentQuest" dynamodbav:"CurrentQuest"`
-	QuestingUntil   string                    `json:"questingUntil" dynamodbav:"QuestingUntil"`
-	WorkingUntil    string                    `json:"workingUntil" dynamodbav:"WorkingUntil"`
-	WorkReward      int                       `json:"workReward" dynamodbav:"WorkReward"`
-	WorkDuration    int                       `json:"workDuration" dynamodbav:"WorkDuration"`
-	LastPlayedDate  string                    `json:"lastPlayedDate" dynamodbav:"LastPlayedDate"`
-	DailyQuestCount int                       `json:"dailyQuestCount" dynamodbav:"DailyQuestCount"`
+	Name              string                    `json:"name" dynamodbav:"Username"`
+	Email             string                    `json:"email" dynamodbav:"Email"`
+	Password          Password                  `json:"-"`
+	PasswordHash      string                    `json:"-" dynamodbav:"PasswordHash"`
+	CreatedOn         string                    `json:"createdOn,omitempty" dynamodbav:"CreatedOn"`
+	ImageURL          string                    `json:"imageURL" dynamodbav:"ImageURL"`
+	Level             int                       `json:"level" dynamodbav:"Level"`
+	Gold              int                       `json:"gold" dynamodbav:"Gold"`
+	EXP               int                       `json:"EXP" dynamodbav:"EXP"`
+	BigDPoints        int                       `json:"bigDPoints" dynamodbav:"BigDPoints"`
+	Strength          int                       `json:"strength" dynamodbav:"Strength"`
+	Dexterity         int                       `json:"dexterity" dynamodbav:"Dexterity"`
+	Constitution      int                       `json:"constitution" dynamodbav:"Constitution"`
+	Intelligence      int                       `json:"intelligence" dynamodbav:"Intelligence"`
+	TotalStrength     int                       `json:"totalStrength" dynamodbav:"TotalStrength"`
+	TotalDexterity    int                       `json:"totalDexterity" dynamodbav:"TotalDexterity"`
+	TotalConstitution int                       `json:"totalConstitution" dynamodbav:"TotalConstitution"`
+	TotalIntelligence int                       `json:"totalIntelligence" dynamodbav:"TotalIntelligence"`
+	EquippedItems     map[string]Item           `json:"equippedItems" dynamodbav:"EquippedItems"`
+	WeaponShop        map[string]Item           `json:"weaponShop" dynamodbav:"WeaponShop"`
+	MagicShop         map[string]Item           `json:"magicShop" dynamodbav:"MagicShop"`
+	Mount             string                    `json:"mount" dynamodbav:"Mount"`
+	MountImageURL     string                    `json:"mountImageURL" dynamodbav:"MountImageURL"`
+	Inventory         map[string]Item           `json:"inventory" dynamodbav:"Inventory"`
+	IsQuesting        bool                      `json:"isQuesting" dynamodbav:"IsQuesting"`
+	IsWorking         bool                      `json:"isWorking" dynamodbav:"IsWorking"`
+	Quests            map[string]GeneratedQuest `json:"quests" dynamodbav:"Quests"`
+	CurrentQuest      map[string]GeneratedQuest `json:"currentQuest" dynamodbav:"CurrentQuest"`
+	QuestingUntil     string                    `json:"questingUntil" dynamodbav:"QuestingUntil"`
+	WorkingUntil      string                    `json:"workingUntil" dynamodbav:"WorkingUntil"`
+	WorkReward        int                       `json:"workReward" dynamodbav:"WorkReward"`
+	WorkDuration      int                       `json:"workDuration" dynamodbav:"WorkDuration"`
+	LastPlayedDate    string                    `json:"lastPlayedDate" dynamodbav:"LastPlayedDate"`
+	DailyQuestCount   int                       `json:"dailyQuestCount" dynamodbav:"DailyQuestCount"`
+	DamageMin         int                       `json:"damageMin" dynamodbav:"DamageMin"`
+	DamageMax         int                       `json:"damageMax" dynamodbav:"DamageMax"`
+	DamageAverage     int                       `json:"damageAverage" dynamodbav:"DamageAverage"`
+	BlockChance       int                       `json:"blockChance" dynamodbav:"BlockChance"`
+	ArmourAmount      int                       `json:"armourAmount" dynamodbav:"ArmourAmount"`
 }
 
 type Password struct {

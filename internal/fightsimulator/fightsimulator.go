@@ -7,6 +7,7 @@ import (
 	"math/rand"
 )
 
+// TODO: Add armour amount and blockchance and use actual user's stats
 type Fighter struct {
 	Name          string
 	Health        float32
@@ -29,7 +30,6 @@ func (f *Fighter) criticalHit() bool {
 func Simulate(player Fighter, enemy Fighter) (string, bool) {
 	var fightLog string
 
-	// Initial magic damage
 	fightLog += "Initial Magic Damage:\n"
 	if player.MagicDamage > enemy.MagicDamage {
 		enemy.Health -= player.MagicDamage
@@ -41,18 +41,15 @@ func Simulate(player Fighter, enemy Fighter) (string, bool) {
 			enemy.Name, int(enemy.MagicDamage), player.Name, player.Name, int(math.Round(float64(player.Health))))
 	}
 
-	// Determine who hits first
 	first, second := player, enemy
 	if enemy.HitFirstIndex > player.HitFirstIndex {
 		first, second = enemy, player
 	}
 
-	// Fight rounds
 	round := 1
 	for player.Health > 0 && enemy.Health > 0 {
 		fightLog += fmt.Sprintf("Round %d:\n", round)
 
-		// First attack
 		damage := first.dealDamage()
 		if first.criticalHit() {
 			damage *= 2
@@ -69,7 +66,6 @@ func Simulate(player Fighter, enemy Fighter) (string, bool) {
 			return fightLog, first.Name == player.Name
 		}
 
-		// Second attack
 		damage = second.dealDamage()
 		if second.criticalHit() {
 			damage *= 2
@@ -87,7 +83,6 @@ func Simulate(player Fighter, enemy Fighter) (string, bool) {
 		round++
 	}
 
-	// If somehow the loop exits without either being defeated
 	return fightLog, false
 }
 
