@@ -23,7 +23,7 @@ const (
 	PasswordHashAttribute    = "PasswordHash"
 	CreatedOnAttribute       = "CreatedOn"
 	ImageURLAttribute        = "ImageURL"
-	LevelAttribute           = "Level"
+	LevelAttribute           = "Lvl"
 	GoldAttribute            = "Gold"
 	TimeAttribute            = "Time"
 	EXPAttribute             = "EXP"

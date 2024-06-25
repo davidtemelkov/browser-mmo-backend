@@ -23,7 +23,7 @@ type Shield struct {
 
 type GeneratedShield struct {
 	Name         string
-	Level        int
+	Lvl          int
 	BlockChance  int
 	IsLegendary  bool
 	ImageURL     string

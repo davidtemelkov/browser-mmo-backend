@@ -12,7 +12,7 @@ import (
 
 type GeneratedWeapon struct {
 	Name          string
-	Level         int
+	Lvl           int
 	DamageMin     int
 	DamageMax     int
 	DamageAverage int
@@ -42,7 +42,7 @@ type Weapon struct {
 type Item struct {
 	WhatItem      string `json:"whatItem"`
 	Name          string `json:"name"`
-	Level         int    `json:"level"`
+	Lvl           int    `json:"lvl"`
 	DamageMin     int    `json:"damageMin"`
 	DamageMax     int    `json:"damageMax"`
 	DamageAverage int    `json:"damageAverage"`

@@ -124,6 +124,12 @@ func (app *application) collectCurrentQuestRewardsHandler(c *gin.Context) {
 	fightLog, playerWon := fightsimulator.Simulate(userFighter, monsterFighter)
 
 	if playerWon {
+		err = app.models.Users.LevelUp(user)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, constants.InternalServerError)
+			return
+		}
+
 		err = app.models.Quests.CollectCurrentQuestRewards(user)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, constants.InternalServerError)
@@ -162,7 +168,7 @@ func (app *application) collectCurrentQuestRewardsHandler(c *gin.Context) {
 			"fightWon":        playerWon,
 			"monsterName":     generatedMonster.Name,
 			"monsterImageUrl": generatedMonster.ImageURL,
-			"monsterLevel":    generatedMonster.Level,
+			"monsterLvl":      generatedMonster.Lvl,
 			"monsterHealth":   monsterFighter.Health,
 		})
 }

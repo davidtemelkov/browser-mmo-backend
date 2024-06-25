@@ -20,7 +20,7 @@ type Monster struct {
 type GeneratedMonster struct {
 	Name         string  `json:"name"`
 	ImageURL     string  `json:"imageURL"`
-	Level        int     `json:"level"`
+	Lvl          int     `json:"lvl"`
 	Constitution float32 `json:"constitution"`
 	Dexterity    float32 `json:"dexterity"`
 	Intelligence float32 `json:"intelligence"`

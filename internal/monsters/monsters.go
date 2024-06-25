@@ -16,7 +16,7 @@ func GenerateMonster(mm data.MonsterModel, user data.User) (data.GeneratedMonste
 	monster := data.GeneratedMonster{
 		Name:         randomMonster.Name,
 		ImageURL:     randomMonster.ImageURL,
-		Level:        user.Level - 1,
+		Lvl:          user.Lvl - 1,
 		Constitution: float32(user.Constitution) * 0.7,
 		Dexterity:    float32(user.Dexterity) * 0.7,
 		Intelligence: float32(user.Intelligence) * 0.7,

@@ -20,7 +20,7 @@ func GetInitialUser(input UserInput) *data.User {
 		Email:        input.Email,
 		CreatedOn:    time.Now().UTC().Format(constants.TimeFormat),
 		ImageURL:     input.ImageURL,
-		Level:        1,
+		Lvl:          1,
 		Gold:         100,
 		EXP:          0,
 		BigDPoints:   0,

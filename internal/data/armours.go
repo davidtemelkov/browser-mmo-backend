@@ -26,7 +26,7 @@ type Armour struct {
 type GeneratedArmour struct {
 	Type         string
 	Name         string
-	Level        int
+	Lvl          int
 	ArmourAmount int
 	Strength     int
 	Dexterity    int

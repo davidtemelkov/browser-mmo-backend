@@ -94,7 +94,7 @@ func NewFighterFromUser(playerData data.User) Fighter {
 		DamageMax:     float32(playerData.Strength),
 		CritChance:    float32(playerData.Dexterity) * 0.01,
 		MagicDamage:   float32(playerData.Intelligence),
-		HitFirstIndex: float32(playerData.Dexterity) + float32(playerData.Level),
+		HitFirstIndex: float32(playerData.Dexterity) + float32(playerData.Lvl),
 	}
 }
 
@@ -106,6 +106,6 @@ func NewFighterFromMonster(monster data.GeneratedMonster) Fighter {
 		DamageMax:     monster.Strength,
 		CritChance:    monster.Dexterity * 0.01,
 		MagicDamage:   monster.Intelligence,
-		HitFirstIndex: monster.Dexterity + float32(monster.Level),
+		HitFirstIndex: monster.Dexterity + float32(monster.Lvl),
 	}
 }

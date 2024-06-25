@@ -6,6 +6,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"math"
 	"strconv"
 	"strings"
 
@@ -23,7 +24,7 @@ type User struct {
 	PasswordHash      string                    `json:"-" dynamodbav:"PasswordHash"`
 	CreatedOn         string                    `json:"createdOn,omitempty" dynamodbav:"CreatedOn"`
 	ImageURL          string                    `json:"imageURL" dynamodbav:"ImageURL"`
-	Level             int                       `json:"level" dynamodbav:"Level"`
+	Lvl               int                       `json:"lvl" dynamodbav:"Lvl"`
 	Gold              int                       `json:"gold" dynamodbav:"Gold"`
 	EXP               int                       `json:"EXP" dynamodbav:"EXP"`
 	BigDPoints        int                       `json:"bigDPoints" dynamodbav:"BigDPoints"`
@@ -139,7 +140,7 @@ func (um UserModel) Insert(user *User) error {
 		constants.ImageURLAttribute: &types.AttributeValueMemberS{
 			Value: user.ImageURL,
 		}, constants.LevelAttribute: &types.AttributeValueMemberN{
-			Value: strconv.Itoa(user.Level),
+			Value: strconv.Itoa(user.Lvl),
 		},
 		constants.GoldAttribute: &types.AttributeValueMemberN{
 			Value: strconv.Itoa(user.Gold),
@@ -873,6 +874,66 @@ func (um UserModel) BuyItem(user *User, slotKey, shopType string, newItem Item) 
 	return nil
 }
 
+// TODO: The can lvl up check could be outside this function
+func (um UserModel) LevelUp(user *User) error {
+	for {
+		expForNextLvl := CalculateExpForLvlUp(user.Lvl)
+		if user.EXP >= expForNextLvl {
+			user.EXP -= expForNextLvl
+			user.Lvl++
+		} else {
+			break
+		}
+	}
+
+	key := map[string]types.AttributeValue{
+		constants.PK: &types.AttributeValueMemberS{
+			Value: constants.UserPrefix + user.Email,
+		},
+		constants.SK: &types.AttributeValueMemberS{
+			Value: constants.UserPrefix + user.Email,
+		},
+	}
+
+	updateExpression := "SET #lvl = :lvl, #exp = :exp"
+	expressionAttributeValues := map[string]types.AttributeValue{
+		":lvl": &types.AttributeValueMemberN{Value: strconv.Itoa(user.Lvl)},
+		":exp": &types.AttributeValueMemberN{Value: strconv.Itoa(user.EXP)},
+	}
+	expressionAttributeNames := map[string]string{
+		"#lvl": "Lvl",
+		"#exp": "EXP",
+	}
+
+	input := &dynamodb.UpdateItemInput{
+		TableName:                 aws.String(constants.TableName),
+		Key:                       key,
+		UpdateExpression:          aws.String(updateExpression),
+		ExpressionAttributeValues: expressionAttributeValues,
+		ExpressionAttributeNames:  expressionAttributeNames,
+	}
+
+	_, err := um.DB.UpdateItem(um.CTX, input)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// TODO: Think about moving this to users and either movig the user struct there
+// or add a types package
+const (
+	BASE_EXP     = 100.0
+	EXP_EXPONENT = 1.5
+)
+
+func CalculateExpForLvlUp(lvl int) int {
+	return int(BASE_EXP * math.Pow(float64(lvl), EXP_EXPONENT))
+}
+
+// End
+
 func getItemAWSAttributes(item Item) map[string]types.AttributeValue {
 	var attributes = map[string]types.AttributeValue{}
 
@@ -881,7 +942,7 @@ func getItemAWSAttributes(item Item) map[string]types.AttributeValue {
 		attributes = map[string]types.AttributeValue{
 			constants.WhatItemAttribute:      &types.AttributeValueMemberS{Value: item.WhatItem},
 			constants.NameAttribute:          &types.AttributeValueMemberS{Value: item.Name},
-			constants.LevelAttribute:         &types.AttributeValueMemberN{Value: strconv.Itoa(item.Level)},
+			constants.LevelAttribute:         &types.AttributeValueMemberN{Value: strconv.Itoa(item.Lvl)},
 			constants.DamageMinAttribute:     &types.AttributeValueMemberN{Value: strconv.Itoa(item.DamageMin)},
 			constants.DamageMaxAttribute:     &types.AttributeValueMemberN{Value: strconv.Itoa(item.DamageMax)},
 			constants.DamageAverageAttribute: &types.AttributeValueMemberN{Value: strconv.Itoa(item.DamageAverage)},
@@ -897,7 +958,7 @@ func getItemAWSAttributes(item Item) map[string]types.AttributeValue {
 		attributes = map[string]types.AttributeValue{
 			constants.WhatItemAttribute:     &types.AttributeValueMemberS{Value: item.WhatItem},
 			constants.NameAttribute:         &types.AttributeValueMemberS{Value: item.Name},
-			constants.LevelAttribute:        &types.AttributeValueMemberN{Value: strconv.Itoa(item.Level)},
+			constants.LevelAttribute:        &types.AttributeValueMemberN{Value: strconv.Itoa(item.Lvl)},
 			constants.BlockChanceAttribute:  &types.AttributeValueMemberN{Value: strconv.Itoa(item.BlockChance)},
 			constants.StrengthAttribute:     &types.AttributeValueMemberN{Value: strconv.Itoa(item.Strength)},
 			constants.DexterityAttribute:    &types.AttributeValueMemberN{Value: strconv.Itoa(item.Dexterity)},
@@ -911,7 +972,7 @@ func getItemAWSAttributes(item Item) map[string]types.AttributeValue {
 		attributes = map[string]types.AttributeValue{
 			constants.WhatItemAttribute:     &types.AttributeValueMemberS{Value: item.WhatItem},
 			constants.NameAttribute:         &types.AttributeValueMemberS{Value: item.Name},
-			constants.LevelAttribute:        &types.AttributeValueMemberN{Value: strconv.Itoa(item.Level)},
+			constants.LevelAttribute:        &types.AttributeValueMemberN{Value: strconv.Itoa(item.Lvl)},
 			constants.StrengthAttribute:     &types.AttributeValueMemberN{Value: strconv.Itoa(item.Strength)},
 			constants.DexterityAttribute:    &types.AttributeValueMemberN{Value: strconv.Itoa(item.Dexterity)},
 			constants.ConstitutionAttribute: &types.AttributeValueMemberN{Value: strconv.Itoa(item.Constitution)},

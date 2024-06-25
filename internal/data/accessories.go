@@ -23,7 +23,7 @@ type Accessory struct {
 type GeneratedAccessory struct {
 	Type         string
 	Name         string
-	Level        int
+	Lvl          int
 	IsLegendary  bool
 	ImageURL     string
 	Strength     int
