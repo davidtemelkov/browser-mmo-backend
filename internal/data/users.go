@@ -57,6 +57,7 @@ type User struct {
 	DamageAverage     int                       `json:"damageAverage" dynamodbav:"DamageAverage"`
 	BlockChance       int                       `json:"blockChance" dynamodbav:"BlockChance"`
 	ArmourAmount      int                       `json:"armourAmount" dynamodbav:"ArmourAmount"`
+	Dungeon           int                       `json:"dungeon" dynamodbav:"Dungeon"`
 }
 
 type Password struct {

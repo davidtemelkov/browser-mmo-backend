@@ -37,7 +37,7 @@ func (app *application) setupRoutes() *gin.Engine {
 
 	itemsRoutes := r.Group("/items")
 	{
-		//should add something like an api key and middleware so only admins can add new items
+		// TODO: should add something like an api key and middleware so only admins can add new items
 		itemsRoutes.POST("/weapons", app.createWeaponHandler)
 		itemsRoutes.POST("/accessories", app.createAccessoryHandler)
 		itemsRoutes.POST("/armours", app.createArmourHandler)
@@ -46,7 +46,7 @@ func (app *application) setupRoutes() *gin.Engine {
 
 	questRoutes := r.Group("/quests")
 	{
-		//should add something like an api key and middleware so only admins can add new quests
+		// TODO: should add something like an api key and middleware so only admins can add new quests
 		questRoutes.POST("/create", app.createQuestHandler)
 		questRoutes.Use(app.authenticate())
 		questRoutes.GET("/generate", app.generateQuestsHandler)
@@ -66,7 +66,19 @@ func (app *application) setupRoutes() *gin.Engine {
 
 	monsterRoutes := r.Group("/monsters")
 	{
-		monsterRoutes.POST("/create", app.createMonsterHandler)
+		monsterRoutes.POST("/", app.createMonsterHandler)
+	}
+
+	bossRoutes := r.Group("/bosses")
+	{
+		bossRoutes.POST("/", app.createBossHandler)
+		bossRoutes.GET("/:position", app.getBossByPositionHandler)
+	}
+
+	dungeonRoutes := r.Group("/dungeon")
+	{
+		dungeonRoutes.Use(app.authenticate())
+		dungeonRoutes.PATCH("/", app.fightDungeonBossHandler)
 	}
 
 	r.Run(":8080")

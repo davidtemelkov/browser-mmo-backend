@@ -116,3 +116,10 @@ const (
 	MonsterPrefix = "MONSTER#"
 	Monster       = "MONSTER"
 )
+
+// Boss DB constants
+const (
+	BossPrefix        = "BOSS#"
+	Boss              = "BOSS"
+	PositionAttribute = "Position"
+)

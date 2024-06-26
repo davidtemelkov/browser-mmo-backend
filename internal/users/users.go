@@ -85,6 +85,8 @@ func GetInitialUser(input UserInput) *data.User {
 		WorkDuration:    0,
 		LastPlayedDate:  utils.GetCurrentDate(),
 		DailyQuestCount: 0,
+		ArmourAmount:    0,
+		Dungeon:         1,
 	}
 }
 

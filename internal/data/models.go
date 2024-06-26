@@ -15,6 +15,7 @@ type Models struct {
 	Quests      QuestModel
 	Work        WorkModel
 	Monsters    MonsterModel
+	Bosses      BossModel
 }
 
 func NewModels(db *dynamodb.Client, ctx context.Context) Models {
@@ -27,5 +28,6 @@ func NewModels(db *dynamodb.Client, ctx context.Context) Models {
 		Quests:      QuestModel{DB: db, CTX: ctx},
 		Work:        WorkModel{DB: db, CTX: ctx},
 		Monsters:    MonsterModel{DB: db, CTX: ctx},
+		Bosses:      BossModel{DB: db, CTX: ctx},
 	}
 }

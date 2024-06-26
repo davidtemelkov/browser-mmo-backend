@@ -109,3 +109,15 @@ func NewFighterFromMonster(monster data.GeneratedMonster) Fighter {
 		HitFirstIndex: monster.Dexterity + float32(monster.Lvl),
 	}
 }
+
+func NewFighterFromBoss(boss data.Boss) Fighter {
+	return Fighter{
+		Name:          boss.Name,
+		Health:        float32(boss.Constitution) + 100,
+		DamageMin:     float32(boss.Strength / 2),
+		DamageMax:     float32(boss.Strength),
+		CritChance:    float32(boss.Dexterity) * 0.01,
+		MagicDamage:   float32(boss.Intelligence),
+		HitFirstIndex: float32(boss.Dexterity) + float32(boss.Lvl),
+	}
+}

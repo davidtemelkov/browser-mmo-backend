@@ -124,13 +124,13 @@ func (app *application) collectCurrentQuestRewardsHandler(c *gin.Context) {
 	fightLog, playerWon := fightsimulator.Simulate(userFighter, monsterFighter)
 
 	if playerWon {
-		err = app.models.Users.LevelUp(user)
+		err = app.models.Quests.CollectCurrentQuestRewards(user)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, constants.InternalServerError)
 			return
 		}
 
-		err = app.models.Quests.CollectCurrentQuestRewards(user)
+		err = app.models.Users.LevelUp(user)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, constants.InternalServerError)
 			return
