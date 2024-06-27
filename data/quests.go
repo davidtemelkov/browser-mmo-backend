@@ -1,8 +1,8 @@
 package data
 
 import (
-	"browser-mmo-backend/internal/constants"
-	"browser-mmo-backend/internal/utils"
+	"browser-mmo-backend/constants"
+	"browser-mmo-backend/utils"
 	"context"
 	"strconv"
 	"strings"

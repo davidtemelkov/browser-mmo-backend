@@ -1,8 +1,8 @@
 package items
 
 import (
-	"browser-mmo-backend/internal/constants"
-	"browser-mmo-backend/internal/data"
+	"browser-mmo-backend/constants"
+	"browser-mmo-backend/data"
 	"math/rand"
 )
 
@@ -17,34 +17,42 @@ var ITEM_TYPES = []string{
 	constants.Ring,
 }
 
-func GenerateItem(wp data.WeaponModel,
+var STATS = []string{
+	constants.StrengthAttribute,
+	constants.DexterityAttribute,
+	constants.ConstitutionAttribute,
+	constants.IntelligenceAttribute,
+}
+
+func GenerateItem(
+	isGuaranteedLegendary bool,
+	user data.User,
+	wp data.WeaponModel,
 	acm data.AccessoryModel,
 	sm data.ShieldModel,
 	arm data.ArmourModel,
 	um data.UserModel,
 ) (data.Item, error) {
-	var item data.Item
-
 	randIndex := rand.Intn(len(ITEM_TYPES))
 	selectedItemType := ITEM_TYPES[randIndex]
-	var statType int
-	var suffix string
 
-	// TODO: Other legendary chance logic
-	isLegendary := rand.Intn(25) == 0
+	var (
+		statType    int
+		baseName    string
+		imageURL    string
+		isLegendary bool
+	)
 
-	if !isLegendary {
+	if isGuaranteedLegendary {
+		isLegendary = true
+	} else {
+		isLegendary = rand.Intn(25) == 0
+	}
+
+	if isLegendary {
+		statType = rand.Intn(3)
+	} else {
 		statType = rand.Intn(4)
-
-		switch statType {
-		case 3:
-			suffix = " Of Threesomes"
-		case 4:
-			suffix = " Of All Trades"
-		default:
-			statType = 2
-			suffix = " Of Deuces"
-		}
 	}
 
 	switch selectedItemType {
@@ -67,24 +75,8 @@ func GenerateItem(wp data.WeaponModel,
 			baseWeapon = basicWeapons[randIndex]
 		}
 
-		// TODO: Add different generation logic based upon isLegendary and user stats
-		item = data.Item{
-			WhatItem:      selectedItemType,
-			Name:          baseWeapon.BaseName + suffix,
-			Lvl:           1,
-			DamageMin:     1,
-			DamageMax:     1,
-			DamageAverage: 1,
-			Strength:      0,
-			Dexterity:     0,
-			Constitution:  0,
-			Intelligence:  0,
-			IsLegendary:   isLegendary,
-			ImageURL:      baseWeapon.ImageURL,
-			Price:         1,
-		}
-
-		return item, nil
+		baseName = baseWeapon.BaseName
+		imageURL = baseWeapon.ImageURL
 	case constants.ShieldNotAllCaps:
 		var baseShield data.Shield
 
@@ -104,22 +96,8 @@ func GenerateItem(wp data.WeaponModel,
 			baseShield = basicShields[randIndex]
 		}
 
-		// TODO: Add different generation logic based upon isLegendary and user stats
-		item = data.Item{
-			WhatItem:     selectedItemType,
-			Name:         baseShield.BaseName + suffix,
-			Lvl:          1,
-			BlockChance:  1,
-			Strength:     0,
-			Dexterity:    0,
-			Constitution: 0,
-			Intelligence: 0,
-			IsLegendary:  isLegendary,
-			ImageURL:     baseShield.ImageURL,
-			Price:        1,
-		}
-
-		return item, nil
+		baseName = baseShield.BaseName
+		imageURL = baseShield.ImageURL
 	case constants.Ring:
 		var baseAccessory data.Accessory
 
@@ -139,21 +117,8 @@ func GenerateItem(wp data.WeaponModel,
 			baseAccessory = basicAccessories[randIndex]
 		}
 
-		// TODO: Add different generation logic based upon isLegendary and user stats
-		item = data.Item{
-			WhatItem:     selectedItemType,
-			Name:         baseAccessory.BaseName + suffix,
-			Lvl:          1,
-			Strength:     0,
-			Dexterity:    0,
-			Constitution: 0,
-			Intelligence: 0,
-			IsLegendary:  isLegendary,
-			ImageURL:     baseAccessory.ImageURL,
-			Price:        1,
-		}
-
-		return item, nil
+		baseName = baseAccessory.BaseName
+		imageURL = baseAccessory.ImageURL
 	case constants.Amulet:
 		var baseAccessory data.Accessory
 
@@ -173,21 +138,8 @@ func GenerateItem(wp data.WeaponModel,
 			baseAccessory = basicAccessories[randIndex]
 		}
 
-		// TODO: Add different generation logic based upon isLegendary and user stats
-		item = data.Item{
-			WhatItem:     selectedItemType,
-			Name:         baseAccessory.BaseName + suffix,
-			Lvl:          1,
-			Strength:     0,
-			Dexterity:    0,
-			Constitution: 0,
-			Intelligence: 0,
-			IsLegendary:  isLegendary,
-			ImageURL:     baseAccessory.ImageURL,
-			Price:        1,
-		}
-
-		return item, nil
+		baseName = baseAccessory.BaseName
+		imageURL = baseAccessory.ImageURL
 	default:
 		var baseArmour data.Armour
 
@@ -207,20 +159,98 @@ func GenerateItem(wp data.WeaponModel,
 			baseArmour = basicArmours[randIndex]
 		}
 
-		// TODO: Add different generation logic based upon isLegendary and user stats
-		item = data.Item{
-			WhatItem:     selectedItemType,
-			Name:         baseArmour.BaseName + suffix,
-			Lvl:          1,
-			Strength:     0,
-			Dexterity:    0,
-			Constitution: 0,
-			Intelligence: 0,
-			IsLegendary:  isLegendary,
-			ImageURL:     baseArmour.ImageURL,
-			Price:        1,
-		}
-
-		return item, nil
+		baseName = baseArmour.BaseName
+		imageURL = baseArmour.ImageURL
 	}
+
+	item := generateStats(user, statType, selectedItemType, baseName, imageURL, isLegendary)
+
+	return item, nil
+}
+
+// TODO: Balance this
+func generateStats(user data.User, statType int, itemType, baseName, imageURL string, isLegendary bool) data.Item {
+	item := data.Item{
+		WhatItem:    itemType,
+		Name:        getItemName(isLegendary, baseName, statType),
+		Lvl:         user.Lvl,
+		IsLegendary: isLegendary,
+		ImageURL:    imageURL,
+	}
+
+	// Generate Str, Dex, Const, Int
+	selectedStats := rand.Perm(len(STATS))[:statType]
+
+	baseValue := user.Lvl * 10
+	randomness := rand.Intn(10)
+	totalStatValue := baseValue + randomness
+
+	values := make([]int, statType)
+	switch statType {
+	case 2:
+		values[0] = totalStatValue / 2
+		values[1] = totalStatValue / 2
+	case 3:
+		values[0] = totalStatValue / 3
+		values[1] = totalStatValue / 3
+		values[2] = totalStatValue / 3
+	case 4:
+		values[0] = totalStatValue / 4
+		values[1] = totalStatValue / 4
+		values[2] = totalStatValue / 4
+		values[3] = totalStatValue / 4
+	}
+
+	for i, stat := range selectedStats {
+		switch stat {
+		case 0:
+			item.Strength = values[i]
+		case 1:
+			item.Dexterity = values[i]
+		case 2:
+			item.Constitution = values[i]
+		case 3:
+			item.Intelligence = values[i]
+		}
+	}
+
+	// Generate item type unique stats
+	switch itemType {
+	case constants.WeaponNotAllCaps:
+		// add dmgmin max avrg
+		item.DamageMin = user.Lvl
+		item.DamageMax = user.Lvl * 2
+	case constants.ShieldNotAllCaps:
+		item.BlockChance = user.Lvl
+	default:
+		// add armour amount
+		item.ArmourAmount = user.Lvl * 2
+	}
+
+	item.Price = user.Lvl * statType
+	if isLegendary {
+		item.Price *= 2
+	}
+
+	return item
+}
+
+func getItemName(isLegendary bool, baseName string, statType int) string {
+	if isLegendary {
+		return baseName
+	}
+
+	var suffix string
+
+	switch statType {
+	case 3:
+		suffix = " Of Threesomes"
+	case 4:
+		suffix = " Of All Trades"
+	default:
+		statType = 2
+		suffix = " Of Deuces"
+	}
+
+	return baseName + suffix
 }

@@ -1,8 +1,8 @@
 package main
 
 import (
-	"browser-mmo-backend/internal/constants"
-	"browser-mmo-backend/internal/data"
+	"browser-mmo-backend/constants"
+	"browser-mmo-backend/data"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -11,12 +11,10 @@ import (
 
 func (app *application) createShieldHandler(c *gin.Context) {
 	var input struct {
-		BaseName       string `json:"base_name"`
-		MinLevel       int    `json:"min_level"`
-		BlockChanceMin int    `json:"block_chance_min"`
-		BlockChanceMax int    `json:"block_chance_max"`
-		IsLegendary    bool   `json:"is_legendary"`
-		ImageURL       string `json:"imageURL"`
+		BaseName    string `json:"base_name"`
+		MinLevel    int    `json:"min_level"`
+		IsLegendary bool   `json:"is_legendary"`
+		ImageURL    string `json:"imageURL"`
 	}
 
 	if err := c.BindJSON(&input); err != nil {
@@ -25,13 +23,11 @@ func (app *application) createShieldHandler(c *gin.Context) {
 	}
 
 	shield := &data.Shield{
-		ID:             uuid.New().String(),
-		BaseName:       input.BaseName,
-		MinLevel:       input.MinLevel,
-		BlockChanceMin: input.BlockChanceMin,
-		BlockChanceMax: input.BlockChanceMax,
-		IsLegendary:    input.IsLegendary,
-		ImageURL:       input.ImageURL,
+		ID:          uuid.New().String(),
+		BaseName:    input.BaseName,
+		MinLevel:    input.MinLevel,
+		IsLegendary: input.IsLegendary,
+		ImageURL:    input.ImageURL,
 	}
 
 	err := app.models.Shields.Insert(shield)

@@ -1,7 +1,7 @@
 package validator
 
 import (
-	"browser-mmo-backend/internal/constants"
+	"browser-mmo-backend/constants"
 	"regexp"
 	"time"
 )

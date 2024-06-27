@@ -1,8 +1,8 @@
 package main
 
 import (
-	"browser-mmo-backend/internal/constants"
-	"browser-mmo-backend/internal/data"
+	"browser-mmo-backend/constants"
+	"browser-mmo-backend/data"
 	"net/http"
 
 	"github.com/gin-gonic/gin"

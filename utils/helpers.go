@@ -1,7 +1,7 @@
 package utils
 
 import (
-	"browser-mmo-backend/internal/constants"
+	"browser-mmo-backend/constants"
 	"context"
 	"time"
 

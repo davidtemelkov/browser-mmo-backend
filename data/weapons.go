@@ -1,7 +1,7 @@
 package data
 
 import (
-	"browser-mmo-backend/internal/constants"
+	"browser-mmo-backend/constants"
 	"context"
 	"strconv"
 
@@ -10,56 +10,39 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb/types"
 )
 
-// Base accessories
-type Accessory struct {
+// Base weapons
+type Weapon struct {
 	ID          string
-	WhatItem    string
 	BaseName    string
 	MinLevel    int
 	IsLegendary bool
 	ImageURL    string
 }
 
-type GeneratedAccessory struct {
-	Type         string
-	Name         string
-	Lvl          int
-	IsLegendary  bool
-	ImageURL     string
-	Strength     int
-	Dexterity    int
-	Constitution int
-	Intelligence int
-	Price        int
-}
-
-type AccessoryModel struct {
+type WeaponModel struct {
 	DB  *dynamodb.Client
 	CTX context.Context
 }
 
-func (am AccessoryModel) Insert(accessory *Accessory) error {
+func (wm WeaponModel) Insert(weapon *Weapon) error {
 	item := map[string]types.AttributeValue{
 		constants.PK: &types.AttributeValueMemberS{
-			Value: constants.ItemPrefix + constants.Accessory,
+			Value: constants.ItemPrefix + constants.Weapon,
 		},
 		constants.SK: &types.AttributeValueMemberS{
-			Value: constants.AccessoryPrefix + accessory.ID,
-		},
-		constants.WhatItemAttribute: &types.AttributeValueMemberS{
-			Value: accessory.WhatItem,
+			Value: constants.WeaponPrefix + weapon.ID,
 		},
 		constants.BaseNameAttribute: &types.AttributeValueMemberS{
-			Value: accessory.BaseName,
+			Value: weapon.BaseName,
 		},
 		constants.MinLevelAttribute: &types.AttributeValueMemberN{
-			Value: strconv.Itoa(accessory.MinLevel),
+			Value: strconv.Itoa(weapon.MinLevel),
 		},
 		constants.IsLegendaryAttribute: &types.AttributeValueMemberBOOL{
-			Value: accessory.IsLegendary,
+			Value: weapon.IsLegendary,
 		},
 		constants.ImageURLAttribute: &types.AttributeValueMemberS{
-			Value: accessory.ImageURL,
+			Value: weapon.ImageURL,
 		},
 	}
 
@@ -68,7 +51,7 @@ func (am AccessoryModel) Insert(accessory *Accessory) error {
 		Item:      item,
 	}
 
-	_, err := am.DB.PutItem(am.CTX, putInput)
+	_, err := wm.DB.PutItem(wm.CTX, putInput)
 	if err != nil {
 		return err
 	}
@@ -76,7 +59,7 @@ func (am AccessoryModel) Insert(accessory *Accessory) error {
 	return nil
 }
 
-func (am AccessoryModel) queryAccessoriesByTypeAndIsLegendary(accessoryType string, isLegendary bool) ([]Accessory, error) {
+func (wm WeaponModel) queryWeaponsByIsLegendary(isLegendary bool) ([]Weapon, error) {
 	keyConditionExpression := "#pk = :pk AND begins_with(#sk, :sk)"
 	expressionAttributeNames := map[string]string{
 		"#pk": constants.PK,
@@ -84,20 +67,17 @@ func (am AccessoryModel) queryAccessoriesByTypeAndIsLegendary(accessoryType stri
 	}
 	expressionAttributeValues := map[string]types.AttributeValue{
 		":pk": &types.AttributeValueMemberS{
-			Value: constants.ItemPrefix + constants.Accessory,
+			Value: constants.ItemPrefix + constants.Weapon,
 		},
 		":sk": &types.AttributeValueMemberS{
-			Value: constants.AccessoryPrefix,
-		},
-		":whatItem": &types.AttributeValueMemberS{
-			Value: accessoryType,
+			Value: constants.WeaponPrefix,
 		},
 		":isLegendary": &types.AttributeValueMemberBOOL{
 			Value: isLegendary,
 		},
 	}
 
-	filterExpression := "WhatItem = :whatItem AND IsLegendary = :isLegendary"
+	filterExpression := "IsLegendary = :isLegendary"
 
 	queryInput := &dynamodb.QueryInput{
 		TableName:                 aws.String(constants.TableName),
@@ -107,36 +87,35 @@ func (am AccessoryModel) queryAccessoriesByTypeAndIsLegendary(accessoryType stri
 		FilterExpression:          aws.String(filterExpression),
 	}
 
-	result, err := am.DB.Query(am.CTX, queryInput)
+	result, err := wm.DB.Query(wm.CTX, queryInput)
 	if err != nil {
 		return nil, err
 	}
 
-	accessories := []Accessory{}
+	weapons := []Weapon{}
 	for _, item := range result.Items {
 		minLevel, err := strconv.Atoi(item[constants.MinLevelAttribute].(*types.AttributeValueMemberN).Value)
 		if err != nil {
 			return nil, err
 		}
 
-		accessory := Accessory{
+		weapon := Weapon{
 			ID:          item[constants.SK].(*types.AttributeValueMemberS).Value,
-			WhatItem:    item[constants.WhatItemAttribute].(*types.AttributeValueMemberS).Value,
 			BaseName:    item[constants.BaseNameAttribute].(*types.AttributeValueMemberS).Value,
 			MinLevel:    minLevel,
 			IsLegendary: item[constants.IsLegendaryAttribute].(*types.AttributeValueMemberBOOL).Value,
 			ImageURL:    item[constants.ImageURLAttribute].(*types.AttributeValueMemberS).Value,
 		}
-		accessories = append(accessories, accessory)
+		weapons = append(weapons, weapon)
 	}
 
-	return accessories, nil
+	return weapons, nil
 }
 
-func (am AccessoryModel) GetAllBasicAccessoriesOfType(accessoryType string) ([]Accessory, error) {
-	return am.queryAccessoriesByTypeAndIsLegendary(accessoryType, false)
+func (wm WeaponModel) GetAllBasicWeapons() ([]Weapon, error) {
+	return wm.queryWeaponsByIsLegendary(false)
 }
 
-func (am AccessoryModel) GetAllLegendaryAccessoriesOfType(accessoryType string) ([]Accessory, error) {
-	return am.queryAccessoriesByTypeAndIsLegendary(accessoryType, true)
+func (wm WeaponModel) GetAllLegendaryWeapons() ([]Weapon, error) {
+	return wm.queryWeaponsByIsLegendary(true)
 }

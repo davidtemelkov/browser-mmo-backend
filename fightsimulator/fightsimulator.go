@@ -1,7 +1,7 @@
 package fightsimulator
 
 import (
-	"browser-mmo-backend/internal/data"
+	"browser-mmo-backend/data"
 	"fmt"
 	"math"
 	"math/rand"

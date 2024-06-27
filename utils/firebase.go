@@ -1,7 +1,7 @@
 package utils
 
 import (
-	"browser-mmo-backend/internal/constants"
+	"browser-mmo-backend/constants"
 	"context"
 	"encoding/base64"
 	"errors"
@@ -54,7 +54,7 @@ func UploadFile(photo64, fileFolder, fileName string) (string, error) {
 
 	fb := NewFireBaseStorage(bucketName)
 	ctx := context.Background()
-	opt := option.WithCredentialsFile("internal/helpers/serviceAccountKey.json")
+	opt := option.WithCredentialsFile("helpers/serviceAccountKey.json")
 
 	client, err := storage.NewClient(ctx, opt)
 	if err != nil {

@@ -1,12 +1,12 @@
 package main
 
 import (
-	"browser-mmo-backend/internal/constants"
-	"browser-mmo-backend/internal/data"
-	"browser-mmo-backend/internal/items"
-	"browser-mmo-backend/internal/users"
-	"browser-mmo-backend/internal/utils"
-	"browser-mmo-backend/internal/validator"
+	"browser-mmo-backend/constants"
+	"browser-mmo-backend/data"
+	"browser-mmo-backend/items"
+	"browser-mmo-backend/users"
+	"browser-mmo-backend/utils"
+	"browser-mmo-backend/validator"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -199,7 +199,7 @@ func (app *application) generateWeaponShop(c *gin.Context) {
 
 	var generatedItems []data.Item
 	for i := 0; i < 6; i++ {
-		item, err := items.GenerateItem(app.models.Weapons, app.models.Accessories, app.models.Shields, app.models.Armours, app.models.Users)
+		item, err := items.GenerateItem(false, *user, app.models.Weapons, app.models.Accessories, app.models.Shields, app.models.Armours, app.models.Users)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, constants.InternalServerError)
 			return
@@ -224,7 +224,7 @@ func (app *application) generateMagicShop(c *gin.Context) {
 
 	var generatedItems []data.Item
 	for i := 0; i < 6; i++ {
-		item, err := items.GenerateItem(app.models.Weapons, app.models.Accessories, app.models.Shields, app.models.Armours, app.models.Users)
+		item, err := items.GenerateItem(false, *user, app.models.Weapons, app.models.Accessories, app.models.Shields, app.models.Armours, app.models.Users)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, constants.InternalServerError)
 			return
@@ -263,7 +263,7 @@ func (app *application) buyMagicShopItem(c *gin.Context) {
 
 	slotKey := c.Param("slotKey")
 
-	replacementItem, err := items.GenerateItem(app.models.Weapons, app.models.Accessories, app.models.Shields, app.models.Armours, app.models.Users)
+	replacementItem, err := items.GenerateItem(false, *user, app.models.Weapons, app.models.Accessories, app.models.Shields, app.models.Armours, app.models.Users)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, constants.InternalServerError)
 		return
@@ -284,7 +284,7 @@ func (app *application) buyWeaponShopItem(c *gin.Context) {
 
 	slotKey := c.Param("slotKey")
 
-	replacementItem, err := items.GenerateItem(app.models.Weapons, app.models.Accessories, app.models.Shields, app.models.Armours, app.models.Users)
+	replacementItem, err := items.GenerateItem(false, *user, app.models.Weapons, app.models.Accessories, app.models.Shields, app.models.Armours, app.models.Users)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, constants.InternalServerError)
 		return

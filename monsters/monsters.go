@@ -1,7 +1,7 @@
 package monsters
 
 import (
-	"browser-mmo-backend/internal/data"
+	"browser-mmo-backend/data"
 	"math/rand"
 )
 

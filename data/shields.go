@@ -1,7 +1,7 @@
 package data
 
 import (
-	"browser-mmo-backend/internal/constants"
+	"browser-mmo-backend/constants"
 	"context"
 	"strconv"
 
@@ -12,26 +12,11 @@ import (
 
 // Base shields
 type Shield struct {
-	ID             string
-	BaseName       string
-	MinLevel       int
-	BlockChanceMin int
-	BlockChanceMax int
-	IsLegendary    bool
-	ImageURL       string
-}
-
-type GeneratedShield struct {
-	Name         string
-	Lvl          int
-	BlockChance  int
-	IsLegendary  bool
-	ImageURL     string
-	Strength     int
-	Dexterity    int
-	Constitution int
-	Intelligence int
-	Price        int
+	ID          string
+	BaseName    string
+	MinLevel    int
+	IsLegendary bool
+	ImageURL    string
 }
 
 type ShieldModel struct {
@@ -52,12 +37,6 @@ func (sm ShieldModel) Insert(shield *Shield) error {
 		},
 		constants.MinLevelAttribute: &types.AttributeValueMemberN{
 			Value: strconv.Itoa(shield.MinLevel),
-		},
-		constants.ShieldBlockChanceMinAttribute: &types.AttributeValueMemberN{
-			Value: strconv.Itoa(shield.BlockChanceMin),
-		},
-		constants.ShieldBlockChanceMaxAttribute: &types.AttributeValueMemberN{
-			Value: strconv.Itoa(shield.BlockChanceMax),
 		},
 		constants.IsLegendaryAttribute: &types.AttributeValueMemberBOOL{
 			Value: shield.IsLegendary,
@@ -120,24 +99,12 @@ func (sm ShieldModel) queryShieldsByIsLegendary(isLegendary bool) ([]Shield, err
 			return nil, err
 		}
 
-		blockChanceMin, err := strconv.Atoi(item[constants.ShieldBlockChanceMinAttribute].(*types.AttributeValueMemberN).Value)
-		if err != nil {
-			return nil, err
-		}
-
-		blockChanceMax, err := strconv.Atoi(item[constants.ShieldBlockChanceMaxAttribute].(*types.AttributeValueMemberN).Value)
-		if err != nil {
-			return nil, err
-		}
-
 		shield := Shield{
-			ID:             item[constants.SK].(*types.AttributeValueMemberS).Value,
-			BaseName:       item[constants.BaseNameAttribute].(*types.AttributeValueMemberS).Value,
-			MinLevel:       minLevel,
-			BlockChanceMin: blockChanceMin,
-			BlockChanceMax: blockChanceMax,
-			IsLegendary:    item[constants.IsLegendaryAttribute].(*types.AttributeValueMemberBOOL).Value,
-			ImageURL:       item[constants.ImageURLAttribute].(*types.AttributeValueMemberS).Value,
+			ID:          item[constants.SK].(*types.AttributeValueMemberS).Value,
+			BaseName:    item[constants.BaseNameAttribute].(*types.AttributeValueMemberS).Value,
+			MinLevel:    minLevel,
+			IsLegendary: item[constants.IsLegendaryAttribute].(*types.AttributeValueMemberBOOL).Value,
+			ImageURL:    item[constants.ImageURLAttribute].(*types.AttributeValueMemberS).Value,
 		}
 		shields = append(shields, shield)
 	}

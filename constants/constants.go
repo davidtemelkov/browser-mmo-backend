@@ -69,16 +69,11 @@ const (
 
 // Weapon DB constants
 const (
-	WeaponPrefix                = "WEAPON#"
-	Weapon                      = "WEAPON"
-	WeaponNotAllCaps            = "Weapon"
-	DamageLowRangeMinAttribute  = "DMGLowMin"
-	DamageLowRangeMaxAttribute  = "DMGLowMax"
-	DamageHighRangeMinAttribute = "DMGHighMix"
-	DamageHighRangeMaxAttribute = "DMGHighMax"
-	DamageMinAttribute          = "DamageMin"
-	DamageMaxAttribute          = "DamageMax"
-	DamageAverageAttribute      = "DamageAverage"
+	WeaponPrefix       = "WEAPON#"
+	Weapon             = "WEAPON"
+	WeaponNotAllCaps   = "Weapon"
+	DamageMinAttribute = "DamageMin"
+	DamageMaxAttribute = "DamageMax"
 )
 
 // Accessory DB constants
@@ -89,20 +84,17 @@ const (
 
 // Armour DB constants
 const (
-	ArmourPrefix             = "ARMOUR#"
-	Armour                   = "ARMOUR"
-	ArmourAmountMinAttribute = "ArmourAmountMin"
-	ArmourAmountMaxAttribute = "ArmourAmountMax"
+	ArmourPrefix          = "ARMOUR#"
+	Armour                = "ARMOUR"
+	ArmourAmountAttribute = "ArmourAmount"
 )
 
 // Shield DB constants
 const (
-	ShieldPrefix                  = "SHIELD#"
-	Shield                        = "SHIELD"
-	ShieldNotAllCaps              = "Shield"
-	ShieldBlockChanceMinAttribute = "ShieldMinBlockChance"
-	ShieldBlockChanceMaxAttribute = "ShieldMaxBlockChance"
-	BlockChanceAttribute          = "BlockChance"
+	ShieldPrefix         = "SHIELD#"
+	Shield               = "SHIELD"
+	ShieldNotAllCaps     = "Shield"
+	BlockChanceAttribute = "BlockChance"
 )
 
 // Quest DB constants

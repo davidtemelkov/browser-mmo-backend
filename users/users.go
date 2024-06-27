@@ -1,9 +1,9 @@
 package users
 
 import (
-	"browser-mmo-backend/internal/constants"
-	"browser-mmo-backend/internal/data"
-	"browser-mmo-backend/internal/utils"
+	"browser-mmo-backend/constants"
+	"browser-mmo-backend/data"
+	"browser-mmo-backend/utils"
 	"time"
 )
 
@@ -106,7 +106,6 @@ func CalculateTotalStats(user data.User) data.User {
 		user.ArmourAmount += item.ArmourAmount
 		user.DamageMin += item.DamageMin
 		user.DamageMax += item.DamageMax
-		user.DamageAverage += item.DamageAverage
 	}
 
 	return user

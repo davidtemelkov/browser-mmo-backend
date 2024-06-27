@@ -1,7 +1,7 @@
 package data
 
 import (
-	"browser-mmo-backend/internal/constants"
+	"browser-mmo-backend/constants"
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"

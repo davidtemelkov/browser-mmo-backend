@@ -1,8 +1,8 @@
 package main
 
 import (
-	"browser-mmo-backend/internal/constants"
-	"browser-mmo-backend/internal/data"
+	"browser-mmo-backend/constants"
+	"browser-mmo-backend/data"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -11,13 +11,11 @@ import (
 
 func (app *application) createArmourHandler(c *gin.Context) {
 	var input struct {
-		BaseName        string `json:"base_name"`
-		WhatItem        string `json:"whatItem"`
-		MinLevel        int    `json:"min_level"`
-		ArmourAmountMin int    `json:"armour_amount_min"`
-		ArmourAmountMax int    `json:"armour_amount_max"`
-		IsLegendary     bool   `json:"is_legendary"`
-		ImageURL        string `json:"imageURL"`
+		BaseName    string `json:"base_name"`
+		WhatItem    string `json:"whatItem"`
+		MinLevel    int    `json:"min_level"`
+		IsLegendary bool   `json:"is_legendary"`
+		ImageURL    string `json:"imageURL"`
 	}
 
 	if err := c.BindJSON(&input); err != nil {
@@ -26,14 +24,12 @@ func (app *application) createArmourHandler(c *gin.Context) {
 	}
 
 	armour := &data.Armour{
-		ID:              uuid.New().String(),
-		WhatItem:        input.WhatItem,
-		BaseName:        input.BaseName,
-		MinLevel:        input.MinLevel,
-		ArmourAmountMin: input.ArmourAmountMin,
-		ArmourAmountMax: input.ArmourAmountMax,
-		IsLegendary:     input.IsLegendary,
-		ImageURL:        input.ImageURL,
+		ID:          uuid.New().String(),
+		WhatItem:    input.WhatItem,
+		BaseName:    input.BaseName,
+		MinLevel:    input.MinLevel,
+		IsLegendary: input.IsLegendary,
+		ImageURL:    input.ImageURL,
 	}
 
 	err := app.models.Armours.Insert(armour)

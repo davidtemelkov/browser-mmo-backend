@@ -1,12 +1,12 @@
 package main
 
 import (
-	"browser-mmo-backend/internal/constants"
-	"browser-mmo-backend/internal/data"
-	"browser-mmo-backend/internal/fightsimulator"
-	"browser-mmo-backend/internal/items"
-	"browser-mmo-backend/internal/monsters"
-	"browser-mmo-backend/internal/quests"
+	"browser-mmo-backend/constants"
+	"browser-mmo-backend/data"
+	"browser-mmo-backend/fightsimulator"
+	"browser-mmo-backend/items"
+	"browser-mmo-backend/monsters"
+	"browser-mmo-backend/quests"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -138,7 +138,7 @@ func (app *application) collectCurrentQuestRewardsHandler(c *gin.Context) {
 
 		// TODO: Add this logic when generating quests so user can see what item
 		// they will get, also make quest reward a little worse if there is an item
-		item, err := items.GenerateItem(app.models.Weapons, app.models.Accessories, app.models.Shields, app.models.Armours, app.models.Users)
+		item, err := items.GenerateItem(false, *user, app.models.Weapons, app.models.Accessories, app.models.Shields, app.models.Armours, app.models.Users)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, constants.InternalServerError)
 			return

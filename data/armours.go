@@ -1,7 +1,7 @@
 package data
 
 import (
-	"browser-mmo-backend/internal/constants"
+	"browser-mmo-backend/constants"
 	"context"
 	"strconv"
 
@@ -12,29 +12,12 @@ import (
 
 // Base armours
 type Armour struct {
-	ID              string
-	WhatItem        string
-	BaseName        string
-	MinLevel        int
-	ArmourAmountMin int
-	ArmourAmountMax int
-	IsLegendary     bool
-	ImageURL        string
-}
-
-// Base armours
-type GeneratedArmour struct {
-	Type         string
-	Name         string
-	Lvl          int
-	ArmourAmount int
-	Strength     int
-	Dexterity    int
-	Constitution int
-	Intelligence int
-	IsLegendary  bool
-	ImageURL     string
-	Price        int
+	ID          string
+	WhatItem    string
+	BaseName    string
+	MinLevel    int
+	IsLegendary bool
+	ImageURL    string
 }
 
 type ArmourModel struct {
@@ -58,12 +41,6 @@ func (am ArmourModel) Insert(armour *Armour) error {
 		},
 		constants.MinLevelAttribute: &types.AttributeValueMemberN{
 			Value: strconv.Itoa(armour.MinLevel),
-		},
-		constants.ArmourAmountMinAttribute: &types.AttributeValueMemberN{
-			Value: strconv.Itoa(armour.ArmourAmountMin),
-		},
-		constants.ArmourAmountMaxAttribute: &types.AttributeValueMemberN{
-			Value: strconv.Itoa(armour.ArmourAmountMax),
 		},
 		constants.IsLegendaryAttribute: &types.AttributeValueMemberBOOL{
 			Value: armour.IsLegendary,
@@ -129,25 +106,13 @@ func (am ArmourModel) queryArmoursByTypeAndIsLegendary(armourType string, isLege
 			return nil, err
 		}
 
-		armourAmountMin, err := strconv.Atoi(item[constants.ArmourAmountMinAttribute].(*types.AttributeValueMemberN).Value)
-		if err != nil {
-			return nil, err
-		}
-
-		armourAmountMax, err := strconv.Atoi(item[constants.ArmourAmountMaxAttribute].(*types.AttributeValueMemberN).Value)
-		if err != nil {
-			return nil, err
-		}
-
 		armour := Armour{
-			ID:              item[constants.SK].(*types.AttributeValueMemberS).Value,
-			WhatItem:        item[constants.WhatItemAttribute].(*types.AttributeValueMemberS).Value,
-			BaseName:        item[constants.BaseNameAttribute].(*types.AttributeValueMemberS).Value,
-			MinLevel:        minLevel,
-			ArmourAmountMin: armourAmountMin,
-			ArmourAmountMax: armourAmountMax,
-			IsLegendary:     item[constants.IsLegendaryAttribute].(*types.AttributeValueMemberBOOL).Value,
-			ImageURL:        item[constants.ImageURLAttribute].(*types.AttributeValueMemberS).Value,
+			ID:          item[constants.SK].(*types.AttributeValueMemberS).Value,
+			WhatItem:    item[constants.WhatItemAttribute].(*types.AttributeValueMemberS).Value,
+			BaseName:    item[constants.BaseNameAttribute].(*types.AttributeValueMemberS).Value,
+			MinLevel:    minLevel,
+			IsLegendary: item[constants.IsLegendaryAttribute].(*types.AttributeValueMemberBOOL).Value,
+			ImageURL:    item[constants.ImageURLAttribute].(*types.AttributeValueMemberS).Value,
 		}
 		armours = append(armours, armour)
 	}
