@@ -35,7 +35,7 @@ func (app *application) fightDungeonBossHandler(c *gin.Context) {
 			return
 		}
 
-		// TODO: Add this logic for generating legendaries or getting the exp and gold reward
+		// TODO: Either get legendary or big exp and gold reward
 		item, err := items.GenerateItem(true, *user, app.models.Weapons, app.models.Accessories, app.models.Shields, app.models.Armours, app.models.Users)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, constants.InternalServerError)

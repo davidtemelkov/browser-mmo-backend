@@ -5,6 +5,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// TODO: Add something like an api key and middleware so only admins can add new items/quests etc.
 func (app *application) setupRoutes() *gin.Engine {
 	r := gin.Default()
 
@@ -37,7 +38,6 @@ func (app *application) setupRoutes() *gin.Engine {
 
 	itemsRoutes := r.Group("/items")
 	{
-		// TODO: should add something like an api key and middleware so only admins can add new items
 		itemsRoutes.POST("/weapons", app.createWeaponHandler)
 		itemsRoutes.POST("/accessories", app.createAccessoryHandler)
 		itemsRoutes.POST("/armours", app.createArmourHandler)
@@ -46,7 +46,6 @@ func (app *application) setupRoutes() *gin.Engine {
 
 	questRoutes := r.Group("/quests")
 	{
-		// TODO: should add something like an api key and middleware so only admins can add new quests
 		questRoutes.POST("/create", app.createQuestHandler)
 		questRoutes.Use(app.authenticate())
 		questRoutes.GET("/generate", app.generateQuestsHandler)

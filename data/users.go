@@ -529,106 +529,6 @@ func (um UserModel) AddItemToInventory(user *User, item Item) error {
 	return nil
 }
 
-// TODO: Rework this to buy item from store and this would transfer an item to the
-// user inventory and generate a new one for the shop
-func (um UserModel) AddItemToWeaponShop(user *User, item Item) error {
-	var slotKey string
-	for key, slotItem := range user.WeaponShop {
-		if slotItem.Price == 0 {
-			slotKey = key
-			break
-		}
-	}
-
-	if slotKey == "" {
-		return errors.New(constants.NoAvailableSlotError)
-	}
-
-	key := map[string]types.AttributeValue{
-		constants.PK: &types.AttributeValueMemberS{
-			Value: constants.UserPrefix + user.Email,
-		},
-		constants.SK: &types.AttributeValueMemberS{
-			Value: constants.UserPrefix + user.Email,
-		},
-	}
-
-	updateExpression := fmt.Sprintf("SET %s.#slot = :item", constants.WeaponShopAttribute)
-	expressionAttributeValues := map[string]types.AttributeValue{
-		":item": &types.AttributeValueMemberM{
-			Value: getItemAWSAttributes(item),
-		},
-	}
-	expressionAttributeNames := map[string]string{
-		"#slot": slotKey,
-	}
-
-	input := &dynamodb.UpdateItemInput{
-		TableName:                 aws.String(constants.TableName),
-		Key:                       key,
-		UpdateExpression:          aws.String(updateExpression),
-		ExpressionAttributeValues: expressionAttributeValues,
-		ExpressionAttributeNames:  expressionAttributeNames,
-	}
-
-	_, err := um.DB.UpdateItem(um.CTX, input)
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
-// TODO: Rework this to buy item from store and this would transfer an item to the
-// user inventory and generate a new one for the shop
-func (um UserModel) AddItemToMagicShop(user *User, item Item) error {
-	var slotKey string
-	for key, slotItem := range user.MagicShop {
-		if slotItem.Price == 0 {
-			slotKey = key
-			break
-		}
-	}
-
-	if slotKey == "" {
-		return errors.New(constants.NoAvailableSlotError)
-	}
-
-	key := map[string]types.AttributeValue{
-		constants.PK: &types.AttributeValueMemberS{
-			Value: constants.UserPrefix + user.Email,
-		},
-		constants.SK: &types.AttributeValueMemberS{
-			Value: constants.UserPrefix + user.Email,
-		},
-	}
-
-	updateExpression := fmt.Sprintf("SET %s.#slot = :item", constants.MagicShopAttribute)
-	expressionAttributeValues := map[string]types.AttributeValue{
-		":item": &types.AttributeValueMemberM{
-			Value: getItemAWSAttributes(item),
-		},
-	}
-	expressionAttributeNames := map[string]string{
-		"#slot": slotKey,
-	}
-
-	input := &dynamodb.UpdateItemInput{
-		TableName:                 aws.String(constants.TableName),
-		Key:                       key,
-		UpdateExpression:          aws.String(updateExpression),
-		ExpressionAttributeValues: expressionAttributeValues,
-		ExpressionAttributeNames:  expressionAttributeNames,
-	}
-
-	_, err := um.DB.UpdateItem(um.CTX, input)
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
 func (um UserModel) GenerateWeaponShop(user *User, items []Item) error {
 	newWeaponShop := make(map[string]Item)
 	for i, item := range items {
@@ -922,8 +822,7 @@ func (um UserModel) LevelUp(user *User) error {
 	return nil
 }
 
-// TODO: Think about moving this to users and either movig the user struct there
-// or add a types package
+// TODO: Move this to users after lvl up check is outside of LevelUp
 const (
 	BASE_EXP     = 100.0
 	EXP_EXPONENT = 1.5

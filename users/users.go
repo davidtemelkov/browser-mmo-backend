@@ -90,7 +90,7 @@ func GetInitialUser(input UserInput) *data.User {
 	}
 }
 
-func CalculateTotalStats(user data.User) data.User {
+func CalculateTotalStats(user *data.User) {
 	// TODO: User really should be keeping these, maybe on item equip and stat upgrade
 	user.TotalStrength += user.Strength
 	user.TotalDexterity += user.Dexterity
@@ -107,6 +107,4 @@ func CalculateTotalStats(user data.User) data.User {
 		user.DamageMin += item.DamageMin
 		user.DamageMax += item.DamageMax
 	}
-
-	return user
 }

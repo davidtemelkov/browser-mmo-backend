@@ -20,19 +20,6 @@ type Accessory struct {
 	ImageURL    string
 }
 
-type GeneratedAccessory struct {
-	Type         string
-	Name         string
-	Lvl          int
-	IsLegendary  bool
-	ImageURL     string
-	Strength     int
-	Dexterity    int
-	Constitution int
-	Intelligence int
-	Price        int
-}
-
 type AccessoryModel struct {
 	DB  *dynamodb.Client
 	CTX context.Context

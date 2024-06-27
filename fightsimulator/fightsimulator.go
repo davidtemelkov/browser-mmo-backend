@@ -16,6 +16,8 @@ type Fighter struct {
 	CritChance    float32
 	MagicDamage   float32
 	HitFirstIndex float32
+	// BlockChance float32
+	// ArmourAmount float32
 }
 
 func (f *Fighter) dealDamage() float32 {
@@ -90,8 +92,8 @@ func NewFighterFromUser(playerData data.User) Fighter {
 	return Fighter{
 		Name:          playerData.Name,
 		Health:        float32(playerData.Constitution) + 100,
-		DamageMin:     float32(playerData.Strength) / 2,
-		DamageMax:     float32(playerData.Strength),
+		DamageMin:     float32(playerData.DamageMin) + float32(playerData.Strength)/2,
+		DamageMax:     float32(playerData.DamageMax) + float32(playerData.Strength),
 		CritChance:    float32(playerData.Dexterity) * 0.01,
 		MagicDamage:   float32(playerData.Intelligence),
 		HitFirstIndex: float32(playerData.Dexterity) + float32(playerData.Lvl),
@@ -101,12 +103,12 @@ func NewFighterFromUser(playerData data.User) Fighter {
 func NewFighterFromMonster(monster data.GeneratedMonster) Fighter {
 	return Fighter{
 		Name:          monster.Name,
-		Health:        monster.Constitution + 100,
-		DamageMin:     monster.Strength / 2,
-		DamageMax:     monster.Strength,
-		CritChance:    monster.Dexterity * 0.01,
-		MagicDamage:   monster.Intelligence,
-		HitFirstIndex: monster.Dexterity + float32(monster.Lvl),
+		Health:        float32(monster.Constitution) + 100,
+		DamageMin:     float32(monster.Strength) / 2,
+		DamageMax:     float32(monster.Strength),
+		CritChance:    float32(monster.Dexterity) * 0.01,
+		MagicDamage:   float32(monster.Intelligence),
+		HitFirstIndex: float32(monster.Dexterity) + float32(monster.Lvl),
 	}
 }
 

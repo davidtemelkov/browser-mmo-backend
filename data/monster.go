@@ -18,13 +18,13 @@ type Monster struct {
 }
 
 type GeneratedMonster struct {
-	Name         string  `json:"name"`
-	ImageURL     string  `json:"imageURL"`
-	Lvl          int     `json:"lvl"`
-	Constitution float32 `json:"constitution"`
-	Dexterity    float32 `json:"dexterity"`
-	Intelligence float32 `json:"intelligence"`
-	Strength     float32 `json:"strength"`
+	Name         string `json:"name"`
+	ImageURL     string `json:"imageURL"`
+	Lvl          int    `json:"lvl"`
+	Constitution int    `json:"constitution"`
+	Dexterity    int    `json:"dexterity"`
+	Intelligence int    `json:"intelligence"`
+	Strength     int    `json:"strength"`
 }
 
 type MonsterModel struct {

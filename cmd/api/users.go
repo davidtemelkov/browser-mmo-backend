@@ -114,9 +114,6 @@ func (app *application) getUserHandler(c *gin.Context) {
 		return
 	}
 
-	// TODO: Move this somewhere more consistant so it is updated more frequently
-	*user = users.CalculateTotalStats(*user)
-
 	c.JSON(http.StatusOK, user)
 }
 

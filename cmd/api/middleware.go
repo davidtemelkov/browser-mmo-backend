@@ -2,6 +2,7 @@ package main
 
 import (
 	"browser-mmo-backend/constants"
+	"browser-mmo-backend/users"
 	"browser-mmo-backend/utils"
 	"errors"
 	"net/http"
@@ -64,6 +65,9 @@ func (app *application) authenticate() gin.HandlerFunc {
 			c.Abort()
 			return
 		}
+
+		// TODO: Is this placement best?
+		users.CalculateTotalStats(user)
 
 		c.Set("user", user)
 
