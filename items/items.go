@@ -3,6 +3,7 @@ package items
 import (
 	"browser-mmo-backend/constants"
 	"browser-mmo-backend/data"
+	"math"
 	"math/rand"
 )
 
@@ -49,6 +50,7 @@ func GenerateItem(
 		isLegendary = rand.Intn(25) == 0
 	}
 
+	// TODO: Use a different rand func to not get 0s and 1s, only 2,3,4
 	if isLegendary {
 		statType = rand.Intn(3)
 	} else {
@@ -178,6 +180,11 @@ func generateStats(user data.User, statType int, itemType, baseName, imageURL st
 		ImageURL:    imageURL,
 	}
 
+	//TODO: Remove this after implementing different rand func
+	if statType == 0 || statType == 1 {
+		statType = 2
+	}
+
 	// Generate Str, Dex, Const, Int
 	selectedStats := rand.Perm(len(STATS))[:statType]
 
@@ -187,18 +194,18 @@ func generateStats(user data.User, statType int, itemType, baseName, imageURL st
 
 	values := make([]int, statType)
 	switch statType {
-	case 2:
-		values[0] = totalStatValue / 2
-		values[1] = totalStatValue / 2
 	case 3:
-		values[0] = totalStatValue / 3
-		values[1] = totalStatValue / 3
-		values[2] = totalStatValue / 3
+		values[0] = int(math.Round(float64(totalStatValue) * 0.3))
+		values[1] = int(math.Round(float64(totalStatValue) * 0.3))
+		values[2] = int(math.Round(float64(totalStatValue) * 0.3))
 	case 4:
-		values[0] = totalStatValue / 4
-		values[1] = totalStatValue / 4
-		values[2] = totalStatValue / 4
-		values[3] = totalStatValue / 4
+		values[0] = int(math.Round(float64(totalStatValue) * 0.1))
+		values[1] = int(math.Round(float64(totalStatValue) * 0.1))
+		values[2] = int(math.Round(float64(totalStatValue) * 0.1))
+		values[3] = int(math.Round(float64(totalStatValue) * 0.1))
+	case 2:
+		values[0] = int(math.Round(float64(totalStatValue) * 0.5))
+		values[1] = int(math.Round(float64(totalStatValue) * 0.5))
 	}
 
 	for i, stat := range selectedStats {
@@ -222,6 +229,10 @@ func generateStats(user data.User, statType int, itemType, baseName, imageURL st
 		item.DamageMax = user.Lvl * 2
 	case constants.ShieldNotAllCaps:
 		item.BlockChance = user.Lvl
+	case constants.Ring:
+		// do nothing
+	case constants.Amulet:
+		// do nothing
 	default:
 		// add armour amount
 		item.ArmourAmount = user.Lvl * 2

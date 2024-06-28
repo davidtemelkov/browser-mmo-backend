@@ -6,7 +6,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"math"
 	"strconv"
 	"strings"
 
@@ -775,17 +774,9 @@ func (um UserModel) BuyItem(user *User, slotKey, shopType string, newItem Item) 
 	return nil
 }
 
-// TODO: The can lvl up check could be outside this function
-func (um UserModel) LevelUp(user *User) error {
-	for {
-		expForNextLvl := CalculateExpForLvlUp(user.Lvl)
-		if user.EXP >= expForNextLvl {
-			user.EXP -= expForNextLvl
-			user.Lvl++
-		} else {
-			break
-		}
-	}
+func (um UserModel) LevelUp(user *User, expForNextLvl int) error {
+	user.EXP -= expForNextLvl
+	user.Lvl++
 
 	key := map[string]types.AttributeValue{
 		constants.PK: &types.AttributeValueMemberS{
@@ -822,64 +813,22 @@ func (um UserModel) LevelUp(user *User) error {
 	return nil
 }
 
-// TODO: Move this to users after lvl up check is outside of LevelUp
-const (
-	BASE_EXP     = 100.0
-	EXP_EXPONENT = 1.5
-)
-
-func CalculateExpForLvlUp(lvl int) int {
-	return int(BASE_EXP * math.Pow(float64(lvl), EXP_EXPONENT))
-}
-
-// End
-
 func getItemAWSAttributes(item Item) map[string]types.AttributeValue {
-	var attributes = map[string]types.AttributeValue{}
-
-	switch item.WhatItem {
-	case constants.Weapon:
-		attributes = map[string]types.AttributeValue{
-			constants.WhatItemAttribute:     &types.AttributeValueMemberS{Value: item.WhatItem},
-			constants.NameAttribute:         &types.AttributeValueMemberS{Value: item.Name},
-			constants.LevelAttribute:        &types.AttributeValueMemberN{Value: strconv.Itoa(item.Lvl)},
-			constants.DamageMinAttribute:    &types.AttributeValueMemberN{Value: strconv.Itoa(item.DamageMin)},
-			constants.DamageMaxAttribute:    &types.AttributeValueMemberN{Value: strconv.Itoa(item.DamageMax)},
-			constants.StrengthAttribute:     &types.AttributeValueMemberN{Value: strconv.Itoa(item.Strength)},
-			constants.DexterityAttribute:    &types.AttributeValueMemberN{Value: strconv.Itoa(item.Dexterity)},
-			constants.ConstitutionAttribute: &types.AttributeValueMemberN{Value: strconv.Itoa(item.Constitution)},
-			constants.IntelligenceAttribute: &types.AttributeValueMemberN{Value: strconv.Itoa(item.Intelligence)},
-			constants.IsLegendaryAttribute:  &types.AttributeValueMemberBOOL{Value: item.IsLegendary},
-			constants.ImageURLAttribute:     &types.AttributeValueMemberS{Value: item.ImageURL},
-			constants.PriceAttribute:        &types.AttributeValueMemberN{Value: strconv.Itoa(item.Price)},
-		}
-	case constants.Shield:
-		attributes = map[string]types.AttributeValue{
-			constants.WhatItemAttribute:     &types.AttributeValueMemberS{Value: item.WhatItem},
-			constants.NameAttribute:         &types.AttributeValueMemberS{Value: item.Name},
-			constants.LevelAttribute:        &types.AttributeValueMemberN{Value: strconv.Itoa(item.Lvl)},
-			constants.BlockChanceAttribute:  &types.AttributeValueMemberN{Value: strconv.Itoa(item.BlockChance)},
-			constants.StrengthAttribute:     &types.AttributeValueMemberN{Value: strconv.Itoa(item.Strength)},
-			constants.DexterityAttribute:    &types.AttributeValueMemberN{Value: strconv.Itoa(item.Dexterity)},
-			constants.ConstitutionAttribute: &types.AttributeValueMemberN{Value: strconv.Itoa(item.Constitution)},
-			constants.IntelligenceAttribute: &types.AttributeValueMemberN{Value: strconv.Itoa(item.Intelligence)},
-			constants.IsLegendaryAttribute:  &types.AttributeValueMemberBOOL{Value: item.IsLegendary},
-			constants.ImageURLAttribute:     &types.AttributeValueMemberS{Value: item.ImageURL},
-			constants.PriceAttribute:        &types.AttributeValueMemberN{Value: strconv.Itoa(item.Price)},
-		}
-	default:
-		attributes = map[string]types.AttributeValue{
-			constants.WhatItemAttribute:     &types.AttributeValueMemberS{Value: item.WhatItem},
-			constants.NameAttribute:         &types.AttributeValueMemberS{Value: item.Name},
-			constants.LevelAttribute:        &types.AttributeValueMemberN{Value: strconv.Itoa(item.Lvl)},
-			constants.StrengthAttribute:     &types.AttributeValueMemberN{Value: strconv.Itoa(item.Strength)},
-			constants.DexterityAttribute:    &types.AttributeValueMemberN{Value: strconv.Itoa(item.Dexterity)},
-			constants.ConstitutionAttribute: &types.AttributeValueMemberN{Value: strconv.Itoa(item.Constitution)},
-			constants.IntelligenceAttribute: &types.AttributeValueMemberN{Value: strconv.Itoa(item.Intelligence)},
-			constants.IsLegendaryAttribute:  &types.AttributeValueMemberBOOL{Value: item.IsLegendary},
-			constants.ImageURLAttribute:     &types.AttributeValueMemberS{Value: item.ImageURL},
-			constants.PriceAttribute:        &types.AttributeValueMemberN{Value: strconv.Itoa(item.Price)},
-		}
+	attributes := map[string]types.AttributeValue{
+		constants.WhatItemAttribute:     &types.AttributeValueMemberS{Value: item.WhatItem},
+		constants.NameAttribute:         &types.AttributeValueMemberS{Value: item.Name},
+		constants.LevelAttribute:        &types.AttributeValueMemberN{Value: strconv.Itoa(item.Lvl)},
+		constants.DamageMinAttribute:    &types.AttributeValueMemberN{Value: strconv.Itoa(item.DamageMin)},
+		constants.DamageMaxAttribute:    &types.AttributeValueMemberN{Value: strconv.Itoa(item.DamageMax)},
+		constants.StrengthAttribute:     &types.AttributeValueMemberN{Value: strconv.Itoa(item.Strength)},
+		constants.DexterityAttribute:    &types.AttributeValueMemberN{Value: strconv.Itoa(item.Dexterity)},
+		constants.ConstitutionAttribute: &types.AttributeValueMemberN{Value: strconv.Itoa(item.Constitution)},
+		constants.IntelligenceAttribute: &types.AttributeValueMemberN{Value: strconv.Itoa(item.Intelligence)},
+		constants.IsLegendaryAttribute:  &types.AttributeValueMemberBOOL{Value: item.IsLegendary},
+		constants.ImageURLAttribute:     &types.AttributeValueMemberS{Value: item.ImageURL},
+		constants.BlockChanceAttribute:  &types.AttributeValueMemberN{Value: strconv.Itoa(item.BlockChance)},
+		constants.ArmourAmountAttribute: &types.AttributeValueMemberN{Value: strconv.Itoa(item.ArmourAmount)},
+		constants.PriceAttribute:        &types.AttributeValueMemberN{Value: strconv.Itoa(item.Price)},
 	}
 
 	return attributes

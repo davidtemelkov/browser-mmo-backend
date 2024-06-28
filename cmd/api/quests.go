@@ -7,6 +7,7 @@ import (
 	"browser-mmo-backend/items"
 	"browser-mmo-backend/monsters"
 	"browser-mmo-backend/quests"
+	"browser-mmo-backend/users"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -130,10 +131,13 @@ func (app *application) collectCurrentQuestRewardsHandler(c *gin.Context) {
 			return
 		}
 
-		err = app.models.Users.LevelUp(user)
-		if err != nil {
-			c.JSON(http.StatusInternalServerError, constants.InternalServerError)
-			return
+		expForNextLvl := users.CalculateExpForLvlUp(user.Lvl)
+		if user.EXP >= expForNextLvl {
+			err = app.models.Users.LevelUp(user, expForNextLvl)
+			if err != nil {
+				c.JSON(http.StatusInternalServerError, constants.InternalServerError)
+				return
+			}
 		}
 
 		// TODO: Make reward not always be item, if no item more exp and gold

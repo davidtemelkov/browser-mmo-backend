@@ -5,6 +5,7 @@ import (
 	"browser-mmo-backend/data"
 	"browser-mmo-backend/fightsimulator"
 	"browser-mmo-backend/items"
+	"browser-mmo-backend/users"
 	"net/http"
 	"strconv"
 
@@ -28,11 +29,13 @@ func (app *application) fightDungeonBossHandler(c *gin.Context) {
 
 	if playerWon {
 		// TODO: Gain exp, gold and increment user.Dungeon by 1
-
-		err = app.models.Users.LevelUp(user)
-		if err != nil {
-			c.JSON(http.StatusInternalServerError, constants.InternalServerError)
-			return
+		expForNextLvl := users.CalculateExpForLvlUp(user.Lvl)
+		if user.EXP >= expForNextLvl {
+			err = app.models.Users.LevelUp(user, expForNextLvl)
+			if err != nil {
+				c.JSON(http.StatusInternalServerError, constants.InternalServerError)
+				return
+			}
 		}
 
 		// TODO: Either get legendary or big exp and gold reward

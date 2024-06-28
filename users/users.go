@@ -4,7 +4,13 @@ import (
 	"browser-mmo-backend/constants"
 	"browser-mmo-backend/data"
 	"browser-mmo-backend/utils"
+	"math"
 	"time"
+)
+
+const (
+	BASE_EXP     = 100.0
+	EXP_EXPONENT = 1.5
 )
 
 type UserInput struct {
@@ -91,7 +97,7 @@ func GetInitialUser(input UserInput) *data.User {
 }
 
 func CalculateTotalStats(user *data.User) {
-	// TODO: User really should be keeping these, maybe on item equip and stat upgrade
+	// TODO: !!! User really should be keeping these, maybe on item equip and stat upgrade
 	user.TotalStrength += user.Strength
 	user.TotalDexterity += user.Dexterity
 	user.TotalConstitution += user.Constitution
@@ -107,4 +113,8 @@ func CalculateTotalStats(user *data.User) {
 		user.DamageMin += item.DamageMin
 		user.DamageMax += item.DamageMax
 	}
+}
+
+func CalculateExpForLvlUp(lvl int) int {
+	return int(BASE_EXP * math.Pow(float64(lvl), EXP_EXPONENT))
 }
