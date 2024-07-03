@@ -48,6 +48,7 @@ const (
 	WorkDurationAttribute    = "WorkDuration"
 	LastPlayedDateAttribute  = "LastPlayedDate"
 	DailyQuestCountAttribute = "DailyQuestCount"
+	DungeonAttribute         = "Dungeon"
 )
 
 // Item DB constants

@@ -3,6 +3,7 @@ package main
 import (
 	"browser-mmo-backend/constants"
 	"browser-mmo-backend/data"
+	"browser-mmo-backend/fightsimulator"
 	"browser-mmo-backend/items"
 	"browser-mmo-backend/users"
 	"browser-mmo-backend/utils"
@@ -105,14 +106,13 @@ func (app *application) loginUserHandler(c *gin.Context) {
 func (app *application) getUserHandler(c *gin.Context) {
 	email := c.Param("email")
 
-	userValue, _ := c.Get("user")
-	user, _ := userValue.(*data.User)
-
-	if email != user.Email {
-		//TODO: This shouldn't matter, users should be able to view others' profiles
-		c.JSON(http.StatusForbidden, constants.UserIsNotAuthorizedError)
+	user, err := app.models.Users.Get(email)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, constants.InternalServerError)
 		return
 	}
+
+	users.CalculateTotalStats(user)
 
 	c.JSON(http.StatusOK, user)
 }
@@ -190,6 +190,7 @@ func (app *application) upgradeIntelligenceHandler(c *gin.Context) {
 }
 
 // TODO: Make logic for only weaponShop items to be generated and added
+// TODO: Add shopsLastGenerated in dynamo
 func (app *application) generateWeaponShop(c *gin.Context) {
 	userValue, _ := c.Get("user")
 	user, _ := userValue.(*data.User)
@@ -215,6 +216,7 @@ func (app *application) generateWeaponShop(c *gin.Context) {
 }
 
 // TODO: Make logic for only magicShop items to be generated and added
+// TODO: Add shopsLastGenerated in dynamo
 func (app *application) generateMagicShop(c *gin.Context) {
 	userValue, _ := c.Get("user")
 	user, _ := userValue.(*data.User)
@@ -309,4 +311,48 @@ func (app *application) sellItem(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, "item sold")
+}
+
+func (app *application) fightPlayerHandler(c *gin.Context) {
+	userValue, _ := c.Get("user")
+	user, _ := userValue.(*data.User)
+
+	email := c.Param("email")
+	enemy, err := app.models.Users.Get(email)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, constants.InternalServerError)
+		return
+	}
+
+	userFighter := fightsimulator.NewFighterFromUser(*user)
+	enemyFighter := fightsimulator.NewFighterFromUser(*enemy)
+
+	fightLog, playerWon := fightsimulator.Simulate(userFighter, enemyFighter)
+
+	if playerWon {
+		err = app.models.Users.CollectPlayerFightRewards(user, enemy)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, constants.InternalServerError)
+			return
+		}
+
+		expForNextLvl := users.CalculateExpForLvlUp(user.Lvl)
+		if user.EXP >= expForNextLvl {
+			err = app.models.Users.LevelUp(user, expForNextLvl)
+			if err != nil {
+				c.JSON(http.StatusInternalServerError, constants.InternalServerError)
+				return
+			}
+		}
+	}
+
+	c.IndentedJSON(http.StatusOK,
+		gin.H{
+			"fightLog":        fightLog,
+			"fightWon":        playerWon,
+			"monsterName":     enemy.Name,
+			"monsterImageUrl": enemy.ImageURL,
+			"monsterLvl":      enemy.Lvl,
+			"monsterHealth":   enemy.Constitution + 100, // TODO: Temporary
+		})
 }

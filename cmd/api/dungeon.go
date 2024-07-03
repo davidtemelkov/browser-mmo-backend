@@ -28,7 +28,12 @@ func (app *application) fightDungeonBossHandler(c *gin.Context) {
 	fightLog, playerWon := fightsimulator.Simulate(userFighter, bossFighter)
 
 	if playerWon {
-		// TODO: Gain exp, gold and increment user.Dungeon by 1
+		err = app.models.Users.CollectDungeonFightRewards(user, 0, 0) // Todo: change 0 0 to boss.exp boss.gold rewards
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, constants.InternalServerError)
+			return
+		}
+
 		expForNextLvl := users.CalculateExpForLvlUp(user.Lvl)
 		if user.EXP >= expForNextLvl {
 			err = app.models.Users.LevelUp(user, expForNextLvl)

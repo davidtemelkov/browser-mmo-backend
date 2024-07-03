@@ -813,6 +813,98 @@ func (um UserModel) LevelUp(user *User, expForNextLvl int) error {
 	return nil
 }
 
+func (um UserModel) CollectPlayerFightRewards(user *User, enemy *User) error {
+	key := map[string]types.AttributeValue{
+		constants.PK: &types.AttributeValueMemberS{
+			Value: constants.UserPrefix + user.Email,
+		},
+		constants.SK: &types.AttributeValueMemberS{
+			Value: constants.UserPrefix + user.Email,
+		},
+	}
+
+	playerLvlDifference := user.Lvl - enemy.Lvl
+	if playerLvlDifference == 0 {
+		playerLvlDifference = 1
+	} else if playerLvlDifference < 0 {
+		playerLvlDifference = playerLvlDifference * -1
+	} else if playerLvlDifference > 4 {
+		playerLvlDifference = 0
+	}
+
+	goldReward := playerLvlDifference
+	EXPReward := playerLvlDifference
+	BigDPointsReward := playerLvlDifference * 2
+
+	user.Gold += goldReward
+	user.EXP += EXPReward
+	user.BigDPoints += BigDPointsReward
+
+	updateExpression := "SET " +
+		constants.GoldAttribute + " = :newGold, " +
+		constants.EXPAttribute + " = :newEXP, " +
+		constants.BigDPointsAttribute + " = :newBigDPoints"
+
+	expressionAttributeValues := map[string]types.AttributeValue{
+		":newGold":       &types.AttributeValueMemberN{Value: strconv.Itoa(user.Gold)},
+		":newEXP":        &types.AttributeValueMemberN{Value: strconv.Itoa(user.EXP)},
+		":newBigDPoints": &types.AttributeValueMemberN{Value: strconv.Itoa(user.BigDPoints)},
+	}
+
+	input := &dynamodb.UpdateItemInput{
+		TableName:                 aws.String(constants.TableName),
+		Key:                       key,
+		UpdateExpression:          aws.String(updateExpression),
+		ExpressionAttributeValues: expressionAttributeValues,
+	}
+
+	_, err := um.DB.UpdateItem(um.CTX, input)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (um UserModel) CollectDungeonFightRewards(user *User, goldReward, expReward int) error {
+	key := map[string]types.AttributeValue{
+		constants.PK: &types.AttributeValueMemberS{
+			Value: constants.UserPrefix + user.Email,
+		},
+		constants.SK: &types.AttributeValueMemberS{
+			Value: constants.UserPrefix + user.Email,
+		},
+	}
+
+	user.Gold += goldReward
+	user.EXP += expReward
+
+	updateExpression := "SET " +
+		constants.GoldAttribute + " = :newGold, " +
+		constants.EXPAttribute + " = :newEXP, " +
+		constants.DungeonAttribute + " = :newDungeon"
+
+	expressionAttributeValues := map[string]types.AttributeValue{
+		":newGold":    &types.AttributeValueMemberN{Value: strconv.Itoa(user.Gold)},
+		":newEXP":     &types.AttributeValueMemberN{Value: strconv.Itoa(user.EXP)},
+		":newDungeon": &types.AttributeValueMemberN{Value: strconv.Itoa(user.Dungeon + 1)},
+	}
+
+	input := &dynamodb.UpdateItemInput{
+		TableName:                 aws.String(constants.TableName),
+		Key:                       key,
+		UpdateExpression:          aws.String(updateExpression),
+		ExpressionAttributeValues: expressionAttributeValues,
+	}
+
+	_, err := um.DB.UpdateItem(um.CTX, input)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func getItemAWSAttributes(item Item) map[string]types.AttributeValue {
 	attributes := map[string]types.AttributeValue{
 		constants.WhatItemAttribute:     &types.AttributeValueMemberS{Value: item.WhatItem},

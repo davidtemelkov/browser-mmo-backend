@@ -22,8 +22,8 @@ func (app *application) setupRoutes() *gin.Engine {
 	{
 		usersRoutes.POST("/register", app.registerUserHandler)
 		usersRoutes.POST("/login", app.loginUserHandler)
-		usersRoutes.Use(app.authenticate())
 		usersRoutes.GET("/:email", app.getUserHandler)
+		usersRoutes.Use(app.authenticate())
 		usersRoutes.PATCH("/strength", app.upgradeStrengthHandler)
 		usersRoutes.PATCH("/dexterity", app.upgradeDexterityHandler)
 		usersRoutes.PATCH("/constitution", app.upgradeConstitutionHandler)
@@ -34,6 +34,7 @@ func (app *application) setupRoutes() *gin.Engine {
 		usersRoutes.PATCH("/shops/magic/:slotKey", app.buyMagicShopItem)
 		usersRoutes.PATCH("/equip/:slotKey", app.equipItem)
 		usersRoutes.PATCH("/sell/:slotKey", app.sellItem)
+		usersRoutes.POST("/fight/:email", app.fightPlayerHandler)
 	}
 
 	itemsRoutes := r.Group("/items")
