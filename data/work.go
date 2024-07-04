@@ -26,7 +26,7 @@ func (wm WorkModel) Set(user *User, hours int, workReward int) error {
 		},
 	}
 
-	workUntilTime := time.Now().Add(time.Hour * time.Duration(hours))
+	workUntilTime := time.Now().UTC().Add(time.Hour * time.Duration(hours))
 	workUntilFormatted := workUntilTime.Format(constants.TimeFormat)
 
 	workDuration := hours * 60

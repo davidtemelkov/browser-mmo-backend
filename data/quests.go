@@ -193,7 +193,7 @@ func (qm QuestModel) SetCurrentQuest(email string, quest map[string]GeneratedQue
 		return err
 	}
 
-	questingUntilTime := time.Now().Add(time.Minute * time.Duration(minutes))
+	questingUntilTime := time.Now().UTC().Add(time.Minute * time.Duration(minutes))
 	questingUntilFormatted := questingUntilTime.Format(constants.TimeFormat)
 
 	updateExpression := "SET " + constants.CurrentQuestAttribute + " = :currentQuest, " + constants.IsQuestingAttribute + " = :isQuesting, " + constants.QuestingUntilAttribute + " = :questingUntil"
