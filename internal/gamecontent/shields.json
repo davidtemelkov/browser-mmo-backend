@@ -1,0 +1,14 @@
+[
+  {
+    "ID": "shield-001",
+    "BaseName": "Wooden Shield",
+    "MinLevel": 1,
+    "IsLegendary": false
+  },
+  {
+    "ID": "shield-002",
+    "BaseName": "Aegis",
+    "MinLevel": 12,
+    "IsLegendary": true
+  }
+]

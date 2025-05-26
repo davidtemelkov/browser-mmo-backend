@@ -1,0 +1,22 @@
+[
+  {
+    "ID": "boss-001",
+    "Position": 1,
+    "Name": "Goblin King",
+    "Lvl": 5,
+    "Constitution": 20,
+    "Dexterity": 10,
+    "Intelligence": 8,
+    "Strength": 15
+  },
+  {
+    "ID": "boss-002",
+    "Position": 2,
+    "Name": "Ancient Dragon",
+    "Lvl": 20,
+    "Constitution": 100,
+    "Dexterity": 30,
+    "Intelligence": 40,
+    "Strength": 60
+  }
+]

@@ -1,0 +1,14 @@
+[
+  {
+    "ID": "weapon-001",
+    "BaseName": "Iron Sword",
+    "MinLevel": 1,
+    "IsLegendary": false
+  },
+  {
+    "ID": "weapon-002",
+    "BaseName": "Excalibur",
+    "MinLevel": 10,
+    "IsLegendary": true
+  }
+]

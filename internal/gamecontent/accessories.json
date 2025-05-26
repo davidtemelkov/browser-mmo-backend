@@ -1,0 +1,30 @@
+[
+  {
+    "ID": "accessory-001",
+    "WhatItem": "Ring",
+    "BaseName": "Silver Ring",
+    "MinLevel": 2,
+    "IsLegendary": false
+  },
+  {
+    "ID": "accessory-002",
+    "WhatItem": "Ring",
+    "BaseName": "Ring of Eternity",
+    "MinLevel": 15,
+    "IsLegendary": true
+  },
+  {
+    "ID": "accessory-004",
+    "WhatItem": "Amulet",
+    "BaseName": "Amulet of Wisdom",
+    "MinLevel": 5,
+    "IsLegendary": false
+  },
+  {
+    "ID": "accessory-005",
+    "WhatItem": "Amulet",
+    "BaseName": "Amulet of Power",
+    "MinLevel": 8,
+    "IsLegendary": true
+  }
+]

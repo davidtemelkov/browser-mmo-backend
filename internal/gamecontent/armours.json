@@ -1,0 +1,72 @@
+[
+  {
+    "ID": "armour-001",
+    "WhatItem": "Helmet",
+    "BaseName": "Leather Cap",
+    "MinLevel": 1,
+    "IsLegendary": false
+  },
+  {
+    "ID": "armour-002",
+    "WhatItem": "Helmet",
+    "BaseName": "Helm of Legends",
+    "MinLevel": 12,
+    "IsLegendary": true
+  },
+  {
+    "ID": "armour-003",
+    "WhatItem": "Boots",
+    "BaseName": "Traveler's Boots",
+    "MinLevel": 2,
+    "IsLegendary": false
+  },
+  {
+    "ID": "armour-004",
+    "WhatItem": "Boots",
+    "BaseName": "Boots of Swiftness",
+    "MinLevel": 14,
+    "IsLegendary": true
+  },
+  {
+    "ID": "armour-005",
+    "WhatItem": "Gloves",
+    "BaseName": "Work Gloves",
+    "MinLevel": 3,
+    "IsLegendary": false
+  },
+  {
+    "ID": "armour-006",
+    "WhatItem": "Gloves",
+    "BaseName": "Gloves of Power",
+    "MinLevel": 16,
+    "IsLegendary": true
+  },
+  {
+    "ID": "armour-007",
+    "WhatItem": "Chestplate",
+    "BaseName": "Dragon Plate",
+    "MinLevel": 15,
+    "IsLegendary": true
+  },
+  {
+    "ID": "armour-008",
+    "WhatItem": "Chestplate",
+    "BaseName": "Iron Mail",
+    "MinLevel": 5,
+    "IsLegendary": false
+  },
+  {
+    "ID": "armour-009",
+    "WhatItem": "Leggings",
+    "BaseName": "Leather Pants",
+    "MinLevel": 4,
+    "IsLegendary": false
+  },
+  {
+    "ID": "armour-010",
+    "WhatItem": "Leggings",
+    "BaseName": "Plate Leggings",
+    "MinLevel": 18,
+    "IsLegendary": true
+  }
+]

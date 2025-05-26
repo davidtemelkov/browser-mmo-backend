@@ -6,23 +6,19 @@ COPY go.mod go.sum ./
 RUN go mod download && go mod verify
 COPY . .
 
-# Set the working directory to the location of main.go
-WORKDIR /usr/src/app/cmd/api
-
-# Build the Go application
+WORKDIR /usr/src/app/cmd/tanothstory
 RUN go build -v -o /run-app .
 
 FROM debian:bookworm
 
-# Install CA certificates
 RUN apt-get update && apt-get install -y ca-certificates && rm -rf /var/lib/apt/lists/*
 
-# Copy the built binary from the builder stage
-COPY --from=builder /run-app /usr/local/bin/
+COPY --from=builder /run-app /usr/local/bin/run-app
+COPY --from=builder /usr/src/app/internal /usr/src/app/internal
 
-# Set environment variables for AWS
+WORKDIR /usr/src/app
+
 ENV AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
 ENV AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
 
-# Set the command to run the built binary
 CMD ["run-app"]
